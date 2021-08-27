@@ -5,6 +5,71 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "New Block", menuName = "Scriptable Objects/Block", order = 0)]
 public class BlockData : ScriptableObject
 {
+    public int id;
+    public int maxHealth = 1;
+    public bool isTransparent;
+    public Texture textureData;
+    public Vector2Int facePixelDimensions = new Vector2Int(256, 256);
+    public Vector2 uvLeft;
+    public Vector2 uvRight;
+    public Vector2 uvTop;
+    public Vector2 uvBottom;
+    public Vector2 uvBack;
+    public Vector2 uvFront;
+
+    public Vector2 GetUVFromDirection(int index)
+    {
+        Vector2 uv = Vector2.zero;
+        switch(index)
+        {
+            case 0:
+                uv = uvLeft;
+                break;
+            case 1:
+                uv = uvRight;
+                break;
+            case 2:
+                uv = uvTop;
+                break;
+            case 3:
+                uv = uvBottom;
+                break;
+            case 4:
+                uv = uvLeft;
+                break;
+            case 5:
+                uv = uvRight;
+                break;
+        }
+        return uv;
+    }
+
+    public bool IsInvincible
+    {
+        get
+        {
+            return maxHealth <= 0;
+        }
+    }
+
+
+    private void OnValidate()
+    {
+        int numberOfTimesChecked = 0;
+        for (int i = 0; i < AllBlocks.Length; i++)
+        {
+            for (int c = 0; c < AllBlocks.Length; c++)
+            {
+                // If an object is later in the list than the current one, but has the same ID, change it to a new one
+                if (AllBlocks[c].id == AllBlocks[i].id && AllBlocks[c] != AllBlocks[i])
+                {
+                    numberOfTimesChecked += 1;
+                    AllBlocks[c].id = AllBlocks.Length - 1 + numberOfTimesChecked;
+                }
+            }
+        }
+    }
+
     static BlockData[] internalList;
     public static BlockData[] AllBlocks
     {
@@ -18,18 +83,21 @@ public class BlockData : ScriptableObject
             return internalList;
         }
     }
-
-
-
-
-    public int id;
-    public Texture left;
-    public Texture right;
-    public Texture top;
-    public Texture bottom;
-    public Texture front;
-    public Texture back;
-
-    public int maxHealth = 5;
-    public bool isTransparent;
+    public static BlockData GetByAlphabeticalOrder(int index)
+    {
+        return AllBlocks[index];
+    }
+    public static BlockData GetByID(int id)
+    {
+        BlockData type = null;
+        for (int i = 0; i < AllBlocks.Length; i++)
+        {
+            if (AllBlocks[i].id == id)
+            {
+                type = AllBlocks[i];
+                break;
+            }
+        }
+        return type;
+    }
 }

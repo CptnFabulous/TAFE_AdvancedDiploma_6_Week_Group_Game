@@ -7,10 +7,55 @@ public struct Block
 {
     public BlockData type;
     public int health;
-    public bool invincible;
 
-    //public static bool operator ==(Block lhs, Block rhs);
-    //public static bool operator !=(Block lhs, Block rhs);
+    public bool Exists
+    {
+        get
+        {
+            return type != null;
+        }
+    }
+
+    public void Damage(int amount)
+    {
+        if (type.IsInvincible)
+        {
+            return;
+        }
+        
+        health -= amount;
+        if (health <= 0)
+        {
+            Erase();
+        }
+    }
+
+    public void Erase()
+    {
+        type = null;
+        health = 0;
+    }
+
+    public void Replace(BlockData newType)
+    {
+        Replace(newType, newType.maxHealth);
+    }
+
+    public void Replace(BlockData newType, int newHealth)
+    {
+        type = newType;
+        health = Mathf.Clamp(newHealth, 1, newType.maxHealth);
+    }
+    /*
+    public static bool operator ==(Block lhs, Block rhs)
+    {
+        if (lhs.type == rhs.type && )
+    }
+    public static bool operator !=(Block lhs, Block rhs)
+    {
+
+    }
+    */
 }
 
 [RequireComponent(typeof(MeshFilter))]
@@ -18,30 +63,10 @@ public struct Block
 [RequireComponent(typeof(MeshCollider))]
 public class Chunk : MonoBehaviour
 {
-    
-
-    public int width = 16;
-    public int height = 16;
-    public int length = 16;
+    public Vector3Int dimensions = new Vector3Int(16, 16, 16);
 
 
-    Block[,,] blocks;
-    public Block[,,] CurrentBlocks
-    {
-        get
-        {
-            if (blocks == null)
-            {
-                blocks = new Block[width, height, length];
-            }
-            return blocks;
-        }
-        set
-        {
-            blocks = value;
-            Refresh();
-        }
-    }
+    public Block[,,] blocks { get; private set; }
     MeshFilter meshData;
     MeshRenderer renderer;
     MeshCollider collider;
@@ -53,8 +78,8 @@ public class Chunk : MonoBehaviour
         collider = GetComponent<MeshCollider>();
     }
 
-    
 
+    #region Update chunk when changes are made
     public void Refresh()
     {
         Debug.Log("refreshing");
@@ -65,56 +90,54 @@ public class Chunk : MonoBehaviour
     {
         List<Vector3> verts = new List<Vector3>();
         List<int> triIndexes = new List<int>();
-        
-        int xLength = blocks.GetLength(0);
-        int yLength = blocks.GetLength(1);
-        int zLength = blocks.GetLength(2);
+        List<Vector2> uvs = new List<Vector2>();
 
-        for (int x = 0; x < xLength; x++)
+        Vector3Int lengths = new Vector3Int(blocks.GetLength(0), blocks.GetLength(1), blocks.GetLength(2));
+
+        for (int x = 0; x < lengths.x; x++)
         {
-            for (int y = 0; y < yLength; y++)
+            for (int y = 0; y < lengths.y; y++)
             {
-                for (int z = 0; z < zLength; z++)
+                for (int z = 0; z < lengths.z; z++)
                 {
+                    #region Checks to render block
+                    // Obtains block data
                     Block currentBlock = blocks[x, y, z];
-                    //Debug.Log(currentBlock.type);
-
-
-                    // If block is empty, there's nothing to be rendered.
-                    if (currentBlock.type == null)
+                    if (currentBlock.type == null) // If block is empty
                     {
-                        //Debug.Log("Block at " + new Vector3(x, y, z) + " is empty");
-                        continue;
+                        continue; // Nothing to render
                     }
 
                     #region Check corners to add faces appropriately
-                    Vector3 coordinates = new Vector3(x, y, z);
-                    Vector3[] directions = new Vector3[6]
+                    Vector3Int coordinates = new Vector3Int(x, y, z);
+                    Vector3Int[] directions = new Vector3Int[6]
                     {
-                        Vector3.left,
-                        Vector3.right,
-                        Vector3.up,
-                        Vector3.down,
-                        Vector3.back,
-                        Vector3.forward
+                        Vector3Int.left,
+                        Vector3Int.right,
+                        Vector3Int.up,
+                        Vector3Int.down,
+                        new Vector3Int(0, 0, -1), // Backward
+                        new Vector3Int(0, 0, 1), // Forward
                     };
 
                     // For each space adjacent to the block
                     for (int i = 0; i < directions.Length; i++)
                     {
-                        Vector3 adjacentCoordinates = coordinates + directions[i];
+                        #region Check that the face is worth rendering
+                        Vector3Int adjacentCoordinates = coordinates + directions[i];
+                        
+                        // Have some kind of check so that if it exceeds the array bounds, get the first block of the adjacent chunk
+                        adjacentCoordinates.Clamp(Vector3Int.zero, new Vector3Int(lengths.x - 1, lengths.y - 1, lengths.z - 1));
 
-
-                        adjacentCoordinates.x = Mathf.Clamp(adjacentCoordinates.x, 0, xLength - 1);
-                        adjacentCoordinates.y = Mathf.Clamp(adjacentCoordinates.y, 0, yLength - 1);
-                        adjacentCoordinates.z = Mathf.Clamp(adjacentCoordinates.z, 0, zLength - 1);
-                        Block adjacent = blocks[(int)adjacentCoordinates.x, (int)adjacentCoordinates.y, (int)adjacentCoordinates.z];
-
-                        // If adjacent block is present and opaque (or the same block, meaning the check was clamped to the edges), there's no need to render this face
-                        if ((adjacent.type != null && adjacent.type.isTransparent == false) && !adjacent.Equals(currentBlock))
+                        Block adjacent = Block(adjacentCoordinates);
+                        // If an adjacent block exists
+                        // If it isn't the same block because of clamping
+                        // If the object is opaque OR if transparent, the same type as the current block
+                        if (adjacent.Exists && (adjacent.type.isTransparent == false || adjacent.type == currentBlock.type) && adjacentCoordinates != coordinates)
                         {
                             continue;
                         }
+                        #endregion
 
                         #region Generate mesh verts and tris, and add them to the arrays so they reference each other appropriately
                         Vector3[] faceCorners = new Vector3[4]
@@ -144,10 +167,28 @@ public class Chunk : MonoBehaviour
                         verts.AddRange(faceCorners);
                         triIndexes.AddRange(cornerIndexes);
                         #endregion
-                    }
 
-                    //int count = (yLength * x) + (zLength * y) + z;
-                    //Debug.Log("#" + count + ", " + coordinates);
+                        #region Add UV data for texturing
+                        Vector2 uvOrigin = currentBlock.type.GetUVFromDirection(i);
+                        float texWidth = (float)currentBlock.type.facePixelDimensions.x / (float)currentBlock.type.textureData.width;
+                        float texHeight = (float)currentBlock.type.facePixelDimensions.y / (float)currentBlock.type.textureData.height;
+                        Vector2 scaling = new Vector2(texWidth, texHeight);
+                        Vector2[] uvsForFace = new Vector2[]
+                        {
+                            Vector2.up,
+                            Vector2.one,
+                            Vector2.zero,
+                            Vector2.right,
+                        };
+                        for (int uvIndex = 0; uvIndex < uvsForFace.Length; uvIndex++)
+                        {
+                            uvsForFace[uvIndex] += uvOrigin;
+                            uvsForFace[uvIndex].Scale(scaling);
+                            uvs.Add(uvsForFace[uvIndex]);
+                        }
+                        #endregion
+                    }
+                    #endregion
                     #endregion
                 }
             }
@@ -162,74 +203,86 @@ public class Chunk : MonoBehaviour
 
         //Texture2D combinedTexture = new Texture2D();
         //combinedTexture.width = 
-
+        chunkMesh.uv = uvs.ToArray();
 
         return chunkMesh;
     }
+    #endregion
 
-
-
-    public void PlaceNewBlock(Block spaceToReplace, BlockData type)
+    public Block Block(Vector3Int coordinates)
     {
-        spaceToReplace.type = type;
-        spaceToReplace.health = type.maxHealth;
+        return blocks[coordinates.x, coordinates.y, coordinates.z];
     }
 
-    public Block GetBlock(Vector3 worldPosition)
+    public Vector3Int GetCoordinatesFromWorldPosition(Vector3 position)
     {
-        Vector3 coordinates = worldPosition - transform.position;
-        return blocks[(int)coordinates.x, (int)coordinates.z, (int)coordinates.z];
+        position = transform.InverseTransformPoint(position);
+        return Vector3Int.RoundToInt(position);
     }
 
-    
+    public void DamageBlock(Vector3Int position, int damage)
+    {
+        blocks[position.x, position.y, position.z].Damage(damage);
+        Refresh();
+        
+    }
 
-    public void DamageBlocks(int damage, Vector3[] positions)
+    public void DamageMultipleBlocks(Vector3Int[] positions, int damage)
     {
         for (int i = 0; i < positions.Length; i++)
         {
-            Block blockDamaged = GetBlock(positions[i]);
-            if (blockDamaged.type == null || blockDamaged.invincible)
-            {
-                return;
-            }
+            blocks[positions[i].x, positions[i].y, positions[i].z].Damage(damage);
+        }
+        Refresh();
+    }
 
-            blockDamaged.health -= damage;
+    public void ReplaceBlock(Vector3Int position, BlockData type)
+    {
+        blocks[position.x, position.y, position.z].Replace(type);
+        Refresh();
+    }
 
-            if (blockDamaged.health <= 0)
+    public void Rewrite(Block[,,] blockData)
+    {
+        blocks = blockData;
+        Refresh();
+    }
+
+    public string SaveData()
+    {
+        string saveString = dimensions.x + "x" + dimensions.y + "x" + dimensions.z + ",";
+
+        for (int x = 0; x < dimensions.x; x++)
+        {
+            for (int y = 0; y < dimensions.y; y++)
             {
-                blockDamaged = new Block();
+                for (int z = 0; z < dimensions.z; z++)
+                {
+                    // Get variables of block struct in this position
+                    Block current = blocks[x, y, z];
+                    if (current.Exists)
+                    {
+                        saveString += current.type.id + "," + current.health + ",";
+                    }
+                    else
+                    {
+                        saveString += "n,";
+                    }
+                    
+                }
             }
         }
 
-        Refresh();
+        return saveString;
     }
+
     /*
     public string GetChunkSaveData()
     {
         
     }
     */
-    public Block[,,] FillChunkCompletely(BlockData type)
-    {
-        Block[,,] chunk = new Block[width, height, length];
 
-        int xLength = blocks.GetLength(0);
-        int yLength = blocks.GetLength(1);
-        int zLength = blocks.GetLength(2);
-        for (int x = 0; x < xLength; x++)
-        {
-            for (int y = 0; y < yLength; y++)
-            {
-                for (int z = 0; z < zLength; z++)
-                {
-                    Block current = chunk[x, y, z];
-                    PlaceNewBlock(current, type);
-                }
-            }
-        }
-
-        return chunk;
-    }
 
     /*
     public Block[,,] FillChunkFromFile(string saveData)
