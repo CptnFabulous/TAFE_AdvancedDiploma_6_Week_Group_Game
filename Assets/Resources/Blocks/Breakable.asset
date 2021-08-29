@@ -15,7 +15,6 @@ MonoBehaviour:
   id: 3
   maxHealth: 1
   isTransparent: 0
-  textureData: {fileID: 2800000, guid: 5dc238799e469ee42b98840c6c98d36c, type: 3}
   facePixelDimensions: {x: 256, y: 256}
   uvLeft: {x: 1, y: 1}
   uvRight: {x: 1, y: 1}

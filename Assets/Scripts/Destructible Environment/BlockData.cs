@@ -8,7 +8,6 @@ public class BlockData : ScriptableObject
     public int id;
     public int maxHealth = 1;
     public bool isTransparent;
-    public Texture textureData;
     public Vector2Int facePixelDimensions = new Vector2Int(256, 256);
     public Vector2 uvLeft;
     public Vector2 uvRight;
@@ -43,7 +42,15 @@ public class BlockData : ScriptableObject
         }
         return uv;
     }
+    /*
+    public Sprite Icon
+    {
+        get
+        {
 
+        }
+    }
+    */
     public bool IsInvincible
     {
         get
@@ -52,7 +59,7 @@ public class BlockData : ScriptableObject
         }
     }
 
-
+    #region Obtaining block data
     private void OnValidate()
     {
         int numberOfTimesChecked = 0;
@@ -78,6 +85,7 @@ public class BlockData : ScriptableObject
             if (internalList == null)
             {
                 internalList = Resources.LoadAll<BlockData>("Blocks");
+                
             }
 
             return internalList;
@@ -100,4 +108,5 @@ public class BlockData : ScriptableObject
         }
         return type;
     }
+    #endregion
 }

@@ -13,6 +13,12 @@ MonoBehaviour:
   m_Name: Unbreakable
   m_EditorClassIdentifier: 
   id: 1
-  textureData: {fileID: 0}
   maxHealth: 0
   isTransparent: 0
+  facePixelDimensions: {x: 256, y: 256}
+  uvLeft: {x: 3, y: 3}
+  uvRight: {x: 3, y: 3}
+  uvTop: {x: 2, y: 3}
+  uvBottom: {x: 2, y: 2}
+  uvBack: {x: 3, y: 3}
+  uvFront: {x: 3, y: 3}

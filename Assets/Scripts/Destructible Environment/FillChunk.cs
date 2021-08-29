@@ -5,9 +5,8 @@ using UnityEngine;
 public static class FillChunk
 {
 
-    public static Block[,,] Flood(Chunk chunkToFill, BlockData type)
+    public static Block[,,] Flood(Vector3Int lengths, BlockData type)
     {
-        Vector3Int lengths = chunkToFill.dimensions;
         Block[,,] chunk = new Block[lengths.x, lengths.y, lengths.z];
         for (int x = 0; x < lengths.x; x++)
         {
@@ -22,10 +21,8 @@ public static class FillChunk
 
         return chunk;
     }
-
-    public static Block[,,] Hollow(Chunk chunkToFill, BlockData type)
+    public static Block[,,] Hollow(Vector3Int lengths, BlockData type)
     {
-        Vector3Int lengths = chunkToFill.dimensions;
         Block[,,] chunk = new Block[lengths.x, lengths.y, lengths.z];
         for (int x = 0; x < lengths.x; x++)
         {
@@ -45,7 +42,6 @@ public static class FillChunk
 
         return chunk;
     }
-
     public static Block[,,] FromData(string dataString)
     {
         int parseStart = 0;
