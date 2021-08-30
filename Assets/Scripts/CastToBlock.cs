@@ -78,9 +78,9 @@ public class CastToBlock : MonoBehaviour
         {
             return false;
         }
-
-        Debug.DrawLine(rh.point + rh.normal, targetedBlockCoords, Color.red);
-        Debug.DrawLine(rh.point + rh.normal, targetedBlockCoords + rh.normal, Color.green);
+        Vector3 debugBlockPosition = targetedChunk.transform.TransformPoint(targetedBlockCoords);
+        Debug.DrawLine(rh.point + rh.normal, debugBlockPosition, Color.red);
+        Debug.DrawLine(rh.point + rh.normal, debugBlockPosition + rh.normal, Color.green);
 
         //Debug.Log("Check for player interaction");
         if (targetedChunk.Block(targetedBlockCoords).Exists == false)

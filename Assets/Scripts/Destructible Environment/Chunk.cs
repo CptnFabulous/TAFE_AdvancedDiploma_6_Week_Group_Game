@@ -167,7 +167,7 @@ public class Chunk : MonoBehaviour
                         // If an adjacent block exists
                         // If the adjacent block is not the current one due to clamping
                         // If the object is opaque OR transparent but the same type as the current block
-                        if (adjacent.Exists && (adjacent.type.isTransparent == false || adjacent.type == currentBlock.type) && !adjacent.Equals(currentBlock))
+                        if (adjacent.Exists && (adjacent.type.isTransparent == false || adjacent.type == currentBlock.type) && adjacentCoordinates != coordinates)
                         {
                             continue;
                         }
@@ -203,10 +203,10 @@ public class Chunk : MonoBehaviour
                         #endregion
 
                         #region Add UV data for texturing
-                        /*
+                        
                         Vector2 uvOrigin = currentBlock.type.GetUVFromDirection(i);
-                        float texWidth = 64f / renderer.material.mainTexture.width;
-                        float texHeight = 64f / renderer.material.mainTexture.height;
+                        float texWidth = 256f / renderer.material.mainTexture.width;
+                        float texHeight = 256f / renderer.material.mainTexture.height;
                         Vector2 scaling = new Vector2(texWidth, texHeight);
                         Vector2[] uvsForFace = new Vector2[]
                         {
@@ -221,7 +221,7 @@ public class Chunk : MonoBehaviour
                             uvsForFace[uvIndex].Scale(scaling);
                             uvs.Add(uvsForFace[uvIndex]);
                         }
-                        */
+                        
                         #endregion
                     }
                     #endregion
@@ -266,30 +266,14 @@ public class Chunk : MonoBehaviour
     /// <returns></returns>
     public bool AreCoordinatesValid(Vector3Int coordinates, out Vector3Int validCoordinates)
     {
-        /*
-        Debug.Log("Starting check");
-        validCoordinates = coordinates;
-        Debug.Log("Assigning values to new thing");
-        validCoordinates.Clamp(Vector3Int.zero, Dimensions - Vector3Int.one);
-        Debug.Log("Clamping");
-        Debug.Log(coordinates + ", " + validCoordinates);
-        */
-
-
-
         validCoordinates = ClampCoordinatesToChunk(coordinates);
         return coordinates == validCoordinates;
     }
 
-
     public Vector3Int ClampCoordinatesToChunk(Vector3Int coordinates)
     {
-        int cx = Mathf.Clamp(coordinates.x, 0, Dimensions.x - 1);
-        int cy = Mathf.Clamp(coordinates.y, 0, Dimensions.y - 1);
-        int cz = Mathf.Clamp(coordinates.z, 0, Dimensions.z - 1);
-        return new Vector3Int(cx, cy, cz);
-        //coordinates.Clamp(Vector3Int.zero, Dimensions - Vector3Int.one);
-        //return coordinates;
+        coordinates.Clamp(Vector3Int.zero, Dimensions - Vector3Int.one);
+        return coordinates;
     }
 
     public Vector3 WorldPositionFromCoordinates(Vector3Int coordinates)
