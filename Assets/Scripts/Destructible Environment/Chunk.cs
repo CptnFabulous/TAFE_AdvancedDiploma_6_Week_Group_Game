@@ -154,33 +154,15 @@ public class Chunk : MonoBehaviour
                     for (int i = 0; i < directions.Length; i++)
                     {
                         #region Check that the face is worth rendering
-                        Block adjacent;
                         Vector3Int adjacentCoordinates = coordinates + directions[i];
+                        //adjacentCoordinates.Clamp(Vector3Int.zero, Dimensions - Vector3Int.one);
+                        adjacentCoordinates = ClampCoordinatesToChunk(adjacentCoordinates);
+
+                        Block adjacent = blocks[adjacentCoordinates.x, adjacentCoordinates.y, adjacentCoordinates.z];
 
                         // Check if adjacent coordinates are still inside the mesh
                         // If not, convert the coordinates to a world position and check for a block inside an adjacent chunk
                         // If not, clamp original coordinates to inside the chunk
-
-
-                        if (AreCoordinatesValid(adjacentCoordinates, out Vector3Int saneCoordinates))
-                        {
-                            Debug.Log("Obtaining regular coordinates");
-                            adjacent = Block(adjacentCoordinates);
-                        }
-                        else if (LevelGrid.Current.TryGetChunkCoordinates(transform.TransformPoint(adjacentCoordinates), out Vector3Int coordinatesInAdjacentChunk, out Chunk adjacentChunk))
-                        {
-                            Debug.Log("Valid adjacent chunk found");
-                            adjacent = adjacentChunk.Block(coordinatesInAdjacentChunk);
-
-                            // If coordinates are invalid, check the next chunk using the current directional value
-                            //Vector3Int coordinatesInAdjacentChunk = adjacentCoordinates - Dimensions;
-                            //adjacent = AdjacentChunk(directions[i]).Block(coordinatesInAdjacentChunk);
-                        }
-                        else
-                        {
-                            Debug.Log("Sane clamped coordinates substituted");
-                            adjacent = Block(saneCoordinates);
-                        }
 
                         // If an adjacent block exists
                         // If the adjacent block is not the current one due to clamping
@@ -221,6 +203,7 @@ public class Chunk : MonoBehaviour
                         #endregion
 
                         #region Add UV data for texturing
+                        /*
                         Vector2 uvOrigin = currentBlock.type.GetUVFromDirection(i);
                         float texWidth = 64f / renderer.material.mainTexture.width;
                         float texHeight = 64f / renderer.material.mainTexture.height;
@@ -238,6 +221,7 @@ public class Chunk : MonoBehaviour
                             uvsForFace[uvIndex].Scale(scaling);
                             uvs.Add(uvsForFace[uvIndex]);
                         }
+                        */
                         #endregion
                     }
                     #endregion
@@ -252,7 +236,7 @@ public class Chunk : MonoBehaviour
         chunkMesh.triangles = triIndexes.ToArray();
         chunkMesh.Optimize();
         chunkMesh.RecalculateNormals();
-        chunkMesh.uv = uvs.ToArray();
+        //chunkMesh.uv = uvs.ToArray();
 
         return chunkMesh;
     }
@@ -282,11 +266,32 @@ public class Chunk : MonoBehaviour
     /// <returns></returns>
     public bool AreCoordinatesValid(Vector3Int coordinates, out Vector3Int validCoordinates)
     {
+        /*
+        Debug.Log("Starting check");
         validCoordinates = coordinates;
+        Debug.Log("Assigning values to new thing");
         validCoordinates.Clamp(Vector3Int.zero, Dimensions - Vector3Int.one);
+        Debug.Log("Clamping");
         Debug.Log(coordinates + ", " + validCoordinates);
+        */
+
+
+
+        validCoordinates = ClampCoordinatesToChunk(coordinates);
         return coordinates == validCoordinates;
     }
+
+
+    public Vector3Int ClampCoordinatesToChunk(Vector3Int coordinates)
+    {
+        int cx = Mathf.Clamp(coordinates.x, 0, Dimensions.x - 1);
+        int cy = Mathf.Clamp(coordinates.y, 0, Dimensions.y - 1);
+        int cz = Mathf.Clamp(coordinates.z, 0, Dimensions.z - 1);
+        return new Vector3Int(cx, cy, cz);
+        //coordinates.Clamp(Vector3Int.zero, Dimensions - Vector3Int.one);
+        //return coordinates;
+    }
+
     public Vector3 WorldPositionFromCoordinates(Vector3Int coordinates)
     {
         return transform.TransformPoint(coordinates);

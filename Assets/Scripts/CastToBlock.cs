@@ -82,7 +82,7 @@ public class CastToBlock : MonoBehaviour
         Debug.DrawLine(rh.point + rh.normal, targetedBlockCoords, Color.red);
         Debug.DrawLine(rh.point + rh.normal, targetedBlockCoords + rh.normal, Color.green);
 
-        Debug.Log("Check for player interaction");
+        //Debug.Log("Check for player interaction");
         if (targetedChunk.Block(targetedBlockCoords).Exists == false)
         {
             return false;

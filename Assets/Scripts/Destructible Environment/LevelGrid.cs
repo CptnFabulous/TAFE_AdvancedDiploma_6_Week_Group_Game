@@ -60,16 +60,19 @@ public class LevelGrid : MonoBehaviour
         
         for (int x = 0; x < chunkDimensions.x; x++)
         {
+            //Debug.Log("Generating blocks on new X layer");
             for (int y = 0; y < chunkDimensions.y; y++)
             {
+                //Debug.Log("Generating blocks on new Y layer");
                 for (int z = 0; z < chunkDimensions.z; z++)
                 {
+                    //Debug.Log("Generating block on new Z layer");
                     Vector3 position = new Vector3(chunkSize.x * x, chunkSize.y * y, chunkSize.z * z);
                     Chunk currentChunk = Instantiate(chunkPrefab, position, Quaternion.identity, transform);
                     // Figure out what to fill the chunk with
-                    currentChunk.Rewrite(FillChunk.Flood(chunkSize, blockToFill));
                     currentChunk.PositionInLevelGrid = new Vector3Int(x, y, z);
                     chunksInLevel[x, y, z] = currentChunk;
+                    currentChunk.Rewrite(FillChunk.Flood(chunkSize, blockToFill));
                 }
             }
         }
