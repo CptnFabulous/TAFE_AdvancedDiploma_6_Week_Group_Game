@@ -8,7 +8,7 @@ public class BlockData : ScriptableObject
     public int id;
     public int maxHealth = 1;
     public bool isTransparent;
-    public Vector2Int facePixelDimensions = new Vector2Int(256, 256);
+    //public Vector2Int facePixelDimensions = new Vector2Int(256, 256);
     public Vector2 uvLeft;
     public Vector2 uvRight;
     public Vector2 uvTop;

@@ -27,18 +27,25 @@ public struct Block
         }
     }
 
-    public void Damage(int amount)
+    public bool TryDamage(int amount)
     {
-        if (Exists == false && type.IsInvincible)
+        if (Exists == false || (type.IsInvincible && amount > -1))
         {
-            return;
+            return false;
         }
-        
+
+        if (amount <= -1)
+        {
+            Erase();
+            return true;
+        }
+
         health -= amount;
         if (health <= 0)
         {
             Erase();
         }
+        return true;
     }
 
     public void Erase()
@@ -57,33 +64,14 @@ public struct Block
         type = newType;
         health = Mathf.Clamp(newHealth, 1, newType.maxHealth);
     }
-    /*
-    public static bool operator ==(Block lhs, Block rhs)
-    {
-        return (lhs.type == rhs.type && lhs.health == rhs.health);
-    }
-    public static bool operator !=(Block lhs, Block rhs)
-    {
-        return (lhs.type != rhs.type || lhs.health != rhs.health);
-    }
-    */
 }
-
-/*
-public struct SpecialBlockData
-{
-    public Vector3Int coordinatesInChunk;
-    public Direction forward;
-    public Direction up;
-    public int health;
-}
-*/
 
 [RequireComponent(typeof(MeshFilter))]
 [RequireComponent(typeof(MeshRenderer))]
 [RequireComponent(typeof(MeshCollider))]
 public class Chunk : MonoBehaviour
 {
+    public Vector2Int facePixelDimensions = new Vector2Int(256, 256);
     public Block[,,] blocks { get; private set; }
     public Vector3Int Dimensions
     {
@@ -109,11 +97,14 @@ public class Chunk : MonoBehaviour
         collider = GetComponent<MeshCollider>();
     }
 
-
     #region Update chunk when changes are made
-
-    void Refresh()
+    void Refresh(bool hasChanged)
     {
+        if (hasChanged == false)
+        {
+            return;
+        }
+        
         meshData.mesh = GenerateMesh();
         collider.sharedMesh = meshData.mesh;
         //Debug.Log(SaveData());
@@ -150,20 +141,37 @@ public class Chunk : MonoBehaviour
                         new Vector3Int(0, 0, 1), // Forward
                     };
 
-                    // For each space adjacent to the block
+                    // For each grid direction from the block
                     for (int i = 0; i < directions.Length; i++)
                     {
                         #region Check that the face is worth rendering
                         Vector3Int adjacentCoordinates = coordinates + directions[i];
-                        //adjacentCoordinates.Clamp(Vector3Int.zero, Dimensions - Vector3Int.one);
-                        adjacentCoordinates = ClampCoordinatesToChunk(adjacentCoordinates);
-
-                        Block adjacent = blocks[adjacentCoordinates.x, adjacentCoordinates.y, adjacentCoordinates.z];
-
+                        Block adjacent;
+                        /*
                         // Check if adjacent coordinates are still inside the mesh
-                        // If not, convert the coordinates to a world position and check for a block inside an adjacent chunk
-                        // If not, clamp original coordinates to inside the chunk
+                        if (AreCoordinatesValid(adjacentCoordinates, out Vector3Int clampedCoordinates))
+                        {
+                            adjacent = Block(adjacentCoordinates);
+                        }
+                        else
+                        {
+                            // If not, convert the coordinates to a world position and check for a block inside an adjacent chunk
+                            Vector3 adjacentBlockWorldPosition = WorldPositionFromCoordinates(adjacentCoordinates);
+                            if (LevelGrid.Current.TryGetChunkCoordinates(adjacentBlockWorldPosition, out adjacentCoordinates, out Chunk adjacentChunk))
+                            {
+                                adjacent = adjacentChunk.Block(adjacentCoordinates);
+                            }
+                            else
+                            {
+                                // If not, clamp original coordinates to inside the chunk
+                                adjacentCoordinates = clampedCoordinates;
+                                adjacent = Block(adjacentCoordinates);
+                            }
+                        }
+                        */
 
+                        adjacentCoordinates = ClampCoordinatesToChunk(adjacentCoordinates);
+                        adjacent = blocks[adjacentCoordinates.x, adjacentCoordinates.y, adjacentCoordinates.z];
                         // If an adjacent block exists
                         // If the adjacent block is not the current one due to clamping
                         // If the object is opaque OR transparent but the same type as the current block
@@ -203,10 +211,9 @@ public class Chunk : MonoBehaviour
                         #endregion
 
                         #region Add UV data for texturing
-                        
                         Vector2 uvOrigin = currentBlock.type.GetUVFromDirection(i);
-                        float texWidth = 256f / renderer.material.mainTexture.width;
-                        float texHeight = 256f / renderer.material.mainTexture.height;
+                        float texWidth = (float)facePixelDimensions.x / renderer.material.mainTexture.width;
+                        float texHeight = (float)facePixelDimensions.y / renderer.material.mainTexture.height;
                         Vector2 scaling = new Vector2(texWidth, texHeight);
                         Vector2[] uvsForFace = new Vector2[]
                         {
@@ -221,7 +228,6 @@ public class Chunk : MonoBehaviour
                             uvsForFace[uvIndex].Scale(scaling);
                             uvs.Add(uvsForFace[uvIndex]);
                         }
-                        
                         #endregion
                     }
                     #endregion
@@ -236,7 +242,7 @@ public class Chunk : MonoBehaviour
         chunkMesh.triangles = triIndexes.ToArray();
         chunkMesh.Optimize();
         chunkMesh.RecalculateNormals();
-        //chunkMesh.uv = uvs.ToArray();
+        chunkMesh.uv = uvs.ToArray();
 
         return chunkMesh;
     }
@@ -245,6 +251,7 @@ public class Chunk : MonoBehaviour
     #region Information about chunk
     public Block Block(Vector3Int coordinates)
     {
+        coordinates = ClampCoordinatesToChunk(coordinates);
         return blocks[coordinates.x, coordinates.y, coordinates.z];
     }
     public Chunk AdjacentChunk(Vector3Int direction)
@@ -252,11 +259,11 @@ public class Chunk : MonoBehaviour
         // Get chunk's coordinates in level manager
         return LevelGrid.Current.GetChunk(PositionInLevelGrid + direction);
     }
-    public bool TryGetCoordinates(Vector3 worldPosition, out Vector3Int coordinates)
+    public bool TryGetCoordinates(Vector3 worldPosition, out Vector3Int validCoordinates)
     {
         Vector3Int localPosition = Vector3Int.RoundToInt(transform.InverseTransformPoint(worldPosition));
-        coordinates = localPosition;
-        return AreCoordinatesValid(coordinates, out coordinates);
+        validCoordinates = localPosition;
+        return AreCoordinatesValid(validCoordinates, out validCoordinates);
     }
     /// <summary>
     /// Sanity check for if coordinates are valid in array, checked by clamping them and seeing if there was any change.
@@ -280,6 +287,7 @@ public class Chunk : MonoBehaviour
     {
         return transform.TransformPoint(coordinates);
     }
+
     public string SaveData()
     {
         string saveString = Dimensions.x + "x" + Dimensions.y + "x" + Dimensions.z + ",";
@@ -312,28 +320,54 @@ public class Chunk : MonoBehaviour
     #region Make changes to chunk
     public void DamageBlock(Vector3Int position, int damage)
     {
-        blocks[position.x, position.y, position.z].Damage(damage);
-        Refresh();
+        bool hasChanged = blocks[position.x, position.y, position.z].TryDamage(damage);
+        Refresh(hasChanged);
         
     }
     public void DamageMultipleBlocks(Vector3Int[] positions, int damage)
     {
+        bool hasChanged = false;
         for (int i = 0; i < positions.Length; i++)
         {
-            blocks[positions[i].x, positions[i].y, positions[i].z].Damage(damage);
+            bool blockDamaged = blocks[positions[i].x, positions[i].y, positions[i].z].TryDamage(damage);
+            // Checks if the current block has changed, or if the change check was already tripped by a previous block
+            hasChanged = blockDamaged == true || hasChanged == true;
         }
-        Refresh();
+        Refresh(hasChanged);
     }
+
+
+    
+    public bool TryReplaceBlock(Vector3 worldPosition, BlockData type)
+    {
+        if (TryGetCoordinates(worldPosition, out Vector3Int saneCoordinates))
+        {
+            ReplaceBlock(saneCoordinates, type);
+            return true;
+        }
+        return false;
+    }
+
+    public bool TryReplaceBlock(Vector3Int coordinates, BlockData type)
+    {
+        if (AreCoordinatesValid(coordinates, out Vector3Int saneCoordinates))
+        {
+            ReplaceBlock(saneCoordinates, type);
+            return true;
+        }
+        return false;
+    }
+
     public void ReplaceBlock(Vector3Int position, BlockData type)
     {
         blocks[position.x, position.y, position.z].Replace(type);
-        Refresh();
+        Refresh(true);
     }
     public void Rewrite(Block[,,] blockData)
     {
         blocks = blockData;
         Debug.Log("Rewriting chunk");
-        Refresh();
+        Refresh(true);
     }
     #endregion
 }

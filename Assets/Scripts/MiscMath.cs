@@ -4,6 +4,32 @@ using UnityEngine;
 
 public static class MiscMath
 {
+    public static float InverseClamp(float f, float min, float max)
+    {
+        if (f > max)
+        {
+            f = min;
+        }
+        if (f < min)
+        {
+            f = max;
+        }
+        return f;
+    }
+
+    public static int InverseClamp(float f, int min, int max)
+    {
+        if (f > max)
+        {
+            f = min;
+        }
+        if (f < min)
+        {
+            f = max;
+        }
+        return (int)f;
+    }
+
     public static Vector3 CentreOfMultiplePositions(Vector3[] positions)
     {
         Vector3 finalValue = Vector3.zero;
