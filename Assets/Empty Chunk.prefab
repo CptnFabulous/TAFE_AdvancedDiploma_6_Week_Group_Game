@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 1017290859246971261}
   - component: {fileID: 1017290859246971262}
   m_Layer: 0
-  m_Name: Chunk
+  m_Name: Empty Chunk
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -107,3 +107,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e4c39218134d884886c59ad3121434a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  facePixelDimensions: {x: 256, y: 256}

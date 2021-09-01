@@ -38,7 +38,7 @@ public static class FillChunk
                     {
                         continue;
                     }
-                    
+
                     chunk[x, y, z].Replace(type);
                 }
             }
@@ -46,13 +46,40 @@ public static class FillChunk
 
         return chunk;
     }
+    public static Block[,,] OnlyFloor(Vector3Int lengths, BlockData type)
+    {
+        Block[,,] chunk = new Block[lengths.x, lengths.y, lengths.z];
+        for (int x = 0; x < lengths.x; x++)
+        {
+            for (int y = 0; y < lengths.y; y++)
+            {
+                for (int z = 0; z < lengths.z; z++)
+                {
+                    if (y != 0)
+                    {
+                        continue;
+                    }
+
+                    chunk[x, y, z].Replace(type);
+                }
+            }
+        }
+
+        return chunk;
+    }
+    public static Block[,,] Empty(Vector3Int lengths)
+    {
+        return new Block[lengths.x, lengths.y, lengths.z];
+    }
+
+
     public static Block[,,] FromData(string dataString)
     {
         int parseStart = 0;
         int parseEnd = 0;
 
         Vector3Int dimensions = Vector3Int.zero;
-        
+
 
         int[] lengths = new int[3];
         for (int i = 0; i < lengths.Length; i++)
@@ -94,22 +121,5 @@ public static class FillChunk
         }
 
         return chunk;
-    }
-
-
-
-
-
-
-
-    /// <summary>
-    /// DOES NOT DO ANYTHING PRESENTLY
-    /// </summary>
-    /// <param name="originalBlockGrid"></param>
-    /// <param name="newDirection"></param>
-    /// <returns></returns>
-    public static Block[,,] RotateBlocksInChunk(Block[,,] originalBlockGrid, Vector3 eulerAngles)
-    {
-        return originalBlockGrid;
     }
 }

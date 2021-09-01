@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class Explosion
+public struct Explosion
 {
-    public float radius = 3;
-    public int entityDamage = 10;
-    public int blockDamage = 5;
-    public float knockback = 50;
-    public AnimationCurve damageFalloff = AnimationCurve.Linear(0, 1, 1, 0);
-    public AnimationCurve knockbackFalloff = AnimationCurve.Linear(0, 1, 1, 0);
-    public LayerMask hitDetection = ~0;
+    public float radius;
+    public int entityDamage;
+    public int blockDamage;
+    public float knockback;
+    public AnimationCurve damageFalloff;
+    public AnimationCurve knockbackFalloff;
+    public LayerMask hitDetection;
 
     public void Detonate(Vector3 centreOfBlast)
     {
@@ -53,6 +53,24 @@ public class Explosion
                 chunkDetected.DamageMultipleBlocks(blocksToDamage.ToArray(), blockDamage);
             }
             #endregion
+        }
+    }
+
+    public Explosion(bool useDefaultData)
+    {
+        if (useDefaultData)
+        {
+            radius = 3;
+            entityDamage = 10;
+            blockDamage = 5;
+            knockback = 50;
+            damageFalloff = AnimationCurve.Linear(0, 1, 1, 0);
+            knockbackFalloff = AnimationCurve.Linear(0, 1, 1, 0);
+            hitDetection = ~0;
+        }
+        else
+        {
+            this = new Explosion();
         }
     }
 }

@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BlockInteraction : MonoBehaviour
+[System.Serializable]
+public class BlockInteraction
 {
     public float raycastLength = 5;
     public LayerMask hitDetection = ~0;
@@ -46,7 +47,10 @@ public class BlockInteraction : MonoBehaviour
         TargetedBlockCoords = coords;
         Vector3 debugBlockPosition = TargetedChunk.transform.TransformPoint(TargetedBlockCoords);
 
-
+        //Gizmos.color = Color.red;
+        //Gizmos.DrawCube(debugBlockPosition, Vector3.one);
+        //Gizmos.color = Color.green;
+        //Gizmos.DrawCube(debugBlockPosition + rh.normal, Vector3.one);
         Debug.DrawLine(rh.point + rh.normal, debugBlockPosition, Color.red);
         Debug.DrawLine(rh.point + rh.normal, debugBlockPosition + rh.normal, Color.green);
 

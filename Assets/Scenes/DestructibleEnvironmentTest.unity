@@ -990,7 +990,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1503164794}
-  - component: {fileID: 1503164795}
   - component: {fileID: 1503164796}
   m_Layer: 0
   m_Name: Head
@@ -1017,22 +1016,6 @@ Transform:
   m_Father: {fileID: 1994331635}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1503164795
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1503164793}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3e4373719aec08c48b6830d4db54faed, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  raycastLength: 20
-  hitDetection:
-    serializedVersion: 2
-    m_Bits: 4294967295
 --- !u!114 &1503164796
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1045,7 +1028,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57dee530a291c0240b985a6615c3dc43, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interactionData: {fileID: 1503164795}
+  interactionData:
+    raycastLength: 6
+    hitDetection:
+      serializedVersion: 2
+      m_Bits: 4294967295
   blockDamage: -1
   explosionStats:
     radius: 3
@@ -1399,9 +1386,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   chunkPrefab: {fileID: 1017290859246971262, guid: e6aa0786044107c47b36c88ad4e42f73,
     type: 3}
-  chunkSize: {x: 16, y: 16, z: 16}
+  chunkSize: {x: 27, y: 9, z: 27}
   levelLengthInChunks: 8
-  chunkDimensions: {x: 4, y: 4, z: 4}
+  chunkDimensions: {x: 1, y: 1, z: 1}
   blockToFill: {fileID: 11400000, guid: 4cf44b270811bf147a5543c5767fbe6a, type: 2}
 --- !u!4 &1764464064
 Transform:
@@ -1453,14 +1440,16 @@ MonoBehaviour:
   cameraSensivityX: 75
   cameraSensivityY: 75
   canLook: 1
-  moveSpeed: 5
+  moveSpeed: 15
   canMove: 1
   jumpForce: 50
   groundingRaycastLength: 0.1
+  groundingRaycastRadius: 0.3
   groundingDetection:
     serializedVersion: 2
     m_Bits: 4294967295
   canJump: 1
+  verticalMovementSpeed: 15
 --- !u!54 &1994331633
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1472,7 +1461,7 @@ Rigidbody:
   m_Mass: 1
   m_Drag: 0
   m_AngularDrag: 0.05
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 112
@@ -1499,7 +1488,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1994331631}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 70, z: 0}
+  m_LocalPosition: {x: 5, y: 70, z: 5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1503164794}
@@ -1556,7 +1545,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
   m_AnchoredPosition: {x: -25, y: 25}
-  m_SizeDelta: {x: 475, y: 180}
+  m_SizeDelta: {x: 500, y: 200}
   m_Pivot: {x: 1, y: 0}
 --- !u!114 &2001004241
 MonoBehaviour:

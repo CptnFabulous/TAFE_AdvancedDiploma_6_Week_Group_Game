@@ -44,9 +44,11 @@ public class LevelEditingController : MonoBehaviour
 
             if (Input.GetMouseButtonDown(1))
             {
+                
                 // Place block
                 Vector3Int placePosition = Vector3Int.RoundToInt(interactionData.ColliderDetected.normal) + interactionData.TargetedBlockCoords;
                 interactionData.TargetedChunk.TryReplaceBlock(placePosition, blockToPlace);
+                // This doesn't work if the face you're placing the block onto is on the edge of the chunk. I will need to add an adjacent chunk check to fix this.
             }
 
             if (Input.GetMouseButtonDown(2))

@@ -72,7 +72,7 @@ public class LevelGrid : MonoBehaviour
                     // Figure out what to fill the chunk with
                     currentChunk.PositionInLevelGrid = new Vector3Int(x, y, z);
                     chunksInLevel[x, y, z] = currentChunk;
-                    currentChunk.Rewrite(FillChunk.Hollow(chunkSize, blockToFill));
+                    currentChunk.Rewrite(FillChunk.OnlyFloor(chunkSize, blockToFill));
                 }
             }
         }

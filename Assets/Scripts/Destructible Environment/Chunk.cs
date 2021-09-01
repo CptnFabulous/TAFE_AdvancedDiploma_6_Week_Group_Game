@@ -1,70 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 
-/*
-public enum Direction
-{
-    right,
-    left,
-    up,
-    down,
-    forward,
-    backward
-}
-*/
-[System.Serializable]
-public struct Block
-{
-    public BlockData type;
-    public int health;
 
-    public bool Exists
-    {
-        get
-        {
-            return type != null;
-        }
-    }
-
-    public bool TryDamage(int amount)
-    {
-        if (Exists == false || (type.IsInvincible && amount > -1))
-        {
-            return false;
-        }
-
-        if (amount <= -1)
-        {
-            Erase();
-            return true;
-        }
-
-        health -= amount;
-        if (health <= 0)
-        {
-            Erase();
-        }
-        return true;
-    }
-
-    public void Erase()
-    {
-        type = null;
-        health = 0;
-    }
-
-    public void Replace(BlockData newType)
-    {
-        Replace(newType, newType.maxHealth);
-    }
-
-    public void Replace(BlockData newType, int newHealth)
-    {
-        type = newType;
-        health = Mathf.Clamp(newHealth, 1, newType.maxHealth);
-    }
-}
 
 [RequireComponent(typeof(MeshFilter))]
 [RequireComponent(typeof(MeshRenderer))]
@@ -72,7 +11,7 @@ public struct Block
 public class Chunk : MonoBehaviour
 {
     public Vector2Int facePixelDimensions = new Vector2Int(256, 256);
-    public Block[,,] blocks { get; private set; }
+    public Block[,,] blocks;
     public Vector3Int Dimensions
     {
         get
@@ -88,9 +27,9 @@ public class Chunk : MonoBehaviour
     MeshFilter meshData;
     MeshRenderer renderer;
     MeshCollider collider;
-    
+    Mesh terrainMesh;
 
-    private void Awake()
+    public void Awake()
     {
         meshData = GetComponent<MeshFilter>();
         renderer = GetComponent<MeshRenderer>();
@@ -98,19 +37,24 @@ public class Chunk : MonoBehaviour
     }
 
     #region Update chunk when changes are made
-    void Refresh(bool hasChanged)
+    public void Refresh(bool hasChanged)
     {
         if (hasChanged == false)
         {
             return;
         }
-        
-        meshData.mesh = GenerateMesh();
-        collider.sharedMesh = meshData.mesh;
-        //Debug.Log(SaveData());
+
+        UpdateMesh();
+        meshData.mesh = terrainMesh;
+        collider.sharedMesh = terrainMesh;
     }
-    Mesh GenerateMesh()
+    void UpdateMesh()
     {
+        if (terrainMesh == null)
+        {
+            terrainMesh = new Mesh();
+        }
+        
         List<Vector3> verts = new List<Vector3>();
         List<int> triIndexes = new List<int>();
         List<Vector2> uvs = new List<Vector2>();
@@ -212,8 +156,8 @@ public class Chunk : MonoBehaviour
 
                         #region Add UV data for texturing
                         Vector2 uvOrigin = currentBlock.type.GetUVFromDirection(i);
-                        float texWidth = (float)facePixelDimensions.x / renderer.material.mainTexture.width;
-                        float texHeight = (float)facePixelDimensions.y / renderer.material.mainTexture.height;
+                        float texWidth = (float)facePixelDimensions.x / renderer.sharedMaterial.mainTexture.width;
+                        float texHeight = (float)facePixelDimensions.y / renderer.sharedMaterial.mainTexture.height;
                         Vector2 scaling = new Vector2(texWidth, texHeight);
                         Vector2[] uvsForFace = new Vector2[]
                         {
@@ -236,15 +180,12 @@ public class Chunk : MonoBehaviour
             }
         }
 
-        Mesh chunkMesh = new Mesh();
-        chunkMesh.name = "Mesh of chunk at " + transform.position;
-        chunkMesh.vertices = verts.ToArray();
-        chunkMesh.triangles = triIndexes.ToArray();
-        chunkMesh.Optimize();
-        chunkMesh.RecalculateNormals();
-        chunkMesh.uv = uvs.ToArray();
-
-        return chunkMesh;
+        terrainMesh.name = "Mesh of chunk at " + transform.position;
+        terrainMesh.vertices = verts.ToArray();
+        terrainMesh.triangles = triIndexes.ToArray();
+        terrainMesh.Optimize();
+        terrainMesh.RecalculateNormals();
+        terrainMesh.uv = uvs.ToArray();
     }
     #endregion
 
@@ -355,6 +296,7 @@ public class Chunk : MonoBehaviour
             ReplaceBlock(saneCoordinates, type);
             return true;
         }
+        Debug.Log("Failed on frame " + Time.frameCount + ", " + coordinates + ", " + saneCoordinates);
         return false;
     }
 
@@ -370,4 +312,29 @@ public class Chunk : MonoBehaviour
         Refresh(true);
     }
     #endregion
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
 }

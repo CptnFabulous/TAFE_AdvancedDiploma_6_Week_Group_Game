@@ -7,23 +7,29 @@ public class FirstPersonController : MonoBehaviour
 {
     Rigidbody rb;
     CapsuleCollider cc;
-
     public Transform head;
 
+    [Header("Camera")]
     public float cameraSensivityX = 2.5f;
     public float cameraSensivityY = 2.5f;
     public bool canLook = true;
+    Vector2 cameraValues;
 
+    [Header("Movement")]
     public float moveSpeed = 5;
     public bool canMove = true;
+    Vector3 movementValues;
 
+    [Header("Jumping")]
     public float jumpForce = 5;
     public float groundingRaycastLength = 0.1f;
+    public float groundingRaycastRadius = 0.3f;
     public LayerMask groundingDetection = ~0;
     public bool canJump = true;
 
-    Vector3 movementValues;
-    Vector2 cameraValues;
+    [Header("Flying")]
+    public float verticalMovementSpeed = 20;
+    
 
     public bool IsGrounded
     {
@@ -32,7 +38,7 @@ public class FirstPersonController : MonoBehaviour
             Vector3 rayOrigin = transform.position + transform.up;
             Vector3 rayDirection = -transform.up;
             RaycastHit rh;
-            if (Physics.SphereCast(rayOrigin, cc.radius, rayDirection, out rh, 1 + groundingRaycastLength, groundingDetection))
+            if (Physics.SphereCast(rayOrigin, groundingRaycastRadius, rayDirection, out rh, 1 + groundingRaycastLength, groundingDetection))
             {
                 return true;
             }
@@ -68,15 +74,24 @@ public class FirstPersonController : MonoBehaviour
         
         
 
-
+        /*
         if (Input.GetButton("Jump") && IsGrounded && canJump)
         {
             willJump = true;
         }
-
+        */
         if (canMove)
         {
-            movementValues = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+            float vertical = 0;
+            if (Input.GetKey(KeyCode.Space))
+            {
+                vertical += 1;
+            }
+            if (Input.GetKey(KeyCode.LeftShift))
+            {
+                vertical -= 1;
+            }
+            movementValues = new Vector3(Input.GetAxis("Horizontal") * moveSpeed, vertical * verticalMovementSpeed, Input.GetAxis("Vertical") * moveSpeed);
         }
         
         
@@ -85,12 +100,13 @@ public class FirstPersonController : MonoBehaviour
     private void FixedUpdate()
     {
         movementValues = transform.rotation * movementValues;
-        rb.MovePosition(transform.position + movementValues * moveSpeed * Time.fixedDeltaTime);
-
+        rb.MovePosition(transform.position + movementValues * Time.fixedDeltaTime);
+        /*
         if (willJump == true)
         {
             willJump = false;
             rb.AddForce(transform.up * jumpForce);
         }
+        */
     }
 }
