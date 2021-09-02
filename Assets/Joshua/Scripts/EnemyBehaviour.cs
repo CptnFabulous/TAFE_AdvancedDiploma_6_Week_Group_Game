@@ -3,19 +3,28 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-[RequireComponent(typeof(NavMeshAgent))]
+[RequireComponent(typeof(NavMeshAgent), typeof(Animator))]
 public class EnemyBehaviour : MonoBehaviour
 {
+    private Transform playerTransform;
+
     private BaseState currentState;
     [SerializeField] private EnemyIdle idle;
     [SerializeField] private EnemyMove move;
     [SerializeField] private EnemyAttack attack;
 
-    protected NavMeshAgent agent;
+    private NavMeshAgent agent;
 
+    private void Awake()
+    {
+        agent = GetComponent<NavMeshAgent>();
+        agent.enabled = move.usingAgent;
+    }
 
     private void Start()
     {
+        playerTransform = GameObject.FindWithTag("Player").transform;
+
         ChangeState(idle.GetStateCopy());
     }
 
@@ -27,6 +36,7 @@ public class EnemyBehaviour : MonoBehaviour
         }
     }
 
+    #region StateMachine
     public EnemyIdle GetIdle()
     {
         return idle;
@@ -54,5 +64,26 @@ public class EnemyBehaviour : MonoBehaviour
             currentState.machine = this;
             currentState.EnterState();
         }
+    }
+    #endregion
+
+    public Vector3 GetPlayerPosition()
+    {
+        return playerTransform.position;
+    }
+
+    public float GetPlayerDistance()
+    {
+        return Vector3.Distance(transform.position, playerTransform.position);
+    }
+
+    public void SetAgentDestination(Vector3 _target)
+    {
+        agent.SetDestination(_target);
+    }
+
+    public bool AgentHasPath()
+    {
+        return agent.hasPath;
     }
 }

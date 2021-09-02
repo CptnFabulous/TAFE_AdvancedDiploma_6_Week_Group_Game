@@ -19,7 +19,7 @@ public class EnemyIdle : BaseState
         if(timer > waitTime)
         {
             Debug.Log("wait's over");
-            machine.ChangeState(machine.GetIdle().GetStateCopy());
+            machine.ChangeState(machine.GetMove().GetStateCopy());
         }
     }
 }

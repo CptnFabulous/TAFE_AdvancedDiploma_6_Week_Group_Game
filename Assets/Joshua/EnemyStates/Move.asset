@@ -13,3 +13,6 @@ MonoBehaviour:
   m_Name: Move
   m_EditorClassIdentifier: 
   machine: {fileID: 0}
+  moveSpeed: 0
+  detectionRadius: 1
+  usingAgent: 1

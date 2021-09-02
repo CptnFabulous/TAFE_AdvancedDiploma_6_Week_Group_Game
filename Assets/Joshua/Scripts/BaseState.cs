@@ -11,7 +11,4 @@ public abstract class BaseState : ScriptableObject
     public virtual void EnterState() { }
     public virtual void UpdateState() { }
     public virtual void DestroyState() { Destroy(this); }
-    public virtual void Move() { }
-    public virtual void Attack() { }
-    public virtual void Idle() { }
 }

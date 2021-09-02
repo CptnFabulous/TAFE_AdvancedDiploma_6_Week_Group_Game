@@ -7,19 +7,33 @@ public class EnemyMove : BaseState
 {
     [SerializeField] protected float moveSpeed;
     [SerializeField] protected float detectionRadius = 5;
+    public bool usingAgent = true;
 
     public override BaseState GetStateCopy()
     {
         return CreateInstance<EnemyMove>();
     }
 
-    public override void UpdateState()
+    public override void EnterState()
     {
-        base.UpdateState();
+        Move();
     }
 
-    public override void Move()
+    public override void UpdateState()
     {
-        base.Move();
+        if(machine.GetPlayerDistance() < detectionRadius)
+        {
+            machine.ChangeState(machine.GetAttack().GetStateCopy());
+        }
+
+        if (!machine.AgentHasPath())
+        {
+            Move();
+        }
+    }
+
+    private void Move()
+    {
+        machine.SetAgentDestination(machine.GetPlayerPosition());
     }
 }
