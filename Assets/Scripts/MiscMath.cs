@@ -60,4 +60,49 @@ public static class MiscMath
         }
         return new Vector3(axes[0], axes[1], axes[2]).normalized;
     }
+
+
+    /// <summary>
+    /// Sets an object's scale to a global value regardless of its parent's scaling. I found this code off the internet and it may not work properly.
+    /// </summary>
+    /// <param name="t"></param>
+    /// <param name="globalScale"></param>
+    public static void SetLossyScale(Transform t, Vector3 globalScale)
+    {
+        t.localScale = Vector3.one;
+        t.localScale = new Vector3(globalScale.x / t.lossyScale.x, globalScale.y / t.lossyScale.y, globalScale.z / t.lossyScale.z);
+    }
+
+
+
+    public static int SingleIndexFor3DArray(Vector3Int coordinates, Vector3Int size)
+    {
+        int x = size.z * size.y * coordinates.x;
+        int y = size.z * coordinates.y;
+        int z = coordinates.z;
+        return x + y + z;
+    }
+    public static Vector3Int IndexFor3DArrayFromSingle(int index, Vector3Int size)
+    {
+        Vector3Int finalValue = Vector3Int.zero;
+        while (index > size.y * size.z)
+        {
+            index -= (size.y * size.z);
+            finalValue.x++;
+        }
+        while (index > size.z)
+        {
+            index -= size.z;
+            finalValue.y++;
+        }
+        /*
+        while (index > 1)
+        {
+            index -= 1;
+            finalValue.z++;
+        }
+        */
+        finalValue.z = index;
+        return finalValue;
+    }
 }

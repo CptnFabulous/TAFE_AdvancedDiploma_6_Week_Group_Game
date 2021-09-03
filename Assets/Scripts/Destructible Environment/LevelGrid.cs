@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class LevelGrid : MonoBehaviour
 {
+    #region Static references for globally getting the current level
     static LevelGrid internalReference;
     public static LevelGrid Current
     {
@@ -29,7 +30,10 @@ public class LevelGrid : MonoBehaviour
             return internalReference;
         }
     }
-    
+    #endregion
+
+
+
     public Chunk chunkPrefab;
     public Vector3Int chunkSize = new Vector3Int(16, 16, 16);
     public int levelLengthInChunks = 8;
@@ -46,12 +50,49 @@ public class LevelGrid : MonoBehaviour
             return new Vector3Int(chunksInLevel.GetLength(0), chunksInLevel.GetLength(1), chunksInLevel.GetLength(2));
         }
     }
-
     public BlockData blockToFill;
+
+
+    public ChunkNavMeshHandler navMeshHandler { get; private set; }
+
+    private void Awake()
+    {
+        navMeshHandler = GetComponent<ChunkNavMeshHandler>();
+    }
+
+
+
 
     private void Start()
     {
         GenerateLevel();
+        
+        Chunk[] oneDimensionalChunkArray = new Chunk[Dimensions.x * Dimensions.y * Dimensions.z];
+        int i = 0;
+        for (int x = 0; x < Dimensions.x; x++)
+        {
+            for (int y = 0; y < Dimensions.y; y++)
+            {
+                for (int z = 0; z < Dimensions.z; z++)
+                {
+                    oneDimensionalChunkArray[i] = chunksInLevel[x, y, z];
+                    i++;
+                }
+            }
+        }
+        
+        navMeshHandler.chunksToManageMeshesOf = oneDimensionalChunkArray;
+        
+        navMeshHandler.BakeMeshForFirstTime();
+
+        /*
+        Chunk[] oneDimensionalChunkArray = new Chunk[Dimensions.x * Dimensions.y * Dimensions.z];
+        for (int i = 0; i < oneDimensionalChunkArray.Length; i++)
+        {
+            Vector3Int coordinates = MiscMath.IndexFor3DArrayFromSingle(i, Dimensions);
+            oneDimensionalChunkArray[i] = chunksInLevel[coordinates.x, coordinates.y, coordinates.z];
+        }
+        */
     }
 
     public void GenerateLevel()
@@ -72,12 +113,15 @@ public class LevelGrid : MonoBehaviour
                     // Figure out what to fill the chunk with
                     currentChunk.PositionInLevelGrid = new Vector3Int(x, y, z);
                     chunksInLevel[x, y, z] = currentChunk;
-                    currentChunk.Rewrite(FillChunk.OnlyFloor(chunkSize, blockToFill));
+                    currentChunk.Rewrite(FillChunk.Flood(chunkSize, blockToFill));
                 }
             }
         }
     }
 
+
+
+    #region Function variables
     public Chunk GetChunk(Vector3Int gridCoordinates)
     {
         return chunksInLevel[gridCoordinates.x, gridCoordinates.y, gridCoordinates.z];
@@ -105,4 +149,5 @@ public class LevelGrid : MonoBehaviour
         chunkContaining = null;
         return false;
     }
+    #endregion
 }

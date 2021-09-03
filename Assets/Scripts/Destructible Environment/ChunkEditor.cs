@@ -9,8 +9,14 @@ public class ChunkEditor : Editor
     //SerializedProperty facePixelDimensions;
 
 
+    SerializedProperty blockGrid;
 
-    public bool editingEnabled = true;
+
+    string saveString;
+
+
+
+    public bool editingEnabled = false;
 
 
     public BlockInteraction blockSelection;
@@ -32,13 +38,19 @@ public class ChunkEditor : Editor
 
     private void OnEnable()
     {
-        
-        
+
+
         //facePixelDimensions = serializedObject.FindProperty("facePixelDimensions");
+        blockGrid = serializedObject.FindProperty("blocks");
+
         Debug.Log(target.name + " is running OnEnable()");
         chunkBeingEdited = (Chunk)serializedObject.targetObject;
-        //chunkBeingEdited.Awake();
-        //chunkBeingEdited.Refresh(true);
+
+        chunkBeingEdited.Awake();
+        chunkBeingEdited.Refresh(true);
+
+        
+
         if (blockSelection == null)
         {
             blockSelection = new BlockInteraction();
@@ -53,19 +65,18 @@ public class ChunkEditor : Editor
         {
             return;
         }
-        
-        // This code does not work because Input.mousePosition literally will not change for no discernible reason.
+
         Camera sceneViewCamera = SceneView.lastActiveSceneView.camera;
         Ray selectionRay = sceneViewCamera.ScreenPointToRay(Event.current.mousePosition);
-        Debug.Log(selectionRay.origin + ", " + selectionRay.direction);
-        if (Physics.Raycast(selectionRay, out RaycastHit rh, 999999999, ~0))
-        {
+        //Ray selectionRay = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);
 
-        }
-        Debug.Log(rh.point + ", " + rh.collider);
+
+        float raycastLength = Vector3.Distance(selectionRay.origin, chunkBeingEdited.transform.position) + Vector3.Distance(chunkBeingEdited.terrainMesh.bounds.min, chunkBeingEdited.terrainMesh.bounds.max);
+        blockSelection.raycastLength = raycastLength;
+        blockSelection.hitDetection = ~0;
         if (blockSelection.TryCheckBlock(selectionRay.origin, selectionRay.direction))
         {
-
+            /*
             // If showDropdown is false and left mouse is pressed, show dropdown
             if (Input.GetKeyDown(KeyCode.Mouse0) && !showDropdown)
             {
@@ -77,6 +88,7 @@ public class ChunkEditor : Editor
             {
                 showDropdown = false;
             }
+            */
             /*
             if (showDropdown)
             {
@@ -102,7 +114,9 @@ public class ChunkEditor : Editor
             //Debug.Log("Failed to find a chunk");
         }
 
-        
+        Debug.Log(selectionRay.origin + ", " + selectionRay.direction + ", " + blockSelection.ColliderDetected.point + ", " + blockSelection.ColliderDetected.collider + ", " + raycastLength);
+        Debug.DrawLine(sceneViewCamera.transform.position, selectionRay.origin + selectionRay.direction * raycastLength, Color.red, 10);
+
     }
 
     public override void OnInspectorGUI()
@@ -116,16 +130,32 @@ public class ChunkEditor : Editor
         //EditorGUILayout.PropertyField(facePixelDimensions);
         //EditorGUILayout.HelpBox("Test message", MessageType.None);
 
-        
 
+
+        /*
+        editingEnabled = EditorGUILayout.BeginToggleGroup("Enable editing", editingEnabled);
+        saveString = EditorGUILayout.TextField("Save string", saveString);
+
+
+
+        EditorGUILayout.EndToggleGroup();
+
+        bool generateString = EditorGUILayout.Toggle(false, "Generate save string");
+        if (generateString)
+        {
+
+        }
+
+        string s = EditorGUILayout.LabelField("Save data", )
+        */
+        
         editingEnabled = EditorGUILayout.BeginFoldoutHeaderGroup(editingEnabled, "Enable Editing");
         if (editingEnabled)
         {
             #region Altering an existing chunk
             EditorGUILayout.HelpBox("Functions for editing individual chunks.\nClick on a face on a chunk to edit what happens to it.\nIf chunk is empty, reset it below.", MessageType.Info);
 
-            blockSelection.raycastLength = EditorGUILayout.FloatField("Selection Raycast Length", blockSelection.raycastLength);
-
+            
             List<string> specifiedLayers = new List<string>();
             for (int i = 0; i < 32; i++)
             {
@@ -187,6 +217,7 @@ public class ChunkEditor : Editor
                 }
                 chunkBeingEdited.Awake();
                 chunkBeingEdited.Rewrite(newChunkData);
+                blockGrid = serializedObject.FindProperty("blocks");
                 confirmReset = false;
                 enableResettingFunctions = false;
             }
@@ -194,6 +225,7 @@ public class ChunkEditor : Editor
             #endregion
         }
         EditorGUILayout.EndFoldoutHeaderGroup();
+        
 
         serializedObject.ApplyModifiedProperties();
     }

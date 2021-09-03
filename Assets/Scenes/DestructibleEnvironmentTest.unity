@@ -662,7 +662,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!54 &1170658368
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1365,6 +1365,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1764464064}
   - component: {fileID: 1764464063}
+  - component: {fileID: 1764464065}
   m_Layer: 0
   m_Name: Level Grid
   m_TagString: Untagged
@@ -1386,9 +1387,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   chunkPrefab: {fileID: 1017290859246971262, guid: e6aa0786044107c47b36c88ad4e42f73,
     type: 3}
-  chunkSize: {x: 27, y: 9, z: 27}
+  chunkSize: {x: 16, y: 16, z: 16}
   levelLengthInChunks: 8
-  chunkDimensions: {x: 1, y: 1, z: 1}
+  chunkDimensions: {x: 4, y: 4, z: 4}
   blockToFill: {fileID: 11400000, guid: 4cf44b270811bf147a5543c5767fbe6a, type: 2}
 --- !u!4 &1764464064
 Transform:
@@ -1404,6 +1405,22 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1764464065
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1764464062}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 585e8e0e74be46748a6a329d52faf256, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  chunksToManageMeshesOf: []
+  outerLimits:
+    m_Center: {x: 32, y: 32, z: 32}
+    m_Extent: {x: 40, y: 40, z: 40}
 --- !u!1 &1994331631
 GameObject:
   m_ObjectHideFlags: 0

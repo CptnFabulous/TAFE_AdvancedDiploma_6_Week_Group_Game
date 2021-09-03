@@ -11,6 +11,7 @@ using UnityEditor;
 public class Chunk : MonoBehaviour
 {
     public Vector2Int facePixelDimensions = new Vector2Int(256, 256);
+    public string saveString = "";
     public Block[,,] blocks;
     public Vector3Int Dimensions
     {
@@ -24,10 +25,22 @@ public class Chunk : MonoBehaviour
         }
     }
     public Vector3Int PositionInLevelGrid { get; set; }
-    MeshFilter meshData;
-    MeshRenderer renderer;
-    MeshCollider collider;
-    Mesh terrainMesh;
+    public MeshFilter meshData { get; private set; }
+    public MeshRenderer renderer { get; private set; }
+    public MeshCollider collider { get; private set; }
+    public Mesh terrainMesh { get; private set; }
+
+
+
+    private void OnValidate()
+    {
+        if (saveString != "")
+        {
+            LoadFromData(saveString);
+            saveString = "";
+        }
+    }
+
 
     public void Awake()
     {
@@ -44,17 +57,20 @@ public class Chunk : MonoBehaviour
             return;
         }
 
+        //Debug.Log(SaveData());
+
         UpdateMesh();
-        meshData.mesh = terrainMesh;
-        collider.sharedMesh = terrainMesh;
+
+        LevelGrid.Current.navMeshHandler.RebakeMesh();
     }
     void UpdateMesh()
     {
         if (terrainMesh == null)
         {
             terrainMesh = new Mesh();
+            terrainMesh.name = "Mesh for chunk " + name;
         }
-        
+
         List<Vector3> verts = new List<Vector3>();
         List<int> triIndexes = new List<int>();
         List<Vector2> uvs = new List<Vector2>();
@@ -180,12 +196,14 @@ public class Chunk : MonoBehaviour
             }
         }
 
-        terrainMesh.name = "Mesh of chunk at " + transform.position;
         terrainMesh.vertices = verts.ToArray();
         terrainMesh.triangles = triIndexes.ToArray();
         terrainMesh.Optimize();
         terrainMesh.RecalculateNormals();
         terrainMesh.uv = uvs.ToArray();
+
+        meshData.mesh = terrainMesh;
+        collider.sharedMesh = terrainMesh;
     }
     #endregion
 
@@ -229,33 +247,7 @@ public class Chunk : MonoBehaviour
         return transform.TransformPoint(coordinates);
     }
 
-    public string SaveData()
-    {
-        string saveString = Dimensions.x + "x" + Dimensions.y + "x" + Dimensions.z + ",";
-
-        for (int x = 0; x < Dimensions.x; x++)
-        {
-            for (int y = 0; y < Dimensions.y; y++)
-            {
-                for (int z = 0; z < Dimensions.z; z++)
-                {
-                    // Get variables of block struct in this position
-                    Block current = blocks[x, y, z];
-                    if (current.Exists)
-                    {
-                        saveString += current.type.id + "," + current.health + ",";
-                    }
-                    else
-                    {
-                        saveString += "n,";
-                    }
-
-                }
-            }
-        }
-
-        return saveString;
-    }
+    
     #endregion
 
     #region Make changes to chunk
@@ -314,6 +306,151 @@ public class Chunk : MonoBehaviour
     #endregion
 
 
+    public string SaveData()
+    {
+        string dimensions = Dimensions.x + "x" + Dimensions.y + "x" + Dimensions.z;
+        string position = transform.position.x + "," + transform.position.y + "," + transform.position.z;
+        string rotation = transform.eulerAngles.x + "," + transform.eulerAngles.y + "," + transform.eulerAngles.z;
+        string scale = transform.lossyScale.x + "," + transform.lossyScale.y + "," + transform.lossyScale.z;
+        
+        string blockValues = "";
+        for (int x = 0; x < Dimensions.x; x++)
+        {
+            for (int y = 0; y < Dimensions.y; y++)
+            {
+                for (int z = 0; z < Dimensions.z; z++)
+                {
+                    // Get variables of block struct in this position
+                    Block current = blocks[x, y, z];
+                    if (current.Exists)
+                    {
+                        blockValues += current.type.id + "t";
+                        if (current.health != current.type.maxHealth)
+                        {
+                            blockValues += current.health + "h";
+                        }
+                    }
+                    // If not, have no space between the commas. I was going to have an 'n' to specify null but that would take up space
+                    blockValues += ",";
+                }
+            }
+        }
+
+        string saveString = dimensions + ";" + position + ";" + rotation + ";" + scale + ";" + blockValues;
+
+        return saveString;
+    }
+
+    public void LoadFromData(string saveString)
+    {
+        int startIndex = 0;
+        int endIndex = 0;
+
+        // For the preliminary variables, split each one by checking for the semicolon delimiter. Then, split each value 
+        #region Chunk dimensions
+        endIndex = saveString.IndexOf(';', startIndex);
+        string dimensionData = saveString.Substring(startIndex, endIndex - startIndex);
+        string[] lengths = dimensionData.Split(new char[] { ',' });
+        Vector3Int dimensions = new Vector3Int(int.Parse(lengths[0]), int.Parse(lengths[1]), int.Parse(lengths[2]));
+        Block[,,] newBlockArray = new Block[dimensions.x, dimensions.y, dimensions.z];
+        saveString.Remove(startIndex, endIndex - startIndex);
+        #endregion
+
+        #region Position
+        endIndex = saveString.IndexOf(';', startIndex);
+        string positionData = saveString.Substring(startIndex, endIndex - startIndex);
+        string[] worldCoords = positionData.Split(new char[] { ',' });
+        Vector3 position = new Vector3(float.Parse(worldCoords[0]), float.Parse(worldCoords[1]), float.Parse(worldCoords[2]));
+        saveString.Remove(startIndex, endIndex - startIndex);
+        #endregion
+
+        #region Rotation
+        endIndex = saveString.IndexOf(';', startIndex);
+        string rotationData = saveString.Substring(startIndex, endIndex - startIndex);
+        string[] angles = rotationData.Split(new char[] { ',' });
+        Vector3 eulerAngles = new Vector3(float.Parse(angles[0]), float.Parse(angles[1]), float.Parse(angles[2]));
+        saveString.Remove(startIndex, endIndex - startIndex);
+        #endregion
+
+        #region Scale
+        endIndex = saveString.IndexOf(';', startIndex);
+        string scaleData = saveString.Substring(startIndex, endIndex - startIndex);
+        string[] proportions = scaleData.Split(new char[] { ',' });
+        Vector3 lossyScale = new Vector3(float.Parse(proportions[0]), float.Parse(proportions[1]), float.Parse(proportions[2]));
+        saveString.Remove(startIndex, endIndex - startIndex);
+        #endregion
+
+        // Split single string into a separate string for each block, without removing empty entries. Any empty strings in this array represent there being no block
+        string[] blockValues = saveString.Split(new char[] { ',' }, System.StringSplitOptions.None);
+        int blockIndex = 0;
+        for (int x = 0; x < dimensions.x; x++)
+        {
+            for (int y = 0; y < dimensions.y; y++)
+            {
+                for (int z = 0; z < dimensions.z; z++)
+                {
+                    /*
+                    I'm trying to think of the best way to extract a series of integer values.
+                    Data is saved by showing a letter to denote what value the number is representing.
+                    Type (t), health (h). Later on I want to have values for directions - forward (f) and up (u) which act as integers to get a direction from a static array.
+                    Some data types are always present, but if a value is default or irrelevant it will be omitted to shorten the string.
+                    E.g.
+                    A block with full health (max health is contained in type) will be t0,
+                    A block with ID 4 and 2 health points remaining will be t4h2,
+                    (NOT IMPLEMENTED) A block with ID 7, 1 health point, facing +y and with a world up of -z would be t7h1f3u5
+                    I'm trying to think of a good clean way to extract this data as appropriate integers
+                    */
+
+                    // Gets the current block string value and increments the index by one so the next block can be obtained
+                    string current = blockValues[blockIndex];
+                    blockIndex++;
+
+                    // If string is empty, there is no block.
+                    if (current.Length <= 0)
+                    {
+                        continue;
+                    }
+
+                    
+                    // Extract and parse type integer, then apply to block
+                    int typeEndIndex = current.IndexOf('t');
+                    string t = current.Substring(0, typeEndIndex);
+                    newBlockArray[x, y, z].Replace(BlockData.AllBlocks[int.Parse(t)]);
+                    current.Remove(0, typeEndIndex);
+
+                    // Check for 'h' delimiter. If so, extract and parse health value, then apply
+                    int healthEndIndex = current.IndexOf('h');
+                    if (healthEndIndex >= 0)
+                    {
+                        // Record health value
+                        string h = current.Substring(0, healthEndIndex);
+                        newBlockArray[x, y, z].health = int.Parse(h);
+                        current.Remove(0, healthEndIndex);
+                    }
+                    /*
+                    int forwardEndIndex = current.IndexOf('f');
+                    if (forwardEndIndex >= 0)
+                    {
+                        // Record forward index
+                    }
+
+                    int upEndIndex = current.IndexOf('u');
+                    if (upEndIndex >= 0)
+                    {
+                        // Record forward index
+                    }
+                    */
+                }
+            }
+        }
+
+
+        transform.position = position;
+        transform.rotation = Quaternion.Euler(eulerAngles);
+        MiscMath.SetLossyScale(transform, lossyScale);
+
+        Rewrite(newBlockArray);
+    }
 
 
 
@@ -334,7 +471,4 @@ public class Chunk : MonoBehaviour
 
 
 
-
-
-    
 }
