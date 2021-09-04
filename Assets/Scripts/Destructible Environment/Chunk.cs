@@ -305,7 +305,7 @@ public class Chunk : MonoBehaviour
     }
     #endregion
 
-
+    /*
     public string SaveData()
     {
         string dimensions = Dimensions.x + "x" + Dimensions.y + "x" + Dimensions.z;
@@ -340,6 +340,91 @@ public class Chunk : MonoBehaviour
 
         return saveString;
     }
+    */
+    public Texture2D SaveData()
+    {
+        // Create array of colours
+        Color32[] blockData = new Color32[(Dimensions.x * Dimensions.y * Dimensions.z) + 12];
+        // The first twelve colour values are put aside to store essential bit and float values
+        blockData[0] = MiscMath.FloatToColour(Dimensions.x); // Dimensions X
+        blockData[1] = MiscMath.FloatToColour(Dimensions.y); // Dimensions Y
+        blockData[2] = MiscMath.FloatToColour(Dimensions.z); // Dimensions Z
+        blockData[3] = MiscMath.FloatToColour(transform.position.x); // Position X
+        blockData[4] = MiscMath.FloatToColour(transform.position.y); // Position Y
+        blockData[5] = MiscMath.FloatToColour(transform.position.z); // Position Z
+        blockData[6] = MiscMath.FloatToColour(transform.rotation.x); // Rotation X
+        blockData[7] = MiscMath.FloatToColour(transform.rotation.y); // Rotation Y
+        blockData[8] = MiscMath.FloatToColour(transform.rotation.z); // Rotation Z
+        blockData[9] = MiscMath.FloatToColour(transform.lossyScale.x); // Scale X
+        blockData[10] = MiscMath.FloatToColour(transform.lossyScale.y); // Scale Y
+        blockData[11] = MiscMath.FloatToColour(transform.lossyScale.z); // Scale Z
+        for (int i = 12; i < blockData.Length; i++)
+        {
+            // Calculates index based on dimensions to produce coordinates for block
+            Block current = Block(MiscMath.IndexFor3DArrayFromSingle(i, Dimensions));
+            if (current.Exists == false)
+            {
+                blockData[i] = new Color32();
+                continue;
+            }
+            blockData[i].r = (byte)current.type.id;
+            if (current.health != current.type.maxHealth)
+            {
+                blockData[i].g = (byte)current.health;
+            }
+        }
+
+        int dimensions = Mathf.CeilToInt(Mathf.Sqrt(blockData.Length));
+        Texture2D t = new Texture2D(dimensions, dimensions);
+        t.SetPixels32(blockData);
+        return t;
+    }
+
+    public void LoadData(Texture2D saveData)
+    {
+        // Turns pixels in image into a list of Color32 values
+        Color32[] values = saveData.GetPixels32();
+
+        Vector3Int dimensions = new Vector3Int();
+        dimensions.x = Mathf.RoundToInt(MiscMath.FloatFromColour(values[0]));
+        dimensions.y = Mathf.RoundToInt(MiscMath.FloatFromColour(values[1]));
+        dimensions.z = Mathf.RoundToInt(MiscMath.FloatFromColour(values[2]));
+        Vector3 position = new Vector3();
+        position.x = MiscMath.FloatFromColour(values[3]);
+        position.y = MiscMath.FloatFromColour(values[4]);
+        position.z = MiscMath.FloatFromColour(values[5]);
+        Vector3 eulerAngles = new Vector3();
+        eulerAngles.x = MiscMath.FloatFromColour(values[6]);
+        eulerAngles.y = MiscMath.FloatFromColour(values[7]);
+        eulerAngles.z = MiscMath.FloatFromColour(values[8]);
+        Vector3 lossyScale = new Vector3();
+        lossyScale.x = MiscMath.FloatFromColour(values[9]);
+        lossyScale.y = MiscMath.FloatFromColour(values[10]);
+        lossyScale.z = MiscMath.FloatFromColour(values[11]);
+
+        Block[,,] newGrid = new Block[dimensions.x, dimensions.y, dimensions.z];
+        for (int i = 12; i < values.Length; i++)
+        {
+            Vector3Int c = MiscMath.IndexFor3DArrayFromSingle(i, dimensions);
+            if (values[i].g == 0)
+            {
+                // If health is zero, there either isn't or shouldn't be a block here. Do not fill.
+                continue;
+            }
+            newGrid[c.x, c.y, c.z].type = BlockData.AllBlocks[values[i].r];
+            newGrid[c.x, c.y, c.z].health = values[i].g;
+        }
+    }
+
+
+
+
+
+
+
+
+
+
 
     public void LoadFromData(string saveString)
     {
@@ -451,7 +536,7 @@ public class Chunk : MonoBehaviour
 
         Rewrite(newBlockArray);
     }
-
+    
 
 
 
