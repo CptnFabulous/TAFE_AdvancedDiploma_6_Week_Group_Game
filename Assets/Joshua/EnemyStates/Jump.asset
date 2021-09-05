@@ -9,10 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3a10c0fa737aab840a421fb7b6034bb7, type: 3}
-  m_Name: Move
+  m_Script: {fileID: 11500000, guid: 56b9b817c41ea9142ad5930030e73301, type: 3}
+  m_Name: Jump
   m_EditorClassIdentifier: 
   machine: {fileID: 0}
-  moveSpeed: 2
-  detectionRadius: 1
-  usingAgent: 1
+  moveSpeed: 3
+  detectionRadius: 5
+  usingAgent: 0
+  jumpHeight: 1

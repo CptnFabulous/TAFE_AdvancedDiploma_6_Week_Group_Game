@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "Move", menuName = "EnemyStates/Move/Default", order = 2)]
+[CreateAssetMenu(fileName = "Move", menuName = "EnemyStates/Move/Default", order = 1)]
 public class EnemyMove : BaseState
 {
-    [SerializeField] protected float moveSpeed;
+    public float moveSpeed = 3;
     [SerializeField] protected float detectionRadius = 5;
     public bool usingAgent = true;
 
@@ -32,7 +32,7 @@ public class EnemyMove : BaseState
         }
     }
 
-    private void Move()
+    protected virtual void Move()
     {
         machine.SetAgentDestination(machine.GetPlayerPosition());
     }

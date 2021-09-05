@@ -17,7 +17,21 @@ public class EnemyBehaviour : MonoBehaviour
 
     private void Awake()
     {
+        if(idle == null)
+        {
+            idle = ScriptableObject.CreateInstance<EnemyIdle>();
+        }
+        if (move == null)
+        {
+            move = ScriptableObject.CreateInstance<EnemyMove>();
+        }
+        if (attack == null)
+        {
+            attack = ScriptableObject.CreateInstance<EnemyAttack>();
+        }
+
         agent = GetComponent<NavMeshAgent>();
+        agent.speed = move.moveSpeed;
         agent.enabled = move.usingAgent;
     }
 
