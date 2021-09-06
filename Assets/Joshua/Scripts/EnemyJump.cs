@@ -12,6 +12,7 @@ public class EnemyJump : EnemyMove
     /// Goes between 0 and 1, used for jump anim
     /// </summary>
     private float jumpProgress = 0;
+    private Vector2Int direction;
     private Vector3 origin;
     private Vector3 destination;
     [SerializeField] private float jumpHeight = 1;
@@ -27,21 +28,22 @@ public class EnemyJump : EnemyMove
     public override void EnterState()
     {
         groundMask = LayerMask.GetMask("Ground");
+
+        direction = machine.GetPlayerDirectionBasic();
+
         origin = machine.transform.position;
         destination = SelectJumpDestination();
     }
 
     public override void UpdateState()
     {
-        machine.transform.position = Vector3.Lerp(origin, destination, jumpProgress);
-        float currentHeight = -jumpHeight * (Mathf.Pow(2 * jumpProgress - 1, 2) - 1);
-        machine.transform.Translate(currentHeight * Vector3.up);
+        Move();
         jumpProgress += Time.deltaTime;
 
         if(jumpProgress >= 1)
         {
             machine.transform.position = destination;
-            if (machine.GetPlayerDistance() < detectionRadius)
+            if (CheckIfInRange())
             {
                 machine.ChangeState(machine.GetAttack().GetStateCopy());
             }
@@ -57,19 +59,13 @@ public class EnemyJump : EnemyMove
         Vector3 target = machine.transform.position;
         for(int i = 0; i < jumpRange; i++)
         {
-            switch(Random.Range(0, 4))
+            switch(Random.Range(0, 2))
             {
                 case 0:
-                    target += Vector3.left;
+                    target += Vector3.right * direction.x;
                     break;
                 case 1:
-                    target += Vector3.right;
-                    break;
-                case 2:
-                    target += Vector3.forward;
-                    break;
-                case 3:
-                    target += Vector3.back;
+                    target += Vector3.forward * direction.y;
                     break;
             }
         }
@@ -88,6 +84,8 @@ public class EnemyJump : EnemyMove
 
     protected override void Move()
     {
-        
+        machine.transform.position = Vector3.Lerp(origin, destination, jumpProgress);
+        float currentHeight = -jumpHeight * (Mathf.Pow(2 * jumpProgress - 1, 2) - 1);
+        machine.transform.Translate(currentHeight * Vector3.up);
     }
 }

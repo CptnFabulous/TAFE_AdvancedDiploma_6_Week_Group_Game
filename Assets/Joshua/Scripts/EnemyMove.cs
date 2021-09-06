@@ -6,9 +6,9 @@ using UnityEngine;
 public class EnemyMove : BaseState
 {
     public float moveSpeed = 3;
-    [SerializeField] protected float detectionRadius = 5;
+    public float detectionRadius = 5;
     public bool usingAgent = true;
-
+    public bool needsLineOfSight = true;
     public override BaseState GetStateCopy()
     {
         return CreateInstance<EnemyMove>();
@@ -21,7 +21,7 @@ public class EnemyMove : BaseState
 
     public override void UpdateState()
     {
-        if(machine.GetPlayerDistance() < detectionRadius)
+        if(CheckIfInRange())
         {
             machine.ChangeState(machine.GetAttack().GetStateCopy());
         }
@@ -30,6 +30,15 @@ public class EnemyMove : BaseState
         {
             Move();
         }
+    }
+
+    protected virtual bool CheckIfInRange()
+    {
+        if (needsLineOfSight)
+        {
+            return machine.IsPlayerInLineOfSight();
+        }
+        return machine.GetPlayerDistance() < detectionRadius;
     }
 
     protected virtual void Move()

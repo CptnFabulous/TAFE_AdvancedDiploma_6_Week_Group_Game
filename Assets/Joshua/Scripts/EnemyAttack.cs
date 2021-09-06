@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "Attack", menuName = "EnemyStates/Attack/Default", order = 3)]
+[CreateAssetMenu(fileName = "Attack", menuName = "EnemyStates/Attack/Default", order = 1)]
 public class EnemyAttack : BaseState
 {
     protected float timer = 0;
@@ -16,7 +16,8 @@ public class EnemyAttack : BaseState
     public override void EnterState()
     {
         base.EnterState();
-        Debug.Log("attack start");
+        machine.SetAnimTrigger("Attack");
+        Debug.Log("attack start" + machine.name);
     }
 
     public override void UpdateState()
