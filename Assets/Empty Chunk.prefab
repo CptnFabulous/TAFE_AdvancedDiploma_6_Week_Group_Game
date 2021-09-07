@@ -108,3 +108,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   facePixelDimensions: {x: 256, y: 256}
+  saveString: 

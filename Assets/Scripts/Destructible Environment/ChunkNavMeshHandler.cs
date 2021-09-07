@@ -22,7 +22,7 @@ public class ChunkNavMeshHandler : MonoBehaviour
         sources = new List<NavMeshBuildSource>();
         for (int i = 0; i < chunksToManageMeshesOf.Length; i++)
         {
-            Debug.Log(chunksToManageMeshesOf[i].terrainMesh.vertices.Length);
+            //Debug.Log(chunksToManageMeshesOf[i].terrainMesh.vertices.Length);
             NavMeshBuildSource newSource = new NavMeshBuildSource();
             newSource.sourceObject = chunksToManageMeshesOf[i].terrainMesh;
             newSource.shape = NavMeshBuildSourceShape.Mesh;

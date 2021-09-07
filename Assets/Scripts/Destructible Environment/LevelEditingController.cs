@@ -55,6 +55,21 @@ public class LevelEditingController : MonoBehaviour
             {
                 explosionStats.Detonate(interactionData.ColliderDetected.point);
             }
+
+            if (Input.GetKeyDown(KeyCode.F))
+            {
+                // Save file
+                Debug.Log("Saving");
+                interactionData.TargetedChunk.SaveData();
+            }
+
+            if (Input.GetKeyDown(KeyCode.L))
+            {
+                // Load file
+                //interactionData.TargetedChunk.LoadData()
+                Debug.Log("Loading");
+                interactionData.TargetedChunk.LoadData(interactionData.TargetedChunk.name);
+            }
         }
     }
 }

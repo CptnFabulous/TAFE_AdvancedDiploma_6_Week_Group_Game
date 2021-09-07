@@ -92,21 +92,24 @@ public class FirstPersonController : MonoBehaviour
                 vertical -= 1;
             }
             movementValues = new Vector3(Input.GetAxis("Horizontal") * moveSpeed, vertical * verticalMovementSpeed, Input.GetAxis("Vertical") * moveSpeed);
+            movementValues = transform.rotation * movementValues;
+            transform.position = transform.position + movementValues * Time.deltaTime;
         }
         
         
     }
-
+    /*
     private void FixedUpdate()
     {
         movementValues = transform.rotation * movementValues;
         rb.MovePosition(transform.position + movementValues * Time.fixedDeltaTime);
-        /*
+        
         if (willJump == true)
         {
             willJump = false;
             rb.AddForce(transform.up * jumpForce);
         }
-        */
+        
     }
+    */
 }

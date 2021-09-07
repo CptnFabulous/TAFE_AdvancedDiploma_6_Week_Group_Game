@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-
+using System.Windows;
 
 [RequireComponent(typeof(MeshFilter))]
 [RequireComponent(typeof(MeshRenderer))]
@@ -11,7 +11,6 @@ using UnityEditor;
 public class Chunk : MonoBehaviour
 {
     public Vector2Int facePixelDimensions = new Vector2Int(256, 256);
-    public string saveString = "";
     public Block[,,] blocks;
     public Vector3Int Dimensions
     {
@@ -32,14 +31,6 @@ public class Chunk : MonoBehaviour
 
 
 
-    private void OnValidate()
-    {
-        if (saveString != "")
-        {
-            LoadFromData(saveString);
-            saveString = "";
-        }
-    }
 
 
     public void Awake()
@@ -147,12 +138,6 @@ public class Chunk : MonoBehaviour
                             new Vector3(0.5f, 0.5f, 0.5f), new Vector3(-0.5f, 0.5f, 0.5f),
                             new Vector3(0.5f, -0.5f, 0.5f), new Vector3(-0.5f, -0.5f, 0.5f),
                         };
-                        int[] cornerIndexes = new int[6]
-                        {
-                            0,1,2,
-                            1,3,2
-                        };
-
                         // Process corner values by rotating them to match the face, and shifting them to match the coordinates in the chunk
                         Quaternion directionAsQuaternion = Quaternion.LookRotation(directions[i], Vector3.up);
                         for (int c = 0; c < faceCorners.Length; c++)
@@ -160,11 +145,26 @@ public class Chunk : MonoBehaviour
                             faceCorners[c] = directionAsQuaternion * faceCorners[c];
                             faceCorners[c] += coordinates;
                         }
-                        // Process corner indexes so when the corner values are moved into the new array, they still get the right corners
-                        for (int ci = 0; ci < cornerIndexes.Length; ci++)
+
+                        int[] cornerIndexes = new int[6]
                         {
-                            cornerIndexes[ci] += verts.Count;
-                        }
+                            0 + verts.Count,
+                            1 + verts.Count,
+                            2 + verts.Count,
+                            1 + verts.Count,
+                            3 + verts.Count,
+                            2 + verts.Count
+                        };
+                        // Current amount of verts is 40
+                        // Max value is 39
+
+                        // 41st entry has an index of 40
+                        // First index is 0
+                        // Index (0) + original length (40) = 40 (correct index for 41st value)
+
+                        // So the 41st entry has an index of 39 + 1
+
+                        
 
                         verts.AddRange(faceCorners);
                         triIndexes.AddRange(cornerIndexes);
@@ -195,6 +195,14 @@ public class Chunk : MonoBehaviour
                 }
             }
         }
+
+        string meshDataDebug = "Lengths: " + verts.Count + ", " + triIndexes.Count + ", ";
+        for (int i = 0; i < 6; i++)
+        {
+            meshDataDebug += triIndexes[triIndexes.Count - 1 - i] + ", ";
+        }
+        meshDataDebug += "end";
+        Debug.Log(meshDataDebug);
 
         terrainMesh.vertices = verts.ToArray();
         terrainMesh.triangles = triIndexes.ToArray();
@@ -305,46 +313,16 @@ public class Chunk : MonoBehaviour
     }
     #endregion
 
-    /*
-    public string SaveData()
-    {
-        string dimensions = Dimensions.x + "x" + Dimensions.y + "x" + Dimensions.z;
-        string position = transform.position.x + "," + transform.position.y + "," + transform.position.z;
-        string rotation = transform.eulerAngles.x + "," + transform.eulerAngles.y + "," + transform.eulerAngles.z;
-        string scale = transform.lossyScale.x + "," + transform.lossyScale.y + "," + transform.lossyScale.z;
-        
-        string blockValues = "";
-        for (int x = 0; x < Dimensions.x; x++)
-        {
-            for (int y = 0; y < Dimensions.y; y++)
-            {
-                for (int z = 0; z < Dimensions.z; z++)
-                {
-                    // Get variables of block struct in this position
-                    Block current = blocks[x, y, z];
-                    if (current.Exists)
-                    {
-                        blockValues += current.type.id + "t";
-                        if (current.health != current.type.maxHealth)
-                        {
-                            blockValues += current.health + "h";
-                        }
-                    }
-                    // If not, have no space between the commas. I was going to have an 'n' to specify null but that would take up space
-                    blockValues += ",";
-                }
-            }
-        }
-
-        string saveString = dimensions + ";" + position + ";" + rotation + ";" + scale + ";" + blockValues;
-
-        return saveString;
-    }
-    */
+   
     public Texture2D SaveData()
     {
-        // Create array of colours
-        Color32[] blockData = new Color32[(Dimensions.x * Dimensions.y * Dimensions.z) + 12];
+        // Create array of 
+
+        int blockLength = (Dimensions.x * Dimensions.y * Dimensions.z) + 12;
+        int dimensions = Mathf.CeilToInt(Mathf.Sqrt(blockLength));
+        int amountOfPixels = dimensions * dimensions;
+
+        Color32[] blockData = new Color32[amountOfPixels];
         // The first twelve colour values are put aside to store essential bit and float values
         blockData[0] = MiscMath.FloatToColour(Dimensions.x); // Dimensions X
         blockData[1] = MiscMath.FloatToColour(Dimensions.y); // Dimensions Y
@@ -358,7 +336,7 @@ public class Chunk : MonoBehaviour
         blockData[9] = MiscMath.FloatToColour(transform.lossyScale.x); // Scale X
         blockData[10] = MiscMath.FloatToColour(transform.lossyScale.y); // Scale Y
         blockData[11] = MiscMath.FloatToColour(transform.lossyScale.z); // Scale Z
-        for (int i = 12; i < blockData.Length; i++)
+        for (int i = 12; i < blockLength; i++)
         {
             // Calculates index based on dimensions to produce coordinates for block
             Block current = Block(MiscMath.IndexFor3DArrayFromSingle(i, Dimensions));
@@ -368,20 +346,36 @@ public class Chunk : MonoBehaviour
                 continue;
             }
             blockData[i].r = (byte)current.type.id;
+            blockData[i].g = (byte)current.health;
+            /*
             if (current.health != current.type.maxHealth)
             {
-                blockData[i].g = (byte)current.health;
+                
             }
+            */
         }
 
-        int dimensions = Mathf.CeilToInt(Mathf.Sqrt(blockData.Length));
         Texture2D t = new Texture2D(dimensions, dimensions);
         t.SetPixels32(blockData);
+
+
+        byte[] saveFileBytes = t.EncodeToPNG();
+        string dataPath = Application.dataPath + "/Resources/Level Rooms/LevelChunk_" + name + ".png";
+        System.IO.File.WriteAllBytes(dataPath, saveFileBytes);
         return t;
     }
 
-    public void LoadData(Texture2D saveData)
+    public void LoadData(string chunkName)
     {
+        // Creates a new Texture2D to load with the image file. The specified dimensions are irrelevant and will be overwritten, but are required to compile.
+        string dataPath = Application.dataPath + "/Resources/Level Rooms/LevelChunk_" + chunkName + ".png";
+        Texture2D saveData = new Texture2D(1, 1);
+        if (saveData.LoadImage(System.IO.File.ReadAllBytes(dataPath)) == false)
+        {
+            Debug.Log("Save file could not be loaded.");
+            return;
+        }
+        
         // Turns pixels in image into a list of Color32 values
         Color32[] values = saveData.GetPixels32();
 
@@ -403,17 +397,26 @@ public class Chunk : MonoBehaviour
         lossyScale.z = MiscMath.FloatFromColour(values[11]);
 
         Block[,,] newGrid = new Block[dimensions.x, dimensions.y, dimensions.z];
-        for (int i = 12; i < values.Length; i++)
+        // Necessary because some pixels will have to be empty in order for it to save as a proper image
+        int lengthOfActualValues = (dimensions.x * dimensions.y * dimensions.z) + 12;
+        for (int i = 12; i < lengthOfActualValues; i++)
         {
-            Vector3Int c = MiscMath.IndexFor3DArrayFromSingle(i, dimensions);
+            int actualBlockCount = i - 12;
+            Vector3Int c = MiscMath.IndexFor3DArrayFromSingle(actualBlockCount, dimensions);
             if (values[i].g == 0)
             {
                 // If health is zero, there either isn't or shouldn't be a block here. Do not fill.
                 continue;
             }
-            newGrid[c.x, c.y, c.z].type = BlockData.AllBlocks[values[i].r];
+            newGrid[c.x, c.y, c.z].type = BlockData.GetByID(values[i].r);
             newGrid[c.x, c.y, c.z].health = values[i].g;
         }
+
+        name = chunkName;
+        transform.position = position;
+        transform.rotation = Quaternion.Euler(eulerAngles);
+        transform.localScale = transform.InverseTransformVector(lossyScale);
+        Rewrite(newGrid);
     }
 
 
@@ -422,7 +425,41 @@ public class Chunk : MonoBehaviour
 
 
 
+   /*
+   public string SaveData()
+   {
+       string dimensions = Dimensions.x + "x" + Dimensions.y + "x" + Dimensions.z;
+       string position = transform.position.x + "," + transform.position.y + "," + transform.position.z;
+       string rotation = transform.eulerAngles.x + "," + transform.eulerAngles.y + "," + transform.eulerAngles.z;
+       string scale = transform.lossyScale.x + "," + transform.lossyScale.y + "," + transform.lossyScale.z;
 
+       string blockValues = "";
+       for (int x = 0; x < Dimensions.x; x++)
+       {
+           for (int y = 0; y < Dimensions.y; y++)
+           {
+               for (int z = 0; z < Dimensions.z; z++)
+               {
+                   // Get variables of block struct in this position
+                   Block current = blocks[x, y, z];
+                   if (current.Exists)
+                   {
+                       blockValues += current.type.id + "t";
+                       if (current.health != current.type.maxHealth)
+                       {
+                           blockValues += current.health + "h";
+                       }
+                   }
+                   // If not, have no space between the commas. I was going to have an 'n' to specify null but that would take up space
+                   blockValues += ",";
+               }
+           }
+       }
+
+       string saveString = dimensions + ";" + position + ";" + rotation + ";" + scale + ";" + blockValues;
+
+       return saveString;
+    }
 
 
 
@@ -474,7 +511,7 @@ public class Chunk : MonoBehaviour
             {
                 for (int z = 0; z < dimensions.z; z++)
                 {
-                    /*
+                    
                     I'm trying to think of the best way to extract a series of integer values.
                     Data is saved by showing a letter to denote what value the number is representing.
                     Type (t), health (h). Later on I want to have values for directions - forward (f) and up (u) which act as integers to get a direction from a static array.
@@ -484,7 +521,7 @@ public class Chunk : MonoBehaviour
                     A block with ID 4 and 2 health points remaining will be t4h2,
                     (NOT IMPLEMENTED) A block with ID 7, 1 health point, facing +y and with a world up of -z would be t7h1f3u5
                     I'm trying to think of a good clean way to extract this data as appropriate integers
-                    */
+                    
 
                     // Gets the current block string value and increments the index by one so the next block can be obtained
                     string current = blockValues[blockIndex];
@@ -512,6 +549,7 @@ public class Chunk : MonoBehaviour
                         newBlockArray[x, y, z].health = int.Parse(h);
                         current.Remove(0, healthEndIndex);
                     }
+                    
                     /*
                     int forwardEndIndex = current.IndexOf('f');
                     if (forwardEndIndex >= 0)
@@ -524,7 +562,7 @@ public class Chunk : MonoBehaviour
                     {
                         // Record forward index
                     }
-                    */
+                    
                 }
             }
         }
@@ -536,7 +574,7 @@ public class Chunk : MonoBehaviour
 
         Rewrite(newBlockArray);
     }
-    
+    */
 
 
 
