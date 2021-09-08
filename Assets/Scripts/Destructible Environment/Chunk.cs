@@ -66,6 +66,10 @@ public class Chunk : MonoBehaviour
         List<int> triIndexes = new List<int>();
         List<Vector2> uvs = new List<Vector2>();
 
+        //float texWidth = (float)facePixelDimensions.x / renderer.sharedMaterial.mainTexture.width;
+        //float texHeight = (float)facePixelDimensions.y / renderer.sharedMaterial.mainTexture.height;
+        //Vector2 scaling = new Vector2(texWidth, texHeight);
+
         for (int x = 0; x < Dimensions.x; x++)
         {
             for (int y = 0; y < Dimensions.y; y++)
@@ -82,22 +86,13 @@ public class Chunk : MonoBehaviour
 
                     #region Check corners to add faces appropriately
                     Vector3Int coordinates = new Vector3Int(x, y, z);
-                    Vector3Int[] directions = new Vector3Int[6]
-                    {
-                        Vector3Int.left,
-                        Vector3Int.right,
-                        Vector3Int.up,
-                        Vector3Int.down,
-                        new Vector3Int(0, 0, -1), // Backward
-                        new Vector3Int(0, 0, 1), // Forward
-                    };
-
                     // For each grid direction from the block
-                    for (int i = 0; i < directions.Length; i++)
+                    for (int i = 0; i < ChunkGenerator.cardinalDirections.Length; i++)
                     {
                         #region Check that the face is worth rendering
-                        Vector3Int adjacentCoordinates = coordinates + directions[i];
+                        Vector3Int adjacentCoordinates = coordinates + ChunkGenerator.cardinalDirections[i];
                         Block adjacent;
+
                         /*
                         // Check if adjacent coordinates are still inside the mesh
                         if (AreCoordinatesValid(adjacentCoordinates, out Vector3Int clampedCoordinates))
@@ -133,13 +128,13 @@ public class Chunk : MonoBehaviour
                         #endregion
 
                         #region Generate mesh verts and tris, and add them to the arrays so they reference each other appropriately
+                        // Process corner values by rotating them to match the face, and shifting them to match the coordinates in the chunk
+                        Quaternion directionAsQuaternion = Quaternion.LookRotation(ChunkGenerator.cardinalDirections[i], Vector3.up);
                         Vector3[] faceCorners = new Vector3[4]
                         {
                             new Vector3(0.5f, 0.5f, 0.5f), new Vector3(-0.5f, 0.5f, 0.5f),
                             new Vector3(0.5f, -0.5f, 0.5f), new Vector3(-0.5f, -0.5f, 0.5f),
                         };
-                        // Process corner values by rotating them to match the face, and shifting them to match the coordinates in the chunk
-                        Quaternion directionAsQuaternion = Quaternion.LookRotation(directions[i], Vector3.up);
                         for (int c = 0; c < faceCorners.Length; c++)
                         {
                             faceCorners[c] = directionAsQuaternion * faceCorners[c];
@@ -155,16 +150,6 @@ public class Chunk : MonoBehaviour
                             3 + verts.Count,
                             2 + verts.Count
                         };
-                        // Current amount of verts is 40
-                        // Max value is 39
-
-                        // 41st entry has an index of 40
-                        // First index is 0
-                        // Index (0) + original length (40) = 40 (correct index for 41st value)
-
-                        // So the 41st entry has an index of 39 + 1
-
-                        
 
                         verts.AddRange(faceCorners);
                         triIndexes.AddRange(cornerIndexes);
@@ -189,26 +174,50 @@ public class Chunk : MonoBehaviour
                             uvs.Add(uvsForFace[uvIndex]);
                         }
                         #endregion
+
+                        /*
+                        #region Generate mesh verts, tris and UVs, and add them to the arrays so they reference each other appropriately
+                        int currentVertCount = verts.Count;
+                        // Process corner values by rotating them to match the face, and shifting them to match the coordinates in the chunk
+                        Quaternion directionAsQuaternion = Quaternion.LookRotation(ChunkGenerator.cardinalDirections[i], Vector3.up);
+                        for (int c = 0; c < ChunkGenerator.faceCorners.Length; c++)
+                        {
+                            Vector3 faceCorner = directionAsQuaternion * ChunkGenerator.faceCorners[c];
+                            faceCorner += coordinates;
+                            verts.Add(faceCorner);
+                        }
+
+                        for (int ci = 0; ci < ChunkGenerator.faceCorners.Length; ci++)
+                        {
+                            int cornerIndex = ChunkGenerator.cornerIndexes[ci] + currentVertCount;
+                            triIndexes.Add(cornerIndex);
+                        }
+
+                        Vector2 uvOrigin = currentBlock.type.GetUVFromDirection(i);
+                        for (int uvi = 0; uvi < ChunkGenerator.uvsForFace.Length; uvi++)
+                        {
+                            Vector2 uvForFace = ChunkGenerator.uvsForFace[uvi] + uvOrigin;
+                            uvForFace.Scale(scaling);
+                            uvs.Add(uvForFace);
+                        }
+                        #endregion
+                        */
                     }
+
                     #endregion
                     #endregion
                 }
             }
         }
 
-        string meshDataDebug = "Lengths: " + verts.Count + ", " + triIndexes.Count + ", ";
-        for (int i = 0; i < 6; i++)
-        {
-            meshDataDebug += triIndexes[triIndexes.Count - 1 - i] + ", ";
-        }
-        meshDataDebug += "end";
-        Debug.Log(meshDataDebug);
-
+        terrainMesh.Clear();
         terrainMesh.vertices = verts.ToArray();
         terrainMesh.triangles = triIndexes.ToArray();
+        terrainMesh.uv = uvs.ToArray();
         terrainMesh.Optimize();
         terrainMesh.RecalculateNormals();
-        terrainMesh.uv = uvs.ToArray();
+        terrainMesh.RecalculateTangents();
+        terrainMesh.RecalculateBounds();
 
         meshData.mesh = terrainMesh;
         collider.sharedMesh = terrainMesh;

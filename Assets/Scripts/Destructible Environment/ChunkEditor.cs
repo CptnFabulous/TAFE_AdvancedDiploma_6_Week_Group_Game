@@ -200,19 +200,19 @@ public class ChunkEditor : Editor
                 switch (chunkTemplateIndex)
                 {
                     case 0:
-                        newChunkData = FillChunk.Flood(newDimensions, BlockData.AllBlocks[blockToPlaceIndex]);
+                        newChunkData = ChunkGenerator.Flood(newDimensions, BlockData.AllBlocks[blockToPlaceIndex]);
                         break;
                     case 1:
-                        newChunkData = FillChunk.Hollow(newDimensions, BlockData.AllBlocks[blockToPlaceIndex]);
+                        newChunkData = ChunkGenerator.Hollow(newDimensions, BlockData.AllBlocks[blockToPlaceIndex]);
                         break;
                     case 2:
-                        newChunkData = FillChunk.OnlyFloor(newDimensions, BlockData.AllBlocks[blockToPlaceIndex]);
+                        newChunkData = ChunkGenerator.OnlyFloor(newDimensions, BlockData.AllBlocks[blockToPlaceIndex]);
                         break;
                     case 3:
-                        newChunkData = FillChunk.Empty(newDimensions);
+                        newChunkData = ChunkGenerator.Empty(newDimensions);
                         break;
                     default:
-                        newChunkData = FillChunk.Flood(newDimensions, BlockData.AllBlocks[blockToPlaceIndex]);
+                        newChunkData = ChunkGenerator.Flood(newDimensions, BlockData.AllBlocks[blockToPlaceIndex]);
                         break;
                 }
                 chunkBeingEdited.Awake();
