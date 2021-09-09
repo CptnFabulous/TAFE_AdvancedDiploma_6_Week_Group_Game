@@ -17,6 +17,10 @@ public class EnemyBehaviour : MonoBehaviour
     private Animator animator;
     private Rigidbody rigid;
 
+    private const float GROUND_CHECK_RATE = 10;
+    private float groundCheckTimer = 0;
+    private LayerMask groundMask;
+
     private void Awake()
     {
         if(idle == null)
@@ -40,6 +44,8 @@ public class EnemyBehaviour : MonoBehaviour
 
         rigid = GetComponent<Rigidbody>();
         rigid.isKinematic = true;
+
+        groundMask = LayerMask.GetMask("Ground");
     }
 
     private void Start()
@@ -54,6 +60,16 @@ public class EnemyBehaviour : MonoBehaviour
         if (currentState != null)
         {
             currentState.UpdateState();
+        }
+
+        groundCheckTimer += Time.deltaTime * GROUND_CHECK_RATE;
+        if(groundCheckTimer > 1)
+        {
+            groundCheckTimer = 0;
+            if(!Physics.Raycast(transform.position, Vector3.down, 10f, groundMask) && rigid.isKinematic)
+            {
+                Destroy(gameObject);
+            }
         }
     }
 

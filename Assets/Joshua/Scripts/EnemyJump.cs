@@ -18,7 +18,7 @@ public class EnemyJump : EnemyMove
     [SerializeField] private float jumpHeight = 1;
     [SerializeField] private int jumpRange = 5;
 
-    LayerMask groundMask;
+    private LayerMask groundMask;
 
     public override BaseState GetStateCopy()
     {
