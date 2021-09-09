@@ -85,7 +85,7 @@ public class BlockData : ScriptableObject
             if (internalList == null)
             {
                 internalList = Resources.LoadAll<BlockData>("Blocks");
-                
+                //internalList = Resources.LoadAll<BlockData>("");
             }
 
             return internalList;

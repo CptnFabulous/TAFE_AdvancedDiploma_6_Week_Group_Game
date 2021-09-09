@@ -1,21 +1,46 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
 
-public class LevelEditingController : MonoBehaviour
+public class LevelEditor : MonoBehaviour
 {
+    [Header("Other classes required for this to work.")]
+    public FirstPersonController movementController;
+    public LevelEditorHUD headsUpDisplay;
+    
+    [Header("Block altering data")]
     public BlockInteraction interactionData;
     public int blockDamage = 1;
     public Explosion explosionStats;
     public LevelEditorHUD hud;
-
     BlockData blockToPlace;
     int blockIndex;
 
-    
-    // Start is called before the first frame update
-    void Start()
+    // Save files
+    DirectoryInfo chunkFolder;
+    public FileInfo[] SaveFiles
     {
+        get
+        {
+            return chunkFolder.GetFiles();
+        }
+    }
+    public static string FilePath
+    {
+        get
+        {
+            return Application.dataPath + "/Assets/Level Chunks/";
+        }
+    }
+
+    
+    
+    void Awake()
+    {
+        chunkFolder = new DirectoryInfo(FilePath);
+
+        headsUpDisplay.controller = this;
         blockToPlace = BlockData.AllBlocks[blockIndex];
         hud.currentBlock.text = blockToPlace.name;
     }
@@ -29,7 +54,7 @@ public class LevelEditingController : MonoBehaviour
             float f = Input.mouseScrollDelta.y * (1 / Input.mouseScrollDelta.y);
             int indexChange = Mathf.RoundToInt(f);
             blockIndex += indexChange;
-            blockIndex = MiscMath.InverseClamp((int)blockIndex, 0, BlockData.AllBlocks.Length - 1);
+            blockIndex = MiscMath.InverseClamp(blockIndex, 0, BlockData.AllBlocks.Length - 1);
             blockToPlace = BlockData.AllBlocks[blockIndex];
             hud.currentBlock.text = blockToPlace.name;
         }
@@ -58,6 +83,13 @@ public class LevelEditingController : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.F))
             {
+                // Open file window
+                Debug.Log("Opening save window");
+                headsUpDisplay.OpenSearchWindow();
+            }
+            /*
+            if (Input.GetKeyDown(KeyCode.F))
+            {
                 // Save file
                 Debug.Log("Saving");
                 interactionData.TargetedChunk.SaveData();
@@ -70,6 +102,32 @@ public class LevelEditingController : MonoBehaviour
                 Debug.Log("Loading");
                 interactionData.TargetedChunk.LoadData(interactionData.TargetedChunk.name);
             }
+            */
         }
     }
+
+
+
+
+
+
+    public void SaveLevel(string fileName)
+    {
+        interactionData.TargetedChunk.name = fileName;
+        interactionData.TargetedChunk.SaveData();
+    }
+    public void OverwriteLevel(int fileIndex)
+    {
+        interactionData.TargetedChunk.name = SaveFiles[fileIndex].Name;
+        interactionData.TargetedChunk.SaveData();
+    }
+    public void LoadLevel(int fileIndex)
+    {
+        interactionData.TargetedChunk.LoadData(SaveFiles[fileIndex].Name);
+    }
+    public void DeleteLevel(int fileIndex)
+    {
+        SaveFiles[fileIndex].Delete();
+    }
+
 }
