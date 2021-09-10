@@ -88,4 +88,13 @@ public class EnemyJump : EnemyMove
         float currentHeight = -jumpHeight * (Mathf.Pow(2 * jumpProgress - 1, 2) - 1);
         machine.transform.Translate(currentHeight * Vector3.up);
     }
+
+    public override void DestroyState()
+    {
+        if(machine.transform.position != destination)
+        {
+            machine.transform.position = new Vector3(machine.transform.position.x, destination.y, machine.transform.position.z);
+        }
+        base.DestroyState();
+    }
 }

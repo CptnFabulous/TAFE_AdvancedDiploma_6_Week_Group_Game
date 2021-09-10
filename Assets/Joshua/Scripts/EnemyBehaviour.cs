@@ -165,4 +165,21 @@ public class EnemyBehaviour : MonoBehaviour
     {
         rigid.MovePosition(transform.position + _movement);
     }
+
+    public void Knockback(Vector3 _force)
+    {
+        ChangeState(ScriptableObject.CreateInstance<EnemyStunned>());
+        agent.enabled = false;
+        rigid.isKinematic = false;
+        rigid.AddForce(_force, ForceMode.Impulse);
+        StartCoroutine(nameof(AddKnockback), _force);
+    }
+
+    private IEnumerator AddKnockback(Vector3 _force)
+    {
+        yield return new WaitForSeconds(1);
+        ChangeState(idle.GetStateCopy());
+        agent.enabled = move.usingAgent;
+        rigid.isKinematic = true;
+    }
 }
