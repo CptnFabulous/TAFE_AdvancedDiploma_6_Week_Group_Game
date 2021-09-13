@@ -161,6 +161,11 @@ public class EnemyBehaviour : MonoBehaviour
         animator.SetTrigger(_triggerName);
     }
 
+    public void SetAnimFloat(string _floatName, float _value)
+    {
+        animator.SetFloat(_floatName, _value);
+    }
+
     public void MoveRigidbody(Vector3 _movement)
     {
         rigid.MovePosition(transform.position + _movement);

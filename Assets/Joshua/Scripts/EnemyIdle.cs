@@ -8,10 +8,10 @@ public class EnemyIdle : BaseState
     protected float timer = 0;
     [SerializeField] protected float waitTime = 1;
 
-    public override BaseState GetStateCopy()
-    {
-        return CreateInstance<EnemyIdle>();
-    }
+    //public override BaseState GetStateCopy()
+    //{
+    //    return CreateInstance<EnemyIdle>();
+    //}
 
     public override void UpdateState()
     {

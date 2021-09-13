@@ -17,12 +17,22 @@ public class EnemyJump : EnemyMove
     private Vector3 destination;
     [SerializeField] private float jumpHeight = 1;
     [SerializeField] private int jumpRange = 5;
-
+    [SerializeField] private float jumpDuration = 1;
+    private float jumpSpeed;
     private LayerMask groundMask;
 
     public override BaseState GetStateCopy()
     {
-        return CreateInstance<EnemyJump>();
+        EnemyJump newState = CreateInstance<EnemyJump>();
+        newState.SetValues(jumpHeight, jumpRange, jumpDuration);
+        return newState;
+    }
+
+    private void SetValues(float _jumpHeight, int _jumpRange, float _jumpDuration)
+    {
+        jumpHeight = _jumpHeight;
+        jumpRange = _jumpRange;
+        jumpDuration = _jumpDuration;
     }
 
     public override void EnterState()
@@ -30,7 +40,7 @@ public class EnemyJump : EnemyMove
         groundMask = LayerMask.GetMask("Ground");
 
         direction = machine.GetPlayerDirectionBasic();
-
+        jumpSpeed = 1 / jumpDuration;
         origin = machine.transform.position;
         destination = SelectJumpDestination();
     }
@@ -38,7 +48,7 @@ public class EnemyJump : EnemyMove
     public override void UpdateState()
     {
         Move();
-        jumpProgress += Time.deltaTime;
+        jumpProgress += Time.deltaTime * jumpSpeed;
 
         if(jumpProgress >= 1)
         {
@@ -56,7 +66,7 @@ public class EnemyJump : EnemyMove
 
     private Vector3 SelectJumpDestination()
     {
-        Vector3 target = machine.transform.position;
+        Vector3 target = origin;
         for(int i = 0; i < jumpRange; i++)
         {
             switch(Random.Range(0, 2))
@@ -71,6 +81,7 @@ public class EnemyJump : EnemyMove
         }
         if (CheckIfWalkable(target))
         {
+            machine.transform.forward = (target - origin).normalized;
             return target;
         }
 
@@ -87,6 +98,8 @@ public class EnemyJump : EnemyMove
         machine.transform.position = Vector3.Lerp(origin, destination, jumpProgress);
         float currentHeight = -jumpHeight * (Mathf.Pow(2 * jumpProgress - 1, 2) - 1);
         machine.transform.Translate(currentHeight * Vector3.up);
+
+        machine.SetAnimFloat("Move", 2 * jumpProgress - 1);
     }
 
     public override void DestroyState()
@@ -95,6 +108,7 @@ public class EnemyJump : EnemyMove
         {
             machine.transform.position = new Vector3(machine.transform.position.x, destination.y, machine.transform.position.z);
         }
+        machine.SetAnimFloat("Move", 0);
         base.DestroyState();
     }
 }
