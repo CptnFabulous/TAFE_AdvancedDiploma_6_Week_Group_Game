@@ -3,11 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 
+/*
+namespace DestructibleEnvironmentLevelEditing
+{
+
+}
+*/
+
 public class LevelEditor : MonoBehaviour
 {
     [Header("Other classes required for this to work.")]
     public FirstPersonController movementController;
     public LevelEditorHUD headsUpDisplay;
+    public EditorControllerStateHandler stateHandler;
     
     [Header("Block altering data")]
     public BlockInteraction interactionData;
@@ -30,7 +38,7 @@ public class LevelEditor : MonoBehaviour
     {
         get
         {
-            return Application.dataPath + "/Assets/Level Chunks/";
+            return Application.dataPath + "/Resources/Level Chunks/";
         }
     }
 
@@ -40,7 +48,7 @@ public class LevelEditor : MonoBehaviour
     {
         chunkFolder = new DirectoryInfo(FilePath);
 
-        headsUpDisplay.controller = this;
+        headsUpDisplay.controller = GetComponentInParent<LevelEditor>();
         blockToPlace = BlockData.AllBlocks[blockIndex];
         hud.currentBlock.text = blockToPlace.name;
     }

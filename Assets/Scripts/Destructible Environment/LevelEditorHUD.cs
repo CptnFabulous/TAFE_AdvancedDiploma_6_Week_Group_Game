@@ -10,6 +10,9 @@ public class LevelEditorHUD : MonoBehaviour
     public LevelEditor controller;
     
     public Text currentBlock;
+
+    [Header("Saving and loading")]
+    public GameObject saveAndLoadWindow;
     public SearchWindow fileWindow;
     public Button save;
     public Button overwrite;
@@ -19,7 +22,8 @@ public class LevelEditorHUD : MonoBehaviour
 
     private void Awake()
     {
-        fileWindow.onItemSearched.AddListener(UpdateSaveAndLoadOptions);
+        saveAndLoadWindow.SetActive(false);
+        fileWindow.onResultSelected.AddListener(UpdateSaveAndLoadOptions);
         save.onClick.AddListener(()=> controller.SaveLevel(fileWindow.input.text));
         overwrite.onClick.AddListener(() => controller.OverwriteLevel(fileWindow.SelectionIndex));
         load.onClick.AddListener(() => controller.LoadLevel(fileWindow.SelectionIndex));
@@ -38,19 +42,22 @@ public class LevelEditorHUD : MonoBehaviour
         }
         // Adds file names to search window, and enables it
         fileWindow.LoadWithFiles(saveFileNames);
-        fileWindow.gameObject.SetActive(true);
+        saveAndLoadWindow.SetActive(true);
 
         // Disables other functions
         controller.movementController.enabled = false;
         controller.enabled = false;
+        controller.stateHandler.SetPlayerActiveStateForMenus(true);
     }
 
     public void CloseSearchWindow()
     {
         // Hides window and restores regular functions
-        fileWindow.gameObject.SetActive(false);
+        saveAndLoadWindow.SetActive(false);
         controller.movementController.enabled = true;
         controller.enabled = true;
+        controller.stateHandler.SetPlayerActiveStateForMenus(false);
+
     }
 
     void UpdateSaveAndLoadOptions(int fileSelectionIndex)
