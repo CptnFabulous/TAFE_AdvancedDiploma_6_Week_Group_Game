@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class EnemyStunned : BaseState
 {
-    public override BaseState GetStateCopy()
+    public override bool GroundCheck()
     {
-        return CreateInstance<EnemyStunned>();
+        return true;
     }
 }

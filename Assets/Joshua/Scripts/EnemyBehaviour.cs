@@ -66,11 +66,20 @@ public class EnemyBehaviour : MonoBehaviour
         if(groundCheckTimer > 1)
         {
             groundCheckTimer = 0;
-            if(!Physics.Raycast(transform.position, Vector3.down, 10f, groundMask) && rigid.isKinematic)
+            if(!currentState.GroundCheck())
             {
                 Destroy(gameObject);
             }
         }
+    }
+
+    /// <summary>
+    /// returns true if there's ground beneath it
+    /// </summary>
+    /// <returns></returns>
+    public bool GroundCheck()
+    {
+        return Physics.Raycast(transform.position, Vector3.down, 10f, groundMask) && rigid.isKinematic;
     }
 
     #region StateMachine

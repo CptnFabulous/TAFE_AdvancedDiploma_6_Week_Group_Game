@@ -10,7 +10,14 @@ public class EnemyAttack : BaseState
 
     public override BaseState GetStateCopy()
     {
-        return CreateInstance<EnemyAttack>();
+        EnemyAttack newState = CreateInstance<EnemyAttack>();
+        newState.SetValues(waitTime);
+        return newState;
+    }
+
+    private void SetValues(float _waitTime)
+    {
+        waitTime = _waitTime;
     }
 
     public override void EnterState()

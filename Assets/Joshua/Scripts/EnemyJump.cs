@@ -53,14 +53,7 @@ public class EnemyJump : EnemyMove
         if(jumpProgress >= 1)
         {
             machine.transform.position = destination;
-            if (CheckIfInRange())
-            {
-                machine.ChangeState(machine.GetAttack().GetStateCopy());
-            }
-            else
-            {
-                machine.ChangeState(machine.GetIdle().GetStateCopy());
-            }
+            machine.ChangeState(machine.GetAttack().GetStateCopy());
         }
     }
 
@@ -110,5 +103,10 @@ public class EnemyJump : EnemyMove
         }
         machine.SetAnimFloat("Move", 0);
         base.DestroyState();
+    }
+
+    public override bool GroundCheck()
+    {
+        return true;
     }
 }

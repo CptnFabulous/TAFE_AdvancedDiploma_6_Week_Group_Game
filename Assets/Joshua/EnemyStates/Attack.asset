@@ -13,3 +13,4 @@ MonoBehaviour:
   m_Name: Attack
   m_EditorClassIdentifier: 
   machine: {fileID: 0}
+  waitTime: 0.1

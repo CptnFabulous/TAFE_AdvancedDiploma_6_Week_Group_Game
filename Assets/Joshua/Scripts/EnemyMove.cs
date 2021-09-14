@@ -45,4 +45,5 @@ public class EnemyMove : BaseState
     {
         machine.SetAgentDestination(machine.GetPlayerPosition());
     }
+
 }
