@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "New Block", menuName = "Scriptable Objects/Block", order = 0)]
+[CreateAssetMenu(fileName = "New Block", menuName = "Scriptable Objects/Block", order = 1)]
 public class BlockData : ScriptableObject
 {
     public int id;
@@ -15,6 +15,8 @@ public class BlockData : ScriptableObject
     public Vector2 uvBottom;
     public Vector2 uvBack;
     public Vector2 uvFront;
+
+    
 
     public Vector2 GetUVFromDirection(int index)
     {

@@ -6,8 +6,26 @@ using UnityEngine.AI;
 
 public class ChunkNavMeshHandler : MonoBehaviour
 {
+    static ChunkNavMeshHandler currentReference;
+    public static ChunkNavMeshHandler Current
+    {
+        get
+        {
+            if (currentReference == null)
+            {
+                currentReference = FindObjectOfType<ChunkNavMeshHandler>();
+            }
+            return currentReference;
+        }
+    }
+    
+    
+    
     public Chunk[] chunksToManageMeshesOf;
     public Bounds outerLimits;
+
+    [Header("Additional NavMesh settings")]
+    public float minRegionArea = 0.2f;
 
 
     NavMeshData currentMesh;
@@ -17,7 +35,7 @@ public class ChunkNavMeshHandler : MonoBehaviour
     public void BakeMeshForFirstTime()
     {
         settings = NavMesh.GetSettingsByID(0);
-        settings.minRegionArea = 0.2f;
+        settings.minRegionArea = minRegionArea;
 
         sources = new List<NavMeshBuildSource>();
         for (int i = 0; i < chunksToManageMeshesOf.Length; i++)

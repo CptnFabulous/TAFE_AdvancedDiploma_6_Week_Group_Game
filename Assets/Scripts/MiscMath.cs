@@ -134,4 +134,13 @@ public static class MiscMath
 
         //return (colour.a << 24) | (colour.b << 16) | (colour.g << 8) | colour.r;
     }
+
+
+    public static bool CoinFlip(float probability)
+    {
+        // Ensures probability is a value between zero and one. Zero is always false, one is always true.
+        probability = Mathf.Clamp(probability, 0, 1);
+        // Creates a random value and clamps it to just above the minimum probability and just below the maximum probability.
+        return UnityEngine.Random.Range(0 + Mathf.Epsilon, 1 - Mathf.Epsilon) < probability;
+    }
 }

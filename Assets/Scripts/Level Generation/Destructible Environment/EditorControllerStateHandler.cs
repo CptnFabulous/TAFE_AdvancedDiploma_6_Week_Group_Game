@@ -29,8 +29,10 @@ public class EditorControllerStateHandler : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
+            Debug.Log("Pause button pressed, current state is " + currentState);
             if (currentState == UserState.Active)
             {
+                Debug.Log("Pausing game");
                 PauseGame();
             }
             else if (currentState == UserState.Paused)
@@ -44,33 +46,37 @@ public class EditorControllerStateHandler : MonoBehaviour
     public void PauseGame()
     {
         currentState = UserState.Paused;
-        SetPlayerActiveStateForMenus(false);
+        SetPlayerActiveState(false);
         SwitchScreen(pauseMenu); 
+    }
+
+    public void GoIntoMenus()
+    {
+        currentState = UserState.InMenus;
+        SetPlayerActiveState(false);
     }
 
     public void ResumeGame()
     {
         currentState = UserState.Active;
-        SetPlayerActiveStateForMenus(true);
+        SetPlayerActiveState(true);
 
         SwitchScreen(headsUpDisplay);
     }
 
-    public void SetPlayerActiveStateForMenus(bool active)
+    public void SetPlayerActiveState(bool active)
     {
         if (active)
         {
             Time.timeScale = 1;
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
-            currentState = UserState.InMenus;
         }
         else
         {
             Time.timeScale = 0;
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
-            currentState = UserState.Active;
         }
     }
 

@@ -52,7 +52,7 @@ public class Chunk : MonoBehaviour
 
         UpdateMesh();
 
-        LevelGrid.Current.navMeshHandler.RebakeMesh();
+        ChunkNavMeshHandler.Current.RebakeMesh();
     }
     void UpdateMesh()
     {
@@ -369,17 +369,18 @@ public class Chunk : MonoBehaviour
 
 
         byte[] saveFileBytes = t.EncodeToPNG();
-        string dataPath = Application.dataPath + "/Resources/Level Rooms/LevelChunk_" + name + ".png";
-        System.IO.File.WriteAllBytes(dataPath, saveFileBytes);
+        string nameAndFilePath = LevelEditor.FilePath + name + ".png";
+        System.IO.File.WriteAllBytes(nameAndFilePath, saveFileBytes);
+        Debug.Log("File " + name + " saved!");
         return t;
     }
 
     public void LoadData(string chunkName)
     {
         // Creates a new Texture2D to load with the image file. The specified dimensions are irrelevant and will be overwritten, but are required to compile.
-        string dataPath = Application.dataPath + "/Resources/Level Rooms/LevelChunk_" + chunkName + ".png";
+        string nameAndFilePath = LevelEditor.FilePath + chunkName;
         Texture2D saveData = new Texture2D(1, 1);
-        if (saveData.LoadImage(System.IO.File.ReadAllBytes(dataPath)) == false)
+        if (saveData.LoadImage(System.IO.File.ReadAllBytes(nameAndFilePath)) == false)
         {
             Debug.Log("Save file could not be loaded.");
             return;

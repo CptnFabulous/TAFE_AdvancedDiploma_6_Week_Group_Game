@@ -36,7 +36,6 @@ public class LevelGrid : MonoBehaviour
 
     public Chunk chunkPrefab;
     public Vector3Int chunkSize = new Vector3Int(16, 16, 16);
-    public int levelLengthInChunks = 8;
     public Vector3Int chunkDimensions = new Vector3Int(4, 4, 4);
     public Chunk[,,] chunksInLevel;
     public Vector3Int Dimensions
@@ -52,13 +51,6 @@ public class LevelGrid : MonoBehaviour
     }
     public BlockData blockToFill;
 
-
-    public ChunkNavMeshHandler navMeshHandler { get; private set; }
-
-    private void Awake()
-    {
-        navMeshHandler = GetComponent<ChunkNavMeshHandler>();
-    }
 
 
 
@@ -81,9 +73,9 @@ public class LevelGrid : MonoBehaviour
             }
         }
         
-        navMeshHandler.chunksToManageMeshesOf = oneDimensionalChunkArray;
-        
-        navMeshHandler.BakeMeshForFirstTime();
+        ChunkNavMeshHandler.Current.chunksToManageMeshesOf = oneDimensionalChunkArray;
+
+        ChunkNavMeshHandler.Current.BakeMeshForFirstTime();
 
         /*
         Chunk[] oneDimensionalChunkArray = new Chunk[Dimensions.x * Dimensions.y * Dimensions.z];
