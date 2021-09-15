@@ -186,12 +186,21 @@ public class EnemyBehaviour : MonoBehaviour
         agent.enabled = false;
         rigid.isKinematic = false;
         rigid.AddForce(_force, ForceMode.Impulse);
-        StartCoroutine(nameof(AddKnockback), _force);
+        StartCoroutine(AddKnockback(1));
     }
 
-    private IEnumerator AddKnockback(Vector3 _force)
+    public void Knockback(Vector3 _force, float _knockbackTime)
     {
-        yield return new WaitForSeconds(1);
+        ChangeState(ScriptableObject.CreateInstance<EnemyStunned>());
+        agent.enabled = false;
+        rigid.isKinematic = false;
+        rigid.AddForce(_force, ForceMode.Impulse);
+        StartCoroutine(AddKnockback(_knockbackTime));
+    }
+
+    private IEnumerator AddKnockback(float _knockbackTime)
+    {
+        yield return new WaitForSeconds(_knockbackTime);
         ChangeState(idle.GetStateCopy());
         agent.enabled = move.usingAgent;
         rigid.isKinematic = true;
