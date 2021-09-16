@@ -31,6 +31,7 @@ public static class MiscMath
         return (int)f;
     }
 
+
     public static Vector3 CentreOfMultiplePositions(Vector3[] positions)
     {
         Vector3 finalValue = Vector3.zero;
@@ -41,6 +42,7 @@ public static class MiscMath
         return finalValue / positions.Length;
     }
 
+    /*
     public static Vector3 ConvertDirectionToCardinalDirection(Vector3 originalDirection)
     {
         // Change direction value so it points in the approximate cardinal direction
@@ -61,7 +63,7 @@ public static class MiscMath
         }
         return new Vector3(axes[0], axes[1], axes[2]).normalized;
     }
-
+    */
 
     /// <summary>
     /// Sets an object's scale to a global value regardless of its parent's scaling. I found this code off the internet and it may not work properly.

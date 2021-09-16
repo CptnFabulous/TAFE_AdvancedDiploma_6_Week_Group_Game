@@ -82,7 +82,19 @@ public class LevelGenerator : MonoBehaviour
             {
                 return;
             }
-            
+
+
+
+            // Use mesh bounds centre (instead of renderer or collider bounds) to get local space values for entry and exit rooms
+            //Bounds newRoomBounds = newRoom.terrainMesh.bounds;
+            //Bounds oldRoomBounds = oldRoom.terrainMesh.bounds;
+
+            // Get direction of the entry door
+            // Get direction of the exit door
+            // Rotate new room so entry door is facing in the same direction as the exit door
+
+
+            /*
             Vector3 globalExitDoorRotation = exitDoor.transform.localPosition - oldRoom.transform.InverseTransformPoint(oldRoom.terrainMesh.bounds.center);
             globalExitDoorRotation = MiscMath.ConvertDirectionToCardinalDirection(globalExitDoorRotation.normalized);
             globalExitDoorRotation = oldRoom.transform.TransformDirection(globalExitDoorRotation);
@@ -96,6 +108,7 @@ public class LevelGenerator : MonoBehaviour
             Vector3 positionForEntryDoor = exitDoor.transform.position + globalExitDoorRotation;
             Vector3 entryDoorRelativePosition = entryDoor.transform.position - newRoom.transform.position;
             newRoom.transform.position = positionForEntryDoor - entryDoorRelativePosition;
+            */
         }
         else
         {
@@ -143,9 +156,9 @@ public class LevelGenerator : MonoBehaviour
                     GameObject prefabOnFloor = Instantiate(reference.prefabToSpawn, newRoom.transform);
                     //prefabOnFloor.transform.localRotation = Quaternion.Euler(reference.defaultRotationEulerAngles);
                     // Get total height of object after rotation
-                    float heightOfCenterOffFloor = prefabOnFloor.GetComponent<MeshRenderer>().bounds.extents.y;
+                    float heightOfCenterFromFloor = prefabOnFloor.GetComponent<MeshRenderer>().bounds.extents.y;
                     // Sets object to appropriate position and raises altitude so it clears the floor.
-                    prefabOnFloor.transform.localPosition = coordinates + Vector3.up * (0.5f + heightOfCenterOffFloor);
+                    prefabOnFloor.transform.localPosition = coordinates + Vector3.up * (0.5f + heightOfCenterFromFloor);
                 }
             }
 
