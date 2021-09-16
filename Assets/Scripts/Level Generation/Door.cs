@@ -24,9 +24,6 @@ public class Door : MonoBehaviour
 
     Collider playerBlocker;
     NavMeshObstacle aiBlocker;
-    //MeshRenderer debugRenderer;
-    //public Material debugOpen;
-    //public Material debugClose;
 
     private void Awake()
     {
@@ -38,6 +35,5 @@ public class Door : MonoBehaviour
     {
         playerBlocker.enabled = !open;
         aiBlocker.enabled = !open;
-        aiBlocker.carving = true;
     }
 }

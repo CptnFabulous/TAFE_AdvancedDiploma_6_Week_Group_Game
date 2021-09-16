@@ -323,13 +323,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 1959063874}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 585e8e0e74be46748a6a329d52faf256, type: 3}
+  m_Script: {fileID: 11500000, guid: 57b7d615bd7282740888d80c1278401e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  chunksToManageMeshesOf: []
+  terrainMeshes: []
+  terrainDetectionLayers:
+    serializedVersion: 2
+    m_Bits: 2048
   outerLimits:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 0, y: 0, z: 0}
+  autoGenerateBounds: 0
+  settingsIndex: 0
+  areaIndex: 0
   minRegionArea: 0.2
 --- !u!114 &1959063876
 MonoBehaviour:
@@ -343,19 +349,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2dbec11455aa344eac203da8e0868bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  numberOfRooms: 8
-  entryRoom: {fileID: 2800000, guid: 7bb56949f7c513f46bda9de37813343f, type: 3}
+  numberOfRooms: 1
+  entryRoom: {fileID: 0}
   roomLayouts:
-  - {fileID: 2800000, guid: e1aac86843f8a184e8479cacb0f019b0, type: 3}
-  - {fileID: 2800000, guid: 83e4abbf853d4d847bd25cf905af546f, type: 3}
-  - {fileID: 2800000, guid: b959472bed1cd7a408be94bca71af5ef, type: 3}
-  - {fileID: 2800000, guid: 7e9e4ec8302d6f84b834da0350faf41d, type: 3}
   - {fileID: 2800000, guid: 0ae7e4ae747b7704bb1c08181ac751fa, type: 3}
-  hallwayLayouts:
-  - {fileID: 2800000, guid: b900e3fb729d8684f85fe1d78e5d173b, type: 3}
-  - {fileID: 2800000, guid: 27f96f3b9b2661543b79a4685ca2b613, type: 3}
-  - {fileID: 2800000, guid: 6e80a1e3e06b50d4e95f4c6da1df70b5, type: 3}
-  exitRoom: {fileID: 2800000, guid: a0bce8c03ae64574e9476daf95b40275, type: 3}
+  hallwayLayouts: []
+  exitRoom: {fileID: 0}
   roomPrefab: {fileID: 1017290859246971262, guid: e6aa0786044107c47b36c88ad4e42f73,
     type: 3}
 --- !u!4 &1959063877

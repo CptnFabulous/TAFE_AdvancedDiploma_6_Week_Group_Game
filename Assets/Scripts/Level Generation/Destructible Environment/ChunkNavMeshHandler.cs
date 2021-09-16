@@ -22,6 +22,7 @@ public class ChunkNavMeshHandler : MonoBehaviour
     
     
     public Chunk[] chunksToManageMeshesOf;
+    public LayerMask terrainDetectionLayers;
     public Bounds outerLimits;
 
     [Header("Additional NavMesh settings")]

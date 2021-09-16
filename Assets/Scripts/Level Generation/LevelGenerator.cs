@@ -21,16 +21,15 @@ public class LevelGenerator : MonoBehaviour
 
     void GenerateLevel()
     {
-        //allRooms = new List<Chunk>();
-
         AddRoom(entryRoom);
+
         for (int i = 0; i < numberOfRooms; i++)
         {
             // Selects a random room
             int randomIndex = Random.Range(0, roomLayouts.Length);
             AddRoom(roomLayouts[randomIndex]);
 
-            if (MiscMath.CoinFlip(0.5f))
+            if (hallwayLayouts.Length > 0 && MiscMath.CoinFlip(0.5f))
             {
                 randomIndex = Random.Range(0, hallwayLayouts.Length);
                 AddRoom(hallwayLayouts[randomIndex]);
@@ -38,20 +37,30 @@ public class LevelGenerator : MonoBehaviour
         }
 
         AddRoom(exitRoom);
+
+        // Add terrain mesh data to nav mesh handler
+        MeshRenderer[] renderers = GetComponentsInChildren<MeshRenderer>();
+        Bounds levelBounds = new Bounds();
+
+        NavMeshUpdateHandler.Current.SetupMesh();
     }
 
     void AddRoom(Texture2D imageFile)
     {
+        // Don't generate a room if there is nothing to generate.
+        if (imageFile == null)
+        {
+            return;
+        }
+        
         Chunk newRoom = GenerateRoom(imageFile);
-        allRooms.Add(newRoom);
-
-
 
         // If there is a previous room
         if (allRooms.Count > 1)
         {
+            #region Orient new room so its entry lines up with the previous room's exit
             // Gets the previous room
-            Chunk oldRoom = allRooms[allRooms.Count - 2];
+            Chunk oldRoom = allRooms[allRooms.Count - 1];
 
             // Find the entry door for the current room
             Door entryDoor = null;
@@ -109,12 +118,15 @@ public class LevelGenerator : MonoBehaviour
             Vector3 entryDoorRelativePosition = entryDoor.transform.position - newRoom.transform.position;
             newRoom.transform.position = positionForEntryDoor - entryDoorRelativePosition;
             */
+            #endregion
         }
         else
         {
             newRoom.transform.position = transform.position;
             newRoom.transform.rotation = transform.rotation;
         }
+
+        allRooms.Add(newRoom);
     }
 
 
@@ -159,6 +171,8 @@ public class LevelGenerator : MonoBehaviour
                     float heightOfCenterFromFloor = prefabOnFloor.GetComponent<MeshRenderer>().bounds.extents.y;
                     // Sets object to appropriate position and raises altitude so it clears the floor.
                     prefabOnFloor.transform.localPosition = coordinates + Vector3.up * (0.5f + heightOfCenterFromFloor);
+
+
                 }
             }
 

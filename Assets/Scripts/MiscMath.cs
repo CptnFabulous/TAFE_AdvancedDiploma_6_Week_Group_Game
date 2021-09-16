@@ -145,4 +145,12 @@ public static class MiscMath
         // Creates a random value and clamps it to just above the minimum probability and just below the maximum probability.
         return UnityEngine.Random.Range(0 + Mathf.Epsilon, 1 - Mathf.Epsilon) < probability;
     }
+
+
+
+    public static bool IsObjectInLayerMask(int layer, LayerMask mask)
+    {
+        return mask == (mask | (1 << layer));
+    }
+    
 }

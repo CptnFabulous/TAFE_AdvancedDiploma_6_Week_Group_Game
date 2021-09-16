@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1017290859246971260}
   - component: {fileID: 1017290859246971261}
   - component: {fileID: 1017290859246971262}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Empty Chunk
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -108,4 +108,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   facePixelDimensions: {x: 256, y: 256}
-  saveString: 
