@@ -37,7 +37,7 @@ public class EnemyJump : EnemyMove
 
     public override void EnterState()
     {
-        groundMask = LayerMask.GetMask("Ground");
+        groundMask = machine.GroundMask;
 
         direction = machine.GetPlayerDirectionBasic();
         jumpSpeed = 1 / jumpDuration;

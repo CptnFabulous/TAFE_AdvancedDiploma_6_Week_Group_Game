@@ -309,7 +309,7 @@ PrefabInstance:
     - target: {fileID: 3147351714441380604, guid: 633cb3ee9e6cb7546983f4acd614a83f,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.5
+      value: 0.6
       objectReference: {fileID: 0}
     - target: {fileID: 3147351714441380604, guid: 633cb3ee9e6cb7546983f4acd614a83f,
         type: 3}
@@ -2147,7 +2147,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.00011444092}
+  m_AnchoredPosition: {x: 0, y: -0.000091552734}
   m_SizeDelta: {x: 0, y: 50}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!1 &963194225
@@ -3566,7 +3566,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   chunkPrefab: {fileID: 1017290859246971262, guid: e6aa0786044107c47b36c88ad4e42f73,
     type: 3}
-  chunkSize: {x: 16, y: 1, z: 16}
+  chunkSize: {x: 8, y: 1, z: 8}
   chunkDimensions: {x: 4, y: 1, z: 4}
   blockToFill: {fileID: 11400000, guid: 4cf44b270811bf147a5543c5767fbe6a, type: 2}
 --- !u!4 &1764464064

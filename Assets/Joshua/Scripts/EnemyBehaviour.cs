@@ -19,7 +19,7 @@ public class EnemyBehaviour : MonoBehaviour
 
     private const float GROUND_CHECK_RATE = 10;
     private float groundCheckTimer = 0;
-    private LayerMask groundMask;
+    public LayerMask GroundMask { get; private set; }
 
     private void Awake()
     {
@@ -45,7 +45,7 @@ public class EnemyBehaviour : MonoBehaviour
         rigid = GetComponent<Rigidbody>();
         rigid.isKinematic = true;
 
-        groundMask = LayerMask.GetMask("Ground", "Level Geometry");
+        GroundMask = LayerMask.GetMask("Ground", "Level Geometry");
     }
 
     private void Start()
@@ -79,7 +79,7 @@ public class EnemyBehaviour : MonoBehaviour
     /// <returns></returns>
     public bool GroundCheck()
     {
-        return Physics.Raycast(transform.position, Vector3.down, 10f, groundMask) && rigid.isKinematic;
+        return Physics.Raycast(transform.position, Vector3.down, 10f, GroundMask) && rigid.isKinematic;
     }
 
     #region StateMachine
