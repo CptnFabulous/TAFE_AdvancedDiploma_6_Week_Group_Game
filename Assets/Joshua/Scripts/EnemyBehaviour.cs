@@ -45,7 +45,7 @@ public class EnemyBehaviour : MonoBehaviour
         rigid = GetComponent<Rigidbody>();
         rigid.isKinematic = true;
 
-        groundMask = LayerMask.GetMask("Ground");
+        groundMask = LayerMask.GetMask("Ground", "Level Geometry");
     }
 
     private void Start()
