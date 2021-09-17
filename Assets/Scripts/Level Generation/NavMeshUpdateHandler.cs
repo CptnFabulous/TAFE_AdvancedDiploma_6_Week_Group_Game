@@ -18,8 +18,9 @@ public class NavMeshUpdateHandler : MonoBehaviour
         }
     }
 
-    public List<MeshFilter> terrainMeshes;
-    public LayerMask terrainDetectionLayers;
+    //[Head]
+    public bool autoFindTerrain;
+    public LayerMask autoFindTerrainLayers;
     public Bounds outerLimits;
     public bool autoGenerateBounds;
 
@@ -31,7 +32,7 @@ public class NavMeshUpdateHandler : MonoBehaviour
     NavMeshData currentMesh;
     NavMeshBuildSettings settings;
     List<NavMeshBuildSource> sources = new List<NavMeshBuildSource>();
-    /*
+    
     public void AddSource(MeshFilter terrainMesh)
     {
         NavMeshBuildSource newSource = new NavMeshBuildSource
@@ -43,35 +44,37 @@ public class NavMeshUpdateHandler : MonoBehaviour
             area = areaIndex, // In a complex game, change this depending on the properties of the environment object.
         };
         sources.Add(newSource);
+
+        if (autoGenerateBounds == true)
+        {
+            MeshRenderer renderer = terrainMesh.GetComponent<MeshRenderer>();
+            // If array length is only one, replace bounds
+            if (sources.Count == 1)
+            {
+                outerLimits = renderer.bounds;
+            }
+            else
+            {
+                // If array is longer, expand existing bounds to accomodate new bounds
+                Vector3 min = Vector3.Min(outerLimits.min, renderer.bounds.min);
+                Vector3 max = Vector3.Max(outerLimits.max, renderer.bounds.max);
+                outerLimits.min = min;
+                outerLimits.max = max;
+            }
+        }
+        
     }
-    */
-
-
 
     public void SetupMesh()
     {
         settings = NavMesh.GetSettingsByID(settingsIndex);
         settings.minRegionArea = minRegionArea;
 
-
-
-        /*
-        List<NavMeshBuildSource> autoGatheredSources = new List<NavMeshBuildSource>();
-        NavMeshBuilder.CollectSources(outerLimits, terrainDetectionLayers, NavMeshCollectGeometry.RenderMeshes, areaIndex, null, autoGatheredSources);
-        sources.AddRange(autoGatheredSources);
-        */
-
-        for (int i = 0; i < terrainMeshes.Count; i++)
+        if (autoFindTerrain)
         {
-            NavMeshBuildSource newSource = new NavMeshBuildSource
-            {
-                sourceObject = terrainMeshes[i].sharedMesh,
-                shape = NavMeshBuildSourceShape.Mesh,
-                transform = terrainMeshes[i].transform.localToWorldMatrix,
-                size = Vector3.one, // Not sure if this is necessary when adding meshes from the world
-                area = areaIndex, // In a complex game, change this depending on the properties of the environment object.
-            };
-            sources.Add(newSource);
+            List<NavMeshBuildSource> autoGatheredSources = new List<NavMeshBuildSource>();
+            NavMeshBuilder.CollectSources(outerLimits, autoFindTerrainLayers, NavMeshCollectGeometry.RenderMeshes, areaIndex, null, autoGatheredSources);
+            sources.AddRange(autoGatheredSources);
         }
 
         currentMesh = NavMeshBuilder.BuildNavMeshData(settings, sources, outerLimits, transform.position, transform.rotation);
@@ -80,7 +83,7 @@ public class NavMeshUpdateHandler : MonoBehaviour
 
     public void RebakeMesh()
     {
-        if (terrainMeshes.Count <= 0)
+        if (currentMesh == null || sources.Count <= 0)
         {
             return;
         }

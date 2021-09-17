@@ -31,9 +31,19 @@ public class Door : MonoBehaviour
         aiBlocker = GetComponent<NavMeshObstacle>();
     }
 
-    public void SetOpenState(bool open)
+    void SetOpenState(bool open)
     {
         playerBlocker.enabled = !open;
         aiBlocker.enabled = !open;
+    }
+
+    private void OnEnable()
+    {
+        SetOpenState(false);
+    }
+
+    private void OnDisable()
+    {
+        SetOpenState(true);
     }
 }
