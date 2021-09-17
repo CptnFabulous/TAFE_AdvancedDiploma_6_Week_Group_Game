@@ -12,7 +12,7 @@ public class EnemyBehaviour : MonoBehaviour
     [SerializeField] private EnemyIdle idle;
     [SerializeField] private EnemyMove move;
     [SerializeField] private EnemyAttack attack;
-
+    [SerializeField] private bool largeEnemy = false;
     private NavMeshAgent agent;
     private Animator animator;
     private Rigidbody rigid;
@@ -79,7 +79,7 @@ public class EnemyBehaviour : MonoBehaviour
     /// <returns></returns>
     public bool GroundCheck()
     {
-        return Physics.Raycast(transform.position, Vector3.down, 10f, GroundMask) && rigid.isKinematic;
+        return largeEnemy ? Physics.CheckBox(transform.position, new Vector3(1, 10, 1), Quaternion.identity,GroundMask) : Physics.Raycast(transform.position, Vector3.down, 10f, GroundMask) && rigid.isKinematic;
     }
 
     #region StateMachine

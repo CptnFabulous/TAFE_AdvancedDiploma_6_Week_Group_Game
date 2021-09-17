@@ -177,7 +177,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ff1d0884ab7244498b8c2657692bee0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  idle: {fileID: 11400000, guid: 69379bb897c5f52488b2f81bb410209d, type: 2}
+  idle: {fileID: 11400000, guid: 0c187883d5cb7c24ea294f0254e3f30e, type: 2}
   move: {fileID: 11400000, guid: eb2bc226352eb7a4f8706db996f516fc, type: 2}
   attack: {fileID: 11400000, guid: 4d5240de63a9ab24eb73389d717d7de3, type: 2}
 --- !u!195 &3181541108136256786
