@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: Idle
   m_EditorClassIdentifier: 
   machine: {fileID: 0}
-  waitTime: 3
+  waitTime: 0.5
