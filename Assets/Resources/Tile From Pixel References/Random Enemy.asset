@@ -9,15 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3dabfc10cac7d0747bebee9f72851f07, type: 3}
-  m_Name: Breakable
+  m_Script: {fileID: 11500000, guid: 0396e82b143f78a43ac1d327988916d7, type: 3}
+  m_Name: Random Enemy
   m_EditorClassIdentifier: 
-  id: 0
-  maxHealth: 1
-  isTransparent: 0
-  uvLeft: {x: 1, y: 1}
-  uvRight: {x: 1, y: 1}
-  uvTop: {x: 0, y: 1}
-  uvBottom: {x: 0, y: 0}
-  uvBack: {x: 1, y: 1}
-  uvFront: {x: 1, y: 1}
+  colourReferenceInSaveFile: {r: 1, g: 0, b: 1, a: 1}
+  prefabToSpawn: {fileID: 0}
+  blockToPlaceOnFloor: {fileID: 11400000, guid: 4cf44b270811bf147a5543c5767fbe6a,
+    type: 2}
