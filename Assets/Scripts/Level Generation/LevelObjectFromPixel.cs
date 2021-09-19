@@ -9,6 +9,25 @@ public class LevelObjectFromPixel : ScriptableObject
     public GameObject prefabToSpawn;
     public BlockData blockToPlaceOnFloor;
 
+
+
+    public virtual GameObject GetPrefab
+    {
+        get
+        {
+            return prefabToSpawn;
+        }
+    }
+
+    public virtual BlockData GetBlock
+    {
+        get
+        {
+            return blockToPlaceOnFloor;
+        }
+    }
+
+
     static LevelObjectFromPixel[] internalList;
     public static LevelObjectFromPixel[] All
     {

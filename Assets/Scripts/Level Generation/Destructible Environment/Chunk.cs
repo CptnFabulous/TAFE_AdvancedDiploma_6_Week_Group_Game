@@ -52,7 +52,8 @@ public class Chunk : MonoBehaviour
 
         UpdateMesh();
 
-        ChunkNavMeshHandler.Current.RebakeMesh();
+        //ChunkNavMeshHandler.Current.RebakeMesh();
+        NavMeshUpdateHandler.Current.RebakeMesh();
     }
     void UpdateMesh()
     {

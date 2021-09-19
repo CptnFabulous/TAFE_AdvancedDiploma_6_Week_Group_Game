@@ -58,33 +58,6 @@ public class LevelGrid : MonoBehaviour
     private void Start()
     {
         GenerateLevel();
-        
-        Chunk[] oneDimensionalChunkArray = new Chunk[Dimensions.x * Dimensions.y * Dimensions.z];
-        int i = 0;
-        for (int x = 0; x < Dimensions.x; x++)
-        {
-            for (int y = 0; y < Dimensions.y; y++)
-            {
-                for (int z = 0; z < Dimensions.z; z++)
-                {
-                    oneDimensionalChunkArray[i] = chunksInLevel[x, y, z];
-                    i++;
-                }
-            }
-        }
-        
-        ChunkNavMeshHandler.Current.chunksToManageMeshesOf = oneDimensionalChunkArray;
-
-        ChunkNavMeshHandler.Current.BakeMeshForFirstTime();
-
-        /*
-        Chunk[] oneDimensionalChunkArray = new Chunk[Dimensions.x * Dimensions.y * Dimensions.z];
-        for (int i = 0; i < oneDimensionalChunkArray.Length; i++)
-        {
-            Vector3Int coordinates = MiscMath.IndexFor3DArrayFromSingle(i, Dimensions);
-            oneDimensionalChunkArray[i] = chunksInLevel[coordinates.x, coordinates.y, coordinates.z];
-        }
-        */
     }
 
     public void GenerateLevel()
@@ -106,9 +79,13 @@ public class LevelGrid : MonoBehaviour
                     currentChunk.PositionInLevelGrid = new Vector3Int(x, y, z);
                     chunksInLevel[x, y, z] = currentChunk;
                     currentChunk.Rewrite(ChunkGenerator.Flood(chunkSize, blockToFill));
+
+                    NavMeshUpdateHandler.Current.AddSource(currentChunk.meshData);
                 }
             }
         }
+
+        NavMeshUpdateHandler.Current.SetupMesh();
     }
 
 
