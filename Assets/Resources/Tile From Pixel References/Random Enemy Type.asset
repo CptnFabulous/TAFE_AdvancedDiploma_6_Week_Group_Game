@@ -14,7 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   colourReferenceInSaveFile: {r: 1, g: 0, b: 1, a: 1}
   prefabToSpawn: {fileID: 0}
-  blockToPlaceOnFloor: {fileID: 11400000, guid: 4cf44b270811bf147a5543c5767fbe6a,
-    type: 2}
-  possiblePrefabs: []
-  possibleBlocks: []
+  blockToPlaceOnFloor: {fileID: 0}
+  possiblePrefabs:
+  - {fileID: 8120905295174416153, guid: 5ea81fd11e962374c852716396e9dc8b, type: 3}
+  - {fileID: 2370708808840157254, guid: 633cb3ee9e6cb7546983f4acd614a83f, type: 3}
+  possibleBlocks:
+  - {fileID: 11400000, guid: 4cf44b270811bf147a5543c5767fbe6a, type: 2}

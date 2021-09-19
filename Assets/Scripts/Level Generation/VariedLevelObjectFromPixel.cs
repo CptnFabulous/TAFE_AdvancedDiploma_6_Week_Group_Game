@@ -12,15 +12,29 @@ public class VariedLevelObjectFromPixel : LevelObjectFromPixel
     {
         get
         {
+            if (possiblePrefabs.Length <= 0)
+            {
+                return null;
+            }
+            
+            // Adds a plus one because the max value on the random.range function is exclusive and therefore will never return that value
             int randomIndex = Random.Range(0, possiblePrefabs.Length);
+            Debug.Log(randomIndex + ", " + possiblePrefabs[randomIndex]);
+            return possiblePrefabs[randomIndex];
+            /*
             if (randomIndex == possiblePrefabs.Length)
             {
+                Debug.Log("Item index: " + randomIndex);
+
                 return prefabToSpawn;
             }
             else
             {
+                Debug.Log("Item index: " + randomIndex);
+
                 return possiblePrefabs[randomIndex];
             }
+            */
         }
     }
 
@@ -28,7 +42,15 @@ public class VariedLevelObjectFromPixel : LevelObjectFromPixel
     {
         get
         {
+            if (possibleBlocks.Length <= 0)
+            {
+                return null;
+            }
+            
             int randomIndex = Random.Range(0, possibleBlocks.Length);
+            return possibleBlocks[randomIndex];
+            /*
+            int randomIndex = Random.Range(0, possibleBlocks.Length + 1);
             if (randomIndex == possibleBlocks.Length)
             {
                 return blockToPlaceOnFloor;
@@ -37,6 +59,7 @@ public class VariedLevelObjectFromPixel : LevelObjectFromPixel
             {
                 return possibleBlocks[randomIndex];
             }
+            */
         }
     }
 }
