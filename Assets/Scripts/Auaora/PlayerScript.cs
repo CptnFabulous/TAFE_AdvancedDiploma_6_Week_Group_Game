@@ -10,7 +10,9 @@ namespace Auaora
         [SerializeField] private Rigidbody rigRef;
         [SerializeField] private Animator playerAnim;
         [SerializeField] private PlayerCameraScript cameraRef;
-        [SerializeField] private GameObject dashIndicator;
+        [SerializeField] private GameObject attackIndicator;
+        [SerializeField] private GameObject attackIndicatorTarget;
+        [SerializeField] private GameObject visualRef;
 
         [Header("Movement Variables")]
         private Vector2 speed;
@@ -20,12 +22,15 @@ namespace Auaora
         private Vector2 knockbackVector = Vector2.zero;
 
         [Header("Dash Variables")]
+        private bool attackBlockingDash = false;
         [SerializeField] private float dashSpeed = 8;
         private float internalDashCooldown;
         [SerializeField] private float dashCooldown = 0.3f;
         private Vector2 dashVector = Vector2.zero;
 
         [Header("Misc Variables")]
+        [SerializeField] private float attackSpeed = 1f;
+        [SerializeField] private LayerMask attackMask;
         private PlayerState currentState = PlayerState.Regular;
         public PlayerState CurrentState { get { return currentState; } }
         [SerializeField] private int maxHealth;
@@ -72,11 +77,18 @@ namespace Auaora
             //Checks for dash input
             if (Input.GetButtonDown("Dash"))
             {
-                if (IfPlayerNotState(false, true, true, true))
+                if (IfPlayerNotState(false, true, true, true) || (currentState == PlayerState.Attacking && !attackBlockingDash))
                 {
                     currentState = PlayerState.Dashing;
-
                     BeginDash();
+                }
+            }
+
+            if (Input.GetButtonDown("Attack"))
+            {
+                if (IfPlayerNotState(false, true, true, true))
+                {
+                    StartAttack();
                 }
             }
 
@@ -95,6 +107,10 @@ namespace Auaora
                 if (currentState == PlayerState.Regular)
                 {
                     rigRef.velocity = new Vector3(speed.x, 0f, speed.y);
+                    if (speed != Vector2.zero)
+                    {
+                        RotateVisuals(new Vector3(speed.x, 0f, speed.y));
+                    }
                 }
                 else if (currentState == PlayerState.Hitstun)
                 {
@@ -120,7 +136,7 @@ namespace Auaora
 
             if (Time.timeScale != 0)
             {
-                dashIndicator.transform.LookAt(new Vector3 (transform.position.x + AimInputVector().x, transform.position.y, transform.position.z + AimInputVector().y));
+                attackIndicator.transform.LookAt(new Vector3(transform.position.x + AimInputVector().x, transform.position.y, transform.position.z + AimInputVector().y));
 
                 /*
                 Vector3 target = (Vector3)AimInputVector();
@@ -156,6 +172,9 @@ namespace Auaora
             currentState = PlayerState.Dashing;
             intangible = 0.8f;
             gameObject.layer = 16;
+
+            playerAnim.SetTrigger("Dash");
+            RotateVisuals(rigRef.velocity);
         }
 
         public void TakeDamage(float damage, Vector3 damagePos, bool knockback = true)
@@ -204,6 +223,11 @@ namespace Auaora
             }
         }
 
+        private void RotateVisuals(Vector3 inDir)
+        {
+            visualRef.transform.rotation = Quaternion.LookRotation(inDir);
+        }
+
         //Sends animation controller relevant information
         private void HandleAnimation()
         {
@@ -215,11 +239,6 @@ namespace Auaora
             {
                 playerAnim.SetBool("Walk", false);
             }
-        }
-
-        private void OnTriggerEnter2D(Collider2D collision)
-        {
-
         }
 
         public bool IsIntangible()
@@ -255,21 +274,60 @@ namespace Auaora
             return direction;
         }
 
-        public void CancelMeleeAttack()
+        private void StartAttack()
+        {
+            playerAnim.SetFloat("AttackSpeed", attackSpeed);
+            playerAnim.SetTrigger("Attack");
+            currentState = PlayerState.Attacking;
+            rigRef.velocity = Vector3.zero;
+            RotateVisuals(attackIndicatorTarget.transform.position - transform.position);
+        }
+
+        public void EnactAttack()
+        {
+            Collider[] hitObjects = Physics.OverlapSphere(attackIndicatorTarget.transform.position, 0.2f, attackMask);
+            Collider closest = null;
+            foreach (Collider hitCol in hitObjects)
+            {
+                if (closest)
+                {
+                    if (Vector3.Distance(transform.position, hitCol.transform.position) < Vector3.Distance(transform.position, closest.transform.position))
+                    {
+                        closest = hitCol;
+                    }
+                }
+                else
+                {
+                    closest = hitCol;
+                }
+            }
+            if (!closest)
+            {
+                // break block beneath
+            }
+            else
+            {
+                if (true) // check if enemy has enemy script
+                {
+                    // damage enemy
+                }
+            }
+        }
+
+        public void ActivateAttackDashBlock()
+        {
+            attackBlockingDash = true;
+        }
+
+        public void DeactivateAttackDashBlock()
+        {
+            attackBlockingDash = false;
+        }
+
+        private void CancelMeleeAttack()
         {
             playerAnim.Play("TestIdle");
             HandleAnimation();
-        }
-
-        public void PlayAttackAnim(string paramName, float speed = 1f)
-        {
-            playerAnim.SetFloat("AttackSpeed", speed);
-            playerAnim.SetTrigger(paramName);
-        }
-
-        public void SetPlayerAsAttacking()
-        {
-            currentState = PlayerState.Attacking;
         }
 
         public void EndPlayerAsAttacking()
@@ -302,21 +360,6 @@ namespace Auaora
         {
             print("State: " + currentState.ToString());
         }
-
-        /*
-        private void AttemptInteract()
-        {
-            Collider2D[] collArray = Physics2D.OverlapCircleAll(transform.position, 0.75f, 1);
-
-            for (int i = 0; i < collArray.Length; i++)
-            {
-                if (collArray[i].CompareTag("Interact"))
-                {
-                    collArray[i].GetComponent<InteractScript>().Interact();
-                }
-            }
-        }
-        */
     }
 }
 
