@@ -51,6 +51,11 @@ public class EnemyBehaviour : MonoBehaviour
     private void Start()
     {
         playerTransform = GameObject.FindWithTag("Player").transform;
+        if(playerTransform == null)
+        {
+            Debug.LogError("There's no player in this scene. Add an object tagged 'Player' or this enemy won't work.");
+            gameObject.SetActive(false);
+        }
 
         ChangeState(idle.GetStateCopy());
     }
