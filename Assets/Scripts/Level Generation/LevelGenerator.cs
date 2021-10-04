@@ -5,11 +5,13 @@ using UnityEngine;
 public class LevelGenerator : MonoBehaviour
 {
     public int numberOfRooms = 8;
+    public Chunk roomPrefab;
+
+    [Header("Rooms")]
     public Texture2D entryRoom;
     public Texture2D[] roomLayouts;
     public Texture2D[] hallwayLayouts;
     public Texture2D exitRoom;
-    public Chunk roomPrefab;
 
     List<Chunk> allRooms = new List<Chunk>();
 
@@ -38,10 +40,6 @@ public class LevelGenerator : MonoBehaviour
 
         AddRoom(exitRoom);
 
-        // Add terrain mesh data to nav mesh handler
-        MeshRenderer[] renderers = GetComponentsInChildren<MeshRenderer>();
-        Bounds levelBounds = new Bounds();
-
         NavMeshUpdateHandler.Current.SetupMesh();
     }
 
@@ -55,10 +53,10 @@ public class LevelGenerator : MonoBehaviour
         
         Chunk newRoom = GenerateRoom(imageFile);
 
+        #region Check doors and orient new room so it lines up with the existing one
         // If there is a previous room
-        if (allRooms.Count > 1)
+        if (allRooms.Count >= 1)
         {
-            #region Orient new room so its entry lines up with the previous room's exit
             // Gets the previous room
             Chunk oldRoom = allRooms[allRooms.Count - 1];
 
@@ -93,16 +91,9 @@ public class LevelGenerator : MonoBehaviour
             }
 
 
+            newRoom.transform.rotation = exitDoor.transform.rotation * entryDoor.transform.rotation;
 
-            // Use mesh bounds centre (instead of renderer or collider bounds) to get local space values for entry and exit rooms
-            //Bounds newRoomBounds = newRoom.terrainMesh.bounds;
-            //Bounds oldRoomBounds = oldRoom.terrainMesh.bounds;
-
-            // Get direction of the entry door
-            // Get direction of the exit door
-            // Rotate new room so entry door is facing in the same direction as the exit door
-
-
+            // Rotate room so the entry is in the same direction as the exit
             /*
             Vector3 globalExitDoorRotation = exitDoor.transform.localPosition - oldRoom.transform.InverseTransformPoint(oldRoom.terrainMesh.bounds.center);
             globalExitDoorRotation = MiscMath.ConvertDirectionToCardinalDirection(globalExitDoorRotation.normalized);
@@ -112,23 +103,33 @@ public class LevelGenerator : MonoBehaviour
             Quaternion entryDoorLocalQuaternion = Quaternion.LookRotation(localEntryDoorRotation, transform.up);
             // Rotates the new room to the same direction as the exit door, plus the relative rotation of its entry door
             newRoom.transform.LookAt(newRoom.transform.position + (entryDoorLocalQuaternion * globalExitDoorRotation), transform.up);
-
-            // Shifts the new room so the entry door is one tile away from the exit door in the same direction
-            Vector3 positionForEntryDoor = exitDoor.transform.position + globalExitDoorRotation;
-            Vector3 entryDoorRelativePosition = entryDoor.transform.position - newRoom.transform.position;
-            newRoom.transform.position = positionForEntryDoor - entryDoorRelativePosition;
             */
-            #endregion
+
+            // Position new room so its entry lines up with the old room's exit
+            Vector3 positionForEntryDoor = exitDoor.transform.position + exitDoor.transform.forward;
+            Vector3 relativePositionOfEntryDoorFromRoomTransform = entryDoor.transform.position - newRoom.transform.position;
+            Vector3 positionForNewRoom = positionForEntryDoor - relativePositionOfEntryDoorFromRoomTransform;
+            newRoom.transform.position = positionForNewRoom;
         }
         else
         {
             newRoom.transform.position = transform.position;
             newRoom.transform.rotation = transform.rotation;
         }
-
+        #endregion
         allRooms.Add(newRoom);
-    }
 
+        // Check all meshes in the room
+        MeshFilter[] meshesInRoomObject = newRoom.GetComponentsInChildren<MeshFilter>();
+        for (int i = 0; i < meshesInRoomObject.Length; i++)
+        {
+            // If the mesh is in the terrain layer, it is meant to be part of the level geometry. Add it to the nav mesh update handler.
+            if(MiscMath.IsObjectInLayerMask(meshesInRoomObject[i].gameObject.layer, NavMeshUpdateHandler.Current.autoFindTerrainLayers))
+            {
+                NavMeshUpdateHandler.Current.AddSource(meshesInRoomObject[i]);
+            }
+        }
+    }
 
     Chunk GenerateRoom(Texture2D imageFile)
     {
@@ -156,23 +157,27 @@ public class LevelGenerator : MonoBehaviour
                 Vector3Int coordinates = MiscMath.IndexFor3DArrayFromSingle(p, size);
 
                 // Place block on floor
-                BlockData block = reference.blockToPlaceOnFloor;
+                BlockData block = reference.GetBlock;
                 if (block != null)
                 {
                     blocksForChunk[coordinates.x, coordinates.y, coordinates.z].type = block;
                     blocksForChunk[coordinates.x, coordinates.y, coordinates.z].health = block.maxHealth;
                 }
                 // Spawn object in space
-                if (reference.prefabToSpawn != null)
+                GameObject prefab = reference.GetPrefab;
+                if (prefab != null)
                 {
                     GameObject prefabOnFloor = Instantiate(reference.prefabToSpawn, newRoom.transform);
                     //prefabOnFloor.transform.localRotation = Quaternion.Euler(reference.defaultRotationEulerAngles);
                     // Get total height of object after rotation
-                    float heightOfCenterFromFloor = prefabOnFloor.GetComponent<MeshRenderer>().bounds.extents.y;
+                    float heightOfCenterFromFloor = 0.5f;
+                    MeshRenderer renderer = prefabOnFloor.GetComponent<MeshRenderer>();
+                    if (renderer != null)
+                    {
+                        heightOfCenterFromFloor += renderer.bounds.extents.y;
+                    }
                     // Sets object to appropriate position and raises altitude so it clears the floor.
-                    prefabOnFloor.transform.localPosition = coordinates + Vector3.up * (0.5f + heightOfCenterFromFloor);
-
-
+                    prefabOnFloor.transform.localPosition = coordinates + Vector3.up * heightOfCenterFromFloor;
                 }
             }
 

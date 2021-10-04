@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a1c3124dc2271a4e982ec1efb01f2fe, type: 3}
+  m_Name: Random Enemy Type
+  m_EditorClassIdentifier: 
+  colourReferenceInSaveFile: {r: 1, g: 0, b: 1, a: 1}
+  prefabToSpawn: {fileID: 0}
+  blockToPlaceOnFloor: {fileID: 0}
+  possiblePrefabs:
+  - {fileID: 8120905295174416153, guid: 5ea81fd11e962374c852716396e9dc8b, type: 3}
+  - {fileID: 2370708808840157254, guid: 633cb3ee9e6cb7546983f4acd614a83f, type: 3}
+  possibleBlocks:
+  - {fileID: 11400000, guid: 4cf44b270811bf147a5543c5767fbe6a, type: 2}
