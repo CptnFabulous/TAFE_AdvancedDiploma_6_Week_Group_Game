@@ -19,6 +19,7 @@ public class EnemyBehaviour : MonoBehaviour
 
     private const float GROUND_CHECK_RATE = 10;
     private float groundCheckTimer = 0;
+    private float groundYValue;
     public LayerMask GroundMask { get; private set; }
 
     private void Awake()
@@ -45,6 +46,7 @@ public class EnemyBehaviour : MonoBehaviour
         rigid = GetComponent<Rigidbody>();
         rigid.isKinematic = true;
 
+        groundYValue = transform.position.y;
         GroundMask = LayerMask.GetMask("Ground", "Level Geometry");
     }
 
@@ -73,9 +75,15 @@ public class EnemyBehaviour : MonoBehaviour
             groundCheckTimer = 0;
             if(!currentState.GroundCheck())
             {
-                Destroy(gameObject);
+                Die();
             }
         }
+    }
+
+    public void Die()
+    {
+
+        Destroy(gameObject);
     }
 
     /// <summary>
@@ -84,7 +92,7 @@ public class EnemyBehaviour : MonoBehaviour
     /// <returns></returns>
     public bool GroundCheck()
     {
-        return largeEnemy ? Physics.CheckBox(transform.position, new Vector3(1, 10, 1), Quaternion.identity,GroundMask) : Physics.Raycast(transform.position, Vector3.down, 10f, GroundMask) && rigid.isKinematic;
+        return largeEnemy ? Physics.CheckSphere(transform.position, 1, GroundMask) : Physics.Raycast(transform.position, Vector3.down, 10f, GroundMask) && rigid.isKinematic;
     }
 
     #region StateMachine
@@ -191,9 +199,16 @@ public class EnemyBehaviour : MonoBehaviour
         agent.enabled = false;
         rigid.isKinematic = false;
         rigid.AddForce(_force, ForceMode.Impulse);
-        StartCoroutine(AddKnockback(1));
+        //StartCoroutine(AddKnockback(1));
     }
 
+    public void EndKnockback()
+    {
+        transform.position = new Vector3(transform.position.x, groundYValue, transform.position.z);
+        agent.enabled = move.usingAgent;
+        rigid.isKinematic = true;
+    }
+    /*
     public void Knockback(Vector3 _force, float _knockbackTime)
     {
         ChangeState(ScriptableObject.CreateInstance<EnemyStunned>());
@@ -209,5 +224,12 @@ public class EnemyBehaviour : MonoBehaviour
         ChangeState(idle.GetStateCopy());
         agent.enabled = move.usingAgent;
         rigid.isKinematic = true;
+    }
+    */
+
+    public bool IsAtGround()
+    {
+        return transform.position.y <= groundYValue;
+        //return Mathf.Abs(transform.position.y - groundYValue) < 0.1;
     }
 }

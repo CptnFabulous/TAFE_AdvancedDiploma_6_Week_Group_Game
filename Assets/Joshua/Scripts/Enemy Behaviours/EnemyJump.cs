@@ -97,10 +97,12 @@ public class EnemyJump : EnemyMove
 
     public override void DestroyState()
     {
+        /*
         if(machine.transform.position != destination)
         {
             machine.transform.position = new Vector3(machine.transform.position.x, destination.y, machine.transform.position.z);
         }
+        */
         machine.SetAnimFloat("Move", 0);
         base.DestroyState();
     }

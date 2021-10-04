@@ -32,7 +32,7 @@ public class EnemyAttack : BaseState
         timer += Time.deltaTime;
         if (timer > waitTime)
         {
-            Debug.Log("attack's over");
+            //Debug.Log("attack's over");
             machine.ChangeState(machine.GetIdle().GetStateCopy());
         }
     }

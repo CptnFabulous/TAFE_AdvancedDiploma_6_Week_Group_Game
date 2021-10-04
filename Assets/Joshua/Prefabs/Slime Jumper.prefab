@@ -120,7 +120,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2370708808840157254}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.6, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 7748252986294699388}
@@ -180,6 +180,7 @@ MonoBehaviour:
   idle: {fileID: 11400000, guid: 0c187883d5cb7c24ea294f0254e3f30e, type: 2}
   move: {fileID: 11400000, guid: eb2bc226352eb7a4f8706db996f516fc, type: 2}
   attack: {fileID: 11400000, guid: 4d5240de63a9ab24eb73389d717d7de3, type: 2}
+  largeEnemy: 0
 --- !u!195 &3181541108136256786
 NavMeshAgent:
   m_ObjectHideFlags: 0
