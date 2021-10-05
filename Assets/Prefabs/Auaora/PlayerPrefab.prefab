@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 331060001194619438}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Target
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -24,7 +24,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 65064418150573754}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 1.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 5207364496814264162}
@@ -44,9 +44,9 @@ GameObject:
   - component: {fileID: 6068566402098617140}
   - component: {fileID: 2164860852670962302}
   - component: {fileID: 5031130327351474377}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: PlayerPrefab
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -88,14 +88,15 @@ MonoBehaviour:
   maxSpeed: 5.5
   groundMask:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 2304
   dashSpeed: 15
   dashCooldown: 0.3
   attackSpeed: 1
+  attackForce: 5
   attackMask:
     serializedVersion: 2
-    m_Bits: 0
-  maxHealth: 0
+    m_Bits: 1280
+  maxHealth: 10
 --- !u!136 &6068566402098617140
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -124,7 +125,7 @@ Rigidbody:
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 84
+  m_Constraints: 116
   m_CollisionDetection: 0
 --- !u!95 &5031130327351474377
 Animator:
@@ -154,7 +155,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3620019126103007105}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Character
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -188,7 +189,7 @@ GameObject:
   - component: {fileID: 5505263066817469257}
   - component: {fileID: 6846131766115759535}
   - component: {fileID: 6681754722725258633}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Capsule
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -267,8 +268,7 @@ GameObject:
   - component: {fileID: 5056107359960271416}
   - component: {fileID: 1475887244380605355}
   - component: {fileID: 61690798667569949}
-  - component: {fileID: 1437977986679600090}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -337,19 +337,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!65 &1437977986679600090
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6685876933535391299}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &6748481427600532175
 GameObject:
   m_ObjectHideFlags: 0
@@ -359,7 +346,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4295221843163609446}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Indicator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -392,7 +379,7 @@ GameObject:
   - component: {fileID: 5207364496814264162}
   - component: {fileID: 7750813999681605809}
   - component: {fileID: 700579812872378538}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -471,8 +458,7 @@ GameObject:
   - component: {fileID: 8654780104291299739}
   - component: {fileID: 6017202118286300798}
   - component: {fileID: 1528877902000896781}
-  - component: {fileID: 2722279999026414812}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Cube (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -540,16 +526,3 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!65 &2722279999026414812
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9159810315220828059}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}

@@ -23,6 +23,7 @@ public class AbilityManager : MonoBehaviour
     private List<int> specialAbilities = new List<int>();
     private int attackSpeedUps = 0;
     private int healthUps = 0;
+    private int attackForceUps = 0;
 
     private void Start()
     {
@@ -55,6 +56,13 @@ public class AbilityManager : MonoBehaviour
         float speed = 1f;
         speed += (attackSpeedUps * 0.1f);
         return speed;
+    }
+
+    public float GetAttackForceBonus()
+    {
+        float force = 0f;
+        force += (attackForceUps * 0.5f);
+        return force;
     }
 
     public int GetHealthBonus()

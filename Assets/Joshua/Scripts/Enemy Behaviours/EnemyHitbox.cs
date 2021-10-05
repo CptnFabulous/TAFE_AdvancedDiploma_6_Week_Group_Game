@@ -6,6 +6,9 @@ public class EnemyHitbox : MonoBehaviour
 {
     private void OnTriggerEnter(Collider other)
     {
-        //Put the method for damaging the player here
+        if (other.CompareTag("Player"))
+        {
+            other.GetComponent<Auaora.PlayerScript>().TakeDamage(1f, transform.position, true);
+        }
     }
 }
