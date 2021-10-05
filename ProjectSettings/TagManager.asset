@@ -18,10 +18,10 @@ TagManager:
   - EnemyHurtbox
   - Level Geometry
   - 
+  - Player
   - 
   - 
-  - 
-  - 
+  - PlayerDash
   - 
   - 
   - 

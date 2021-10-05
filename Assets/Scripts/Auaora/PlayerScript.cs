@@ -30,6 +30,7 @@ namespace Auaora
 
         [Header("Misc Variables")]
         [SerializeField] private float attackSpeed = 1f;
+        [SerializeField] private float attackForce = 5f;
         [SerializeField] private LayerMask attackMask;
         private PlayerState currentState = PlayerState.Regular;
         public PlayerState CurrentState { get { return currentState; } }
@@ -114,16 +115,16 @@ namespace Auaora
                 }
                 else if (currentState == PlayerState.Hitstun)
                 {
-                    if (knockbackVector == Vector2.zero)
+                    if (knockbackVector.magnitude <= 0.5f || rigRef.velocity.magnitude <= 0.5f)
                     {
                         EndHitstun();
                     }
                     else
                     {
-                        //apply hitstun and reduce
+                        rigRef.velocity = Vector2.SmoothDamp(knockbackVector, Vector2.zero, ref knockbackVector, 1.5f);
                     }
                 }
-
+                
                 if (currentState != PlayerState.Dashing)
                 {
                     print("Checking Fall");
@@ -180,6 +181,7 @@ namespace Auaora
         private void EndHitstun()
         {
             currentState = PlayerState.Regular;
+            gameObject.layer = 13;
         }
 
         //Ends dashing
@@ -213,6 +215,8 @@ namespace Auaora
                 {
                     return;
                 }
+                currentState = PlayerState.Hitstun;
+                gameObject.layer = 16;
                 currentHealth -= Mathf.FloorToInt(damage);
                 //FindObjectOfType<HUDScript>().ShowDamageNumber(damage, transform.position, true);
                 //sceneMuleRef.UpdateUi();
@@ -224,7 +228,8 @@ namespace Auaora
                 {
                     if (knockback)
                     {
-                        knockbackVector = (transform.position - damagePos) * 4f;
+                        knockbackVector = (transform.position - damagePos).normalized * 20f;
+                        rigRef.velocity = knockbackVector;
                     }
                 }
             }
@@ -299,7 +304,6 @@ namespace Auaora
                 Vector3 smolDir = (cameraRef.GetComponent<Camera>().ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 1f)) - cameraRef.transform.position).normalized;
                 smolDir *= 10f;
                 direction = cameraRef.transform.position + smolDir - gameObject.transform.position;
-                print(cameraRef.GetComponent<Camera>().ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 1f)) + ": pos");
             }
             else
             {
@@ -320,32 +324,21 @@ namespace Auaora
 
         public void EnactAttack()
         {
-            Collider[] hitObjects = Physics.OverlapSphere(attackIndicatorTarget.transform.position, 0.2f, attackMask);
-            Collider closest = null;
+            print("ATTACKING " + attackIndicatorTarget.transform.position);
+            Collider[] hitObjects = Physics.OverlapSphere(attackIndicatorTarget.transform.position, 0.5f, attackMask);
+            bool enemy = false;
+            print("THINGS HIT: " + hitObjects.Length);
             foreach (Collider hitCol in hitObjects)
             {
-                if (closest)
+                if (hitCol.GetComponent<EnemyBehaviour>())
                 {
-                    if (Vector3.Distance(transform.position, hitCol.transform.position) < Vector3.Distance(transform.position, closest.transform.position))
-                    {
-                        closest = hitCol;
-                    }
-                }
-                else
-                {
-                    closest = hitCol;
+                    print("KNOCKBACK");
+                    hitCol.GetComponent<EnemyBehaviour>().Knockback(AimInputVector() * (attackForce + AbilityManager.SoleManager.GetAttackForceBonus()));
                 }
             }
-            if (!closest)
+            if (!enemy)
             {
                 // break block beneath
-            }
-            else
-            {
-                if (true) // check if enemy has enemy script
-                {
-                    // damage enemy
-                }
             }
         }
 
