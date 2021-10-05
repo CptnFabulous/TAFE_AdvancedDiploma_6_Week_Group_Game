@@ -764,6 +764,8 @@ MonoBehaviour:
   spawnTable:
   - enemy: {fileID: 2370708808840157254, guid: 633cb3ee9e6cb7546983f4acd614a83f, type: 3}
     weight: 1
+  - enemy: {fileID: 8120905295174416153, guid: 5ea81fd11e962374c852716396e9dc8b, type: 3}
+    weight: 1
   minEnemySpawns: 5
   minSpawnTime: 1
   maxSpawnTime: 5

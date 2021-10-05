@@ -333,7 +333,9 @@ namespace Auaora
                 if (hitCol.GetComponent<EnemyBehaviour>())
                 {
                     print("KNOCKBACK");
-                    hitCol.GetComponent<EnemyBehaviour>().Knockback(AimInputVector() * (attackForce + AbilityManager.SoleManager.GetAttackForceBonus()));
+                    Vector2 aim = AimInputVector();
+                    Vector3 direction = new Vector3(aim.x, 0.25f, aim.y);
+                    hitCol.GetComponent<EnemyBehaviour>().Knockback(direction * (attackForce + AbilityManager.SoleManager.GetAttackForceBonus()));
                 }
             }
             if (!enemy)
