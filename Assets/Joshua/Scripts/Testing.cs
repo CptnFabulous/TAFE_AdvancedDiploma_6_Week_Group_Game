@@ -4,11 +4,7 @@ using UnityEngine;
 
 public class Testing : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public Vector3 force;
 
     // Update is called once per frame
     void Update()
@@ -18,7 +14,7 @@ public class Testing : MonoBehaviour
             EnemyBehaviour[] enemies = FindObjectsOfType<EnemyBehaviour>();
             foreach(EnemyBehaviour enemy in enemies)
             {
-                enemy.Knockback(Vector3.up * 10);
+                enemy.Knockback(force);
             }
         }
     }
