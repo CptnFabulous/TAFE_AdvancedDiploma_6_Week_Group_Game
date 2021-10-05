@@ -86,6 +86,9 @@ MonoBehaviour:
   attackIndicatorTarget: {fileID: 65064418150573754}
   visualRef: {fileID: 3736775924968168126}
   maxSpeed: 5.5
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 1
   dashSpeed: 15
   dashCooldown: 0.3
   attackSpeed: 1

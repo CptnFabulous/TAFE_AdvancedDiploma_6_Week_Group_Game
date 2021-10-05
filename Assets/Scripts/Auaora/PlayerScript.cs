@@ -18,7 +18,7 @@ namespace Auaora
         private Vector2 speed;
         [SerializeField] private float maxSpeed = 4f;
         private bool mouseAim = false;
-
+        [SerializeField] private LayerMask groundMask;
         private Vector2 knockbackVector = Vector2.zero;
 
         [Header("Dash Variables")]
@@ -42,7 +42,7 @@ namespace Auaora
         // Sets some things automatically
         void Start()
         {
-            currentHealth = maxHealth;
+            currentHealth = maxHealth + AbilityManager.SoleManager.GetHealthBonus();
             rigRef = GetComponent<Rigidbody>();
 
             if (!cameraRef && FindObjectOfType<PlayerCameraScript>())
@@ -77,7 +77,7 @@ namespace Auaora
             //Checks for dash input
             if (Input.GetButtonDown("Dash"))
             {
-                if (IfPlayerNotState(false, true, true, true) || (currentState == PlayerState.Attacking && !attackBlockingDash))
+                if (IfPlayerNotState(false, true, true, true, true) || (currentState == PlayerState.Attacking && !attackBlockingDash))
                 {
                     currentState = PlayerState.Dashing;
                     BeginDash();
@@ -86,14 +86,14 @@ namespace Auaora
 
             if (Input.GetButtonDown("Attack"))
             {
-                if (IfPlayerNotState(false, true, true, true))
+                if (IfPlayerNotState(false, true, true, true, true))
                 {
                     StartAttack();
                 }
             }
 
             // Control speed
-            if (IfPlayerNotState(false, true, true, true) && Time.timeScale != 0)
+            if (IfPlayerNotState(false, true, true, true, true) && Time.timeScale != 0)
             {
                 speed.x = Input.GetAxisRaw("Horizontal") * 10f;
                 speed.y = Input.GetAxisRaw("Vertical") * 10f;
@@ -123,6 +123,15 @@ namespace Auaora
                         //apply hitstun and reduce
                     }
                 }
+
+                if (currentState != PlayerState.Dashing)
+                {
+                    print("Checking Fall");
+                    if (!Physics.Raycast(transform.position, Vector3.down, 1.5f, groundMask))
+                    {
+                        Fall();
+                    }
+                }
             }
 
             if (intangible > 0)
@@ -147,6 +156,25 @@ namespace Auaora
 
                 HandleAnimation();
             }
+        }
+
+        private void Fall()
+        {
+            playerAnim.SetTrigger("Fall");
+            Die();
+        }
+
+        private void BeKilled()
+        {
+            playerAnim.SetTrigger("Death");
+            Die();
+        }
+
+        private void Die()
+        {
+            dead = true;
+            rigRef.velocity = Vector3.zero;
+            speed = Vector2.zero;
         }
 
         private void EndHitstun()
@@ -188,9 +216,16 @@ namespace Auaora
                 currentHealth -= Mathf.FloorToInt(damage);
                 //FindObjectOfType<HUDScript>().ShowDamageNumber(damage, transform.position, true);
                 //sceneMuleRef.UpdateUi();
-                if (knockback)
+                if (currentHealth <= 0)
                 {
-                    knockbackVector = (transform.position - damagePos) * 4f;
+                    BeKilled();
+                }
+                else
+                {
+                    if (knockback)
+                    {
+                        knockbackVector = (transform.position - damagePos) * 4f;
+                    }
                 }
             }
         }
@@ -276,7 +311,7 @@ namespace Auaora
 
         private void StartAttack()
         {
-            playerAnim.SetFloat("AttackSpeed", attackSpeed);
+            playerAnim.SetFloat("AttackSpeed", AbilityManager.SoleManager.GetAttackSpeed());
             playerAnim.SetTrigger("Attack");
             currentState = PlayerState.Attacking;
             rigRef.velocity = Vector3.zero;
@@ -335,7 +370,7 @@ namespace Auaora
             currentState = PlayerState.Regular;
         }
 
-        private bool IfPlayerNotState(bool regularState, bool dashingState, bool attackingState, bool hitstunState)
+        private bool IfPlayerNotState(bool regularState, bool dashingState, bool attackingState, bool hitstunState, bool deadState)
         {
             if (regularState && currentState == PlayerState.Regular)
             {
@@ -350,6 +385,10 @@ namespace Auaora
                 return false;
             }
             if (hitstunState && currentState == PlayerState.Hitstun)
+            {
+                return false;
+            }
+            if (deadState && dead)
             {
                 return false;
             }
