@@ -22,6 +22,8 @@ public class EnemyBehaviour : MonoBehaviour
     private float groundYValue;
     public LayerMask GroundMask { get; private set; }
 
+    private List<EnemyBehaviour> spawner;
+
     private void Awake()
     {
         if(idle == null)
@@ -80,9 +82,15 @@ public class EnemyBehaviour : MonoBehaviour
         }
     }
 
+    public void SetSpawner(List<EnemyBehaviour> _spawner)
+    {
+        spawner = _spawner;
+        spawner.Add(this);
+    }
+
     public void Die()
     {
-
+        spawner.Remove(this);
         Destroy(gameObject);
     }
 

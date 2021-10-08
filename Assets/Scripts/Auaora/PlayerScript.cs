@@ -127,7 +127,7 @@ namespace Auaora
                 
                 if (currentState != PlayerState.Dashing)
                 {
-                    print("Checking Fall");
+                    //print("Checking Fall");
                     if (!Physics.Raycast(transform.position, Vector3.down, 1.5f, groundMask))
                     {
                         Fall();

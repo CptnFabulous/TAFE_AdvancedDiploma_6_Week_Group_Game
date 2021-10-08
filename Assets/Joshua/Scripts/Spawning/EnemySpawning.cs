@@ -27,8 +27,9 @@ public class EnemySpawning : MonoBehaviour
 
     [SerializeField] private float minSpawnTime = 1;
     [SerializeField] private float maxSpawnTime = 2;
+    private bool spawnActive = true;
     private List<float> spawnTimers;
-    private int enemiesSpawned = 0;
+    private List<EnemyBehaviour> enemiesSpawned;
 
     public bool isSpawning = true;
 
@@ -58,6 +59,8 @@ public class EnemySpawning : MonoBehaviour
         {
             spawnTimers.Add(Random.Range(minSpawnTime, maxSpawnTime));
         }
+
+        enemiesSpawned = new List<EnemyBehaviour>();
     }
 
     // Update is called once per frame
@@ -66,28 +69,44 @@ public class EnemySpawning : MonoBehaviour
         if (!isSpawning)
             return;
 
-        for (int i = 0; i < spawnTimers.Count; ++i)
+        if(spawnActive == true)
         {
-            if(spawnTimers[i] > 0)
+            spawnActive = false;
+            //string log = "";
+            for (int i = 0; i < spawnTimers.Count; ++i)
             {
-                spawnTimers[i] -= Time.deltaTime;
+                //log += i + ": " + spawnTimers[i];
+                if(spawnTimers[i] > 0)
+                {
+                    spawnActive = true;
+                    spawnTimers[i] -= Time.deltaTime;
+                    if(spawnTimers[i] < 0)
+                    {
+                        SpawnEnemy();
+                    }
+                }
             }
-            else
-            {
-                SpawnEnemy();
-                enemiesSpawned++;
-            }
+            //Debug.Log(log);
         }
 
-        if (spawnTimers.Count <= enemiesSpawned)
+        if(enemiesSpawned.Count == 0 && !spawnActive)
+        {
+            SpawnItem();
             enabled = false;
+        }
+    }
+
+    private void SpawnItem()
+    {
+        Debug.Log("Item get!");
     }
 
     private void SpawnEnemy()
     {
         Transform spawnPosition = spawnPositions[Random.Range(0, spawnPositions.Count)];
         GameObject enemy = enemies[Random.Range(0, enemies.Count)];
-        Instantiate(enemy, spawnPosition);
+        GameObject newEnemy = Instantiate(enemy, spawnPosition);
+        newEnemy.GetComponent<EnemyBehaviour>().SetSpawner(enemiesSpawned);
         spawnPositions.Remove(spawnPosition);
     }
 }

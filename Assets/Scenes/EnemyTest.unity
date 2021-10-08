@@ -876,7 +876,7 @@ MonoBehaviour:
     weight: 2
   - enemy: {fileID: 2370708808840157254, guid: 633cb3ee9e6cb7546983f4acd614a83f, type: 3}
     weight: 1
-  minEnemySpawns: 5
+  minEnemySpawns: 3
   minSpawnTime: 1
   maxSpawnTime: 5
   isSpawning: 1
