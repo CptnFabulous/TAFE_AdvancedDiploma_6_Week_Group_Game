@@ -37,6 +37,8 @@ namespace Auaora
         [SerializeField] private int maxHealth;
         private int currentHealth;
 
+        public BlockInteraction BlockInteraction;
+
         private float intangible = 0f;
         private bool dead;
 

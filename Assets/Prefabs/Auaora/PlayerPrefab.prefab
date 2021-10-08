@@ -97,6 +97,11 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1280
   maxHealth: 10
+  BlockInteraction:
+    raycastLength: 5
+    hitDetection:
+      serializedVersion: 2
+      m_Bits: 2304
 --- !u!136 &6068566402098617140
 CapsuleCollider:
   m_ObjectHideFlags: 0
