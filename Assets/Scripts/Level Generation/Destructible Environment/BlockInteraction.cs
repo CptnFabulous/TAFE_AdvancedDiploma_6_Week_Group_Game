@@ -18,9 +18,11 @@ public class BlockInteraction
         TargetedBlockCoords = Vector3Int.zero;
         TargetedChunk = null;
 
+
         // Launch a raycast and get appropriate info - if raycast is false, nothing is found, return null
         if (!Physics.Raycast(origin, direction, out RaycastHit rh, raycastLength, hitDetection))
         {
+
             // Raycast detected nothing
             return false;
         }
@@ -41,6 +43,7 @@ public class BlockInteraction
         // Then try to convert it to coordinates inside the chunk
         if (!TargetedChunk.TryGetCoordinates(pointInsideBlock, out Vector3Int coords))
         {
+
             // Position obtained somehow doesn't match up with a point on the grid
             return false;
         }
@@ -57,6 +60,7 @@ public class BlockInteraction
         // Checks that the position has produced a block (this should pretty much always return true)
         if (TargetedChunk.Block(TargetedBlockCoords).Exists == false)
         {
+
             // The block data is somehow empty
             return false;
         }

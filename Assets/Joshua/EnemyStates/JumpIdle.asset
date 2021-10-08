@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: JumpIdle
   m_EditorClassIdentifier: 
   machine: {fileID: 0}
-  waitTime: 0.5
+  waitTime: 1.5

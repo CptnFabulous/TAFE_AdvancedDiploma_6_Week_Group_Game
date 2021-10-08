@@ -38,7 +38,7 @@ namespace Auaora
         [SerializeField] private int maxHealth;
         private int currentHealth;
 
-        public BlockInteraction BlockInteraction;
+        public BlockInteraction blockInteraction;
 
         private float intangible = 0f;
         private bool dead;
@@ -331,7 +331,7 @@ namespace Auaora
         {
             print("ATTACKING " + attackIndicatorTarget.transform.position);
             Collider[] hitObjects = Physics.OverlapSphere(attackIndicatorTarget.transform.position, 0.5f, attackMask);
-            bool enemy = false;
+            bool enemy = hitObjects.Length > 0;
             print("THINGS HIT: " + hitObjects.Length);
             foreach (Collider hitCol in hitObjects)
             {
@@ -346,6 +346,8 @@ namespace Auaora
             if (!enemy)
             {
                 // break block beneath
+                if(blockInteraction.TryCheckBlock(attackIndicatorTarget.transform.position, Vector3.down))
+                    blockInteraction.TargetedChunk.DamageBlock(blockInteraction.TargetedBlockCoords, 1);
             }
         }
 

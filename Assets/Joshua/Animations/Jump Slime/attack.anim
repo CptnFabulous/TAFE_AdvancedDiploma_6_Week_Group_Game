@@ -195,7 +195,7 @@ AnimationClip:
       serializedVersion: 2
       m_Curve:
       - serializedVersion: 3
-        time: 0
+        time: 0.083333336
         value: 1
         inSlope: Infinity
         outSlope: Infinity
@@ -204,7 +204,7 @@ AnimationClip:
         inWeight: 0
         outWeight: 0
       - serializedVersion: 3
-        time: 0.41666666
+        time: 0.20833333
         value: 0
         inSlope: Infinity
         outSlope: Infinity
@@ -455,7 +455,7 @@ AnimationClip:
       serializedVersion: 2
       m_Curve:
       - serializedVersion: 3
-        time: 0
+        time: 0.083333336
         value: 1
         inSlope: Infinity
         outSlope: Infinity
@@ -464,7 +464,7 @@ AnimationClip:
         inWeight: 0
         outWeight: 0
       - serializedVersion: 3
-        time: 0.41666666
+        time: 0.20833333
         value: 0
         inSlope: Infinity
         outSlope: Infinity
