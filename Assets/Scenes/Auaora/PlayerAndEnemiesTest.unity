@@ -739,7 +739,7 @@ MonoBehaviour:
   chunkPrefab: {fileID: 1017290859246971262, guid: e6aa0786044107c47b36c88ad4e42f73,
     type: 3}
   chunkSize: {x: 16, y: 1, z: 16}
-  chunkDimensions: {x: 4, y: 4, z: 4}
+  chunkDimensions: {x: 1, y: 1, z: 1}
   blockToFill: {fileID: 11400000, guid: 4cf44b270811bf147a5543c5767fbe6a, type: 2}
 --- !u!4 &1766579500
 Transform:
@@ -885,8 +885,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spawnTable:
   - enemy: {fileID: 2370708808840157254, guid: 633cb3ee9e6cb7546983f4acd614a83f, type: 3}
-    weight: 1
-  - enemy: {fileID: 8120905295174416153, guid: 5ea81fd11e962374c852716396e9dc8b, type: 3}
     weight: 1
   minEnemySpawns: 5
   minSpawnTime: 1
