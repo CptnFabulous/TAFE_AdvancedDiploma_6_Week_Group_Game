@@ -13,6 +13,7 @@ namespace Auaora
         [SerializeField] private GameObject attackIndicator;
         [SerializeField] private GameObject attackIndicatorTarget;
         [SerializeField] private GameObject visualRef;
+        private HUDScript hudRef;
 
         [Header("Movement Variables")]
         private Vector2 speed;
@@ -47,6 +48,7 @@ namespace Auaora
         {
             currentHealth = maxHealth + AbilityManager.SoleManager.GetHealthBonus();
             rigRef = GetComponent<Rigidbody>();
+            hudRef = FindObjectOfType<HUDScript>();
 
             if (!cameraRef && FindObjectOfType<PlayerCameraScript>())
             {
@@ -183,7 +185,7 @@ namespace Auaora
         private void EndHitstun()
         {
             currentState = PlayerState.Regular;
-            gameObject.layer = 13;
+            playerAnim.SetTrigger("StunEnd");
         }
 
         //Ends dashing
@@ -219,9 +221,9 @@ namespace Auaora
                 }
                 currentState = PlayerState.Hitstun;
                 gameObject.layer = 16;
+                intangible = 2f;
                 currentHealth -= Mathf.FloorToInt(damage);
-                //FindObjectOfType<HUDScript>().ShowDamageNumber(damage, transform.position, true);
-                //sceneMuleRef.UpdateUi();
+                hudRef.SetHealthAmount(currentHealth, maxHealth);
                 if (currentHealth <= 0)
                 {
                     BeKilled();
@@ -232,6 +234,7 @@ namespace Auaora
                     {
                         knockbackVector = (transform.position - damagePos).normalized * 20f;
                         rigRef.velocity = knockbackVector;
+                        playerAnim.SetTrigger("Stun");
                     }
                 }
             }
