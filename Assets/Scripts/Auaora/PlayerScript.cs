@@ -21,6 +21,8 @@ namespace Auaora
         private bool mouseAim = false;
         [SerializeField] private LayerMask groundMask;
         private Vector2 knockbackVector = Vector2.zero;
+        [SerializeField] private float fallTimerMax = 0.5f;
+        private float fallTimer = 1f;
 
         [Header("Dash Variables")]
         private bool attackBlockingDash = false;
@@ -49,6 +51,8 @@ namespace Auaora
             currentHealth = maxHealth + AbilityManager.SoleManager.GetHealthBonus();
             rigRef = GetComponent<Rigidbody>();
             hudRef = FindObjectOfType<HUDScript>();
+
+            fallTimer = fallTimerMax;
 
             if (!cameraRef && FindObjectOfType<PlayerCameraScript>())
             {
@@ -98,7 +102,7 @@ namespace Auaora
             }
 
             // Control speed
-            if (IfPlayerNotState(false, true, true, true, true) && Time.timeScale != 0)
+            if (IfPlayerNotState(false, true, false, true, true) && Time.timeScale != 0)
             {
                 speed.x = Input.GetAxisRaw("Horizontal") * 10f;
                 speed.y = Input.GetAxisRaw("Vertical") * 10f;
@@ -109,12 +113,19 @@ namespace Auaora
             // Apply movement
             if (!dead && Time.timeScale != 0)
             {
-                if (currentState == PlayerState.Regular)
+                if (currentState == PlayerState.Regular || currentState == PlayerState.Attacking)
                 {
                     rigRef.velocity = new Vector3(speed.x, 0f, speed.y);
-                    if (speed != Vector2.zero)
+                    if (currentState == PlayerState.Regular)
                     {
-                        RotateVisuals(new Vector3(speed.x, 0f, speed.y));
+                        if (speed != Vector2.zero)
+                        {
+                            RotateVisuals(new Vector3(speed.x, 0f, speed.y));
+                        }
+                    }
+                    else
+                    {
+                        RotateVisuals(attackIndicatorTarget.transform.position - transform.position);
                     }
                 }
                 else if (currentState == PlayerState.Hitstun)
@@ -134,7 +145,18 @@ namespace Auaora
                     //print("Checking Fall");
                     if (!Physics.Raycast(transform.position, Vector3.down, 1.5f, groundMask))
                     {
-                        Fall();
+                        if (fallTimer <= 0f)
+                        {
+                            Fall();
+                        }
+                        else
+                        {
+                            fallTimer -= Time.deltaTime;
+                        }
+                    }
+                    else
+                    {
+                        fallTimer = fallTimerMax;
                     }
                 }
             }

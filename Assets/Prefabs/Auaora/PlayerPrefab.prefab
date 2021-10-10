@@ -89,6 +89,7 @@ MonoBehaviour:
   groundMask:
     serializedVersion: 2
     m_Bits: 2304
+  fallTimerMax: 0.2
   dashSpeed: 15
   dashCooldown: 0.3
   attackSpeed: 1
