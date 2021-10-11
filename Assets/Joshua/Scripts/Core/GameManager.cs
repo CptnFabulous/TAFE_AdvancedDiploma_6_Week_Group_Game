@@ -26,6 +26,14 @@ public class GameManager : MonoBehaviour
     [SerializeField] private List<GameObject> roomPrefabs;
     [SerializeField] private string gameSceneName;
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            SceneManager.LoadSceneAsync(0);
+        }
+    }
+
     public void SelectRoom()
     {
         Instantiate(roomPrefabs[Random.Range(0, roomPrefabs.Count)]);
