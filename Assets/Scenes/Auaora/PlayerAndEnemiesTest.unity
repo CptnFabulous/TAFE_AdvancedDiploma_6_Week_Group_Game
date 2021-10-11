@@ -245,6 +245,7 @@ MonoBehaviour:
   maxRooms: 10
   roomPrefabs:
   - {fileID: 997162686746286515, guid: 02eb8841541d141478f5439e7ff22471, type: 3}
+  gameSceneName: PlayerAndEnemiesTest
 --- !u!4 &550089445
 Transform:
   m_ObjectHideFlags: 0

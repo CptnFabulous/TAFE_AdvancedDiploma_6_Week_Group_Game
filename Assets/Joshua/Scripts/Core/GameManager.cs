@@ -13,7 +13,6 @@ public class GameManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
-            DoOnAwake();
         }
         else if(Instance != this)
         {
@@ -24,16 +23,8 @@ public class GameManager : MonoBehaviour
 
     private int currentRoom = 0;
     [SerializeField] private int maxRooms = 10;
-    private Scene gameScene;
     [SerializeField] private List<GameObject> roomPrefabs;
-
-    /// <summary>
-    /// This method is called the first time the gamemanger is loaded
-    /// </summary>
-    private void DoOnAwake()
-    {
-        gameScene = SceneManager.GetActiveScene();
-    }
+    [SerializeField] private string gameSceneName;
 
     public void SelectRoom()
     {
@@ -49,14 +40,14 @@ public class GameManager : MonoBehaviour
         else
         {
             currentRoom++;
-            SceneManager.LoadScene(gameScene.buildIndex);
+            SceneManager.LoadScene(gameSceneName);
         }
     }
 
     public void StartAgain()
     {
         currentRoom = 0;
-        SceneManager.LoadScene(gameScene.buildIndex);
+        SceneManager.LoadScene(gameSceneName);
     }
 
     private void Victory()
