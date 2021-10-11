@@ -199,7 +199,6 @@ namespace Auaora
             speed = Vector2.zero;
 
             StartCoroutine(nameof(StartAgain));
-            Debug.Log("a");
         }
 
         /// <summary>
