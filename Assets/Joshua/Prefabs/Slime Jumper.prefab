@@ -181,7 +181,7 @@ MonoBehaviour:
   idle: {fileID: 11400000, guid: 0c187883d5cb7c24ea294f0254e3f30e, type: 2}
   move: {fileID: 11400000, guid: eb2bc226352eb7a4f8706db996f516fc, type: 2}
   attack: {fileID: 11400000, guid: 4d5240de63a9ab24eb73389d717d7de3, type: 2}
-  largeEnemy: 0
+  largeEnemy: 1
 --- !u!195 &3181541108136256786
 NavMeshAgent:
   m_ObjectHideFlags: 0
