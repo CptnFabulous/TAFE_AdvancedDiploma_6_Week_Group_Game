@@ -12,6 +12,7 @@ namespace Auaora
         [SerializeField] private PlayerCameraScript cameraRef;
         [SerializeField] private GameObject attackIndicator;
         [SerializeField] private GameObject attackIndicatorTarget;
+        [SerializeField] private GameObject attackIndicatorGround;
         [SerializeField] private GameObject visualRef;
         private HUDScript hudRef;
 
@@ -173,13 +174,7 @@ namespace Auaora
             if (Time.timeScale != 0)
             {
                 attackIndicator.transform.LookAt(new Vector3(transform.position.x + AimInputVector().x, transform.position.y, transform.position.z + AimInputVector().y));
-
-                /*
-                Vector3 target = (Vector3)AimInputVector();
-                float angle = Mathf.Atan2(target.y, target.x) * Mathf.Rad2Deg;
-                Quaternion quat = Quaternion.AngleAxis(angle - 90f, Vector3.forward);
-                dashIndicator.transform.rotation = Quaternion.Slerp(dashIndicator.transform.rotation, quat, 0.5f);
-                */
+                attackIndicatorGround.transform.position = new Vector3(Mathf.Round(attackIndicatorTarget.transform.position.x / 2) * 2, attackIndicatorGround.transform.position.y, Mathf.Round(attackIndicatorTarget.transform.position.z / 2) * 2);
 
                 HandleAnimation();
             }
