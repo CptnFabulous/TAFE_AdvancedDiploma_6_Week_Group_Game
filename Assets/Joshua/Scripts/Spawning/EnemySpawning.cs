@@ -99,6 +99,14 @@ public class EnemySpawning : MonoBehaviour
     private void SpawnItem()
     {
         Debug.Log("Item get!");
+        //temporary
+        StartCoroutine(nameof(NextRoom));
+    }
+
+    private IEnumerator NextRoom()
+    {
+        yield return new WaitForSeconds(3);
+        GameManager.Instance.EnterNewRoom();
     }
 
     private void SpawnEnemy()

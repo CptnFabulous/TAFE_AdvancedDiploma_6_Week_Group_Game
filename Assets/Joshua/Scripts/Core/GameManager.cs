@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -12,6 +13,7 @@ public class GameManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+            DoOnAwake();
         }
         else if(Instance != this)
         {
@@ -22,16 +24,37 @@ public class GameManager : MonoBehaviour
 
     private int currentRoom = 0;
     [SerializeField] private int maxRooms = 10;
+    private Scene gameScene;
+    [SerializeField] private List<GameObject> roomPrefabs;
 
-    // Start is called before the first frame update
-    void Start()
+    /// <summary>
+    /// This method is called the first time the gamemanger is loaded
+    /// </summary>
+    private void DoOnAwake()
     {
-        
+        gameScene = SceneManager.GetActiveScene();
     }
 
-    // Update is called once per frame
-    void Update()
+    public void SelectRoom()
     {
-        
+        Instantiate(roomPrefabs[Random.Range(0, roomPrefabs.Count)]);
+    }
+
+    public void EnterNewRoom()
+    {
+        if(currentRoom >= maxRooms)
+        {
+            Victory();
+        }
+        else
+        {
+            currentRoom++;
+            SceneManager.LoadScene(gameScene.buildIndex);
+        }
+    }
+
+    private void Victory()
+    {
+
     }
 }

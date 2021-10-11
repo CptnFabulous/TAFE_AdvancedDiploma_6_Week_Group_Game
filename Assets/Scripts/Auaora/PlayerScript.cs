@@ -352,7 +352,7 @@ namespace Auaora
         public void EnactAttack()
         {
             print("ATTACKING " + attackIndicatorTarget.transform.position);
-            Collider[] hitObjects = Physics.OverlapSphere(attackIndicatorTarget.transform.position, 0.5f, attackMask);
+            Collider[] hitObjects = Physics.OverlapSphere(attackIndicatorTarget.transform.position, 2, attackMask);
             bool enemy = hitObjects.Length > 0;
             print("THINGS HIT: " + hitObjects.Length);
             foreach (Collider hitCol in hitObjects)
