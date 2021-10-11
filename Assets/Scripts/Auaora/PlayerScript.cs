@@ -202,6 +202,18 @@ namespace Auaora
             dead = true;
             rigRef.velocity = Vector3.zero;
             speed = Vector2.zero;
+
+            StartCoroutine(nameof(StartAgain));
+            Debug.Log("a");
+        }
+
+        /// <summary>
+        /// temp
+        /// </summary>
+        private IEnumerator StartAgain()
+        {
+            yield return new WaitForSeconds(3);
+            GameManager.Instance.StartAgain();
         }
 
         private void EndHitstun()

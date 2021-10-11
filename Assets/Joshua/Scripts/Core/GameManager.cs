@@ -53,6 +53,12 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void StartAgain()
+    {
+        currentRoom = 0;
+        SceneManager.LoadScene(gameScene.buildIndex);
+    }
+
     private void Victory()
     {
 
