@@ -33,6 +33,9 @@ public class EnemySpawning : MonoBehaviour
 
     public bool isSpawning = true;
 
+    //item spawning
+    [SerializeField] private List<GameObject> itemPrefabs;
+
     private void Awake()
     {
         enemies = new List<GameObject>();
@@ -99,8 +102,11 @@ public class EnemySpawning : MonoBehaviour
     private void SpawnItem()
     {
         Debug.Log("Item get!");
+
+
+        Instantiate(itemPrefabs[Random.Range(0, itemPrefabs.Count)], new Vector3(10f, 2f, 10f), new Quaternion(0f, 0f, 0f, 0f));
         //temporary
-        StartCoroutine(nameof(NextRoom));
+        //StartCoroutine(nameof(NextRoom));
     }
 
     private IEnumerator NextRoom()

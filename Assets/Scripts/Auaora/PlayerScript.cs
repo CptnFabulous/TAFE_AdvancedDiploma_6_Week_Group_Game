@@ -18,19 +18,24 @@ namespace Auaora
 
         [Header("Movement Variables")]
         private Vector2 speed;
-        [SerializeField] private float maxSpeed = 4f;
+        [SerializeField] private float runSpeed = 4f;
+        [SerializeField] private float attackRunSpeed = 2f;
         private bool mouseAim = false;
         [SerializeField] private LayerMask groundMask;
         private Vector2 knockbackVector = Vector2.zero;
         [SerializeField] private float fallTimerMax = 0.5f;
         private float fallTimer = 1f;
+        private bool attackSlowdown = false;
 
         [Header("Dash Variables")]
         private bool attackBlockingDash = false;
         [SerializeField] private float dashSpeed = 8;
-        private float internalDashCooldown;
-        [SerializeField] private float dashCooldown = 0.3f;
+        private float internalDashTimer;
+        [SerializeField] private float dashTime = 0.3f;
+        [SerializeField] private float dashCooldown = 1.1f;
+        private float internalDashCooldown = -1f;
         private Vector2 dashVector = Vector2.zero;
+        private bool dashOffCooldown = true;
 
         [Header("Misc Variables")]
         [SerializeField] private float attackSpeed = 1f;
@@ -52,6 +57,7 @@ namespace Auaora
             currentHealth = maxHealth + AbilityManager.SoleManager.GetHealthBonus();
             rigRef = GetComponent<Rigidbody>();
             hudRef = FindObjectOfType<HUDScript>();
+            hudRef.SetHealthAmount(currentHealth, maxHealth + AbilityManager.SoleManager.GetHealthBonus());
 
             fallTimer = fallTimerMax;
 
@@ -73,12 +79,12 @@ namespace Auaora
         void Update()
         {
             //Checks if dash should end, else continue dash
-            if (internalDashCooldown > 0 && currentState == PlayerState.Dashing)
+            if (internalDashTimer > 0 && currentState == PlayerState.Dashing)
             {
                 rigRef.velocity = new Vector3(dashVector.x * dashSpeed, 0f, dashVector.y * dashSpeed);
                 intangible = 0.2f;
-                internalDashCooldown -= 1 * Time.deltaTime;
-                if (internalDashCooldown <= 0)
+                internalDashTimer -= 1 * Time.deltaTime;
+                if (internalDashTimer <= 0)
                 {
                     EndDash();
                 }
@@ -87,7 +93,7 @@ namespace Auaora
             //Checks for dash input
             if (Input.GetButtonDown("Dash"))
             {
-                if (IfPlayerNotState(false, true, true, true, true) || (currentState == PlayerState.Attacking && !attackBlockingDash))
+                if ((IfPlayerNotState(false, true, true, true, true) || (currentState == PlayerState.Attacking && !attackBlockingDash)) && dashOffCooldown)
                 {
                     currentState = PlayerState.Dashing;
                     BeginDash();
@@ -108,7 +114,14 @@ namespace Auaora
                 speed.x = Input.GetAxisRaw("Horizontal") * 10f;
                 speed.y = Input.GetAxisRaw("Vertical") * 10f;
                 speed.Normalize();
-                speed *= maxSpeed;
+                if (attackSlowdown)
+                {
+                    speed *= attackRunSpeed;
+                }
+                else
+                {
+                    speed *= runSpeed;
+                }
             }
 
             // Apply movement
@@ -160,6 +173,25 @@ namespace Auaora
                         fallTimer = fallTimerMax;
                     }
                 }
+
+                attackIndicator.transform.LookAt(new Vector3(transform.position.x + AimInputVector().x, transform.position.y, transform.position.z + AimInputVector().y));
+                attackIndicatorGround.transform.position = new Vector3(Mathf.Round(attackIndicatorTarget.transform.position.x / 2) * 2, attackIndicatorGround.transform.position.y, Mathf.Round(attackIndicatorTarget.transform.position.z / 2) * 2);
+
+                HandleAnimation();
+
+                if (internalDashCooldown != -1f)
+                {
+                    if (internalDashCooldown >= (dashCooldown - AbilityManager.SoleManager.GetDashCooldownBonus()))
+                    {
+                        dashOffCooldown = true;
+                        internalDashCooldown = -1f;
+                    }
+                    else
+                    {
+                        internalDashCooldown += Time.deltaTime;
+                    }
+                    hudRef.UpdateDashCooldown(internalDashCooldown, (dashCooldown - AbilityManager.SoleManager.GetDashCooldownBonus()));
+                }
             }
 
             if (intangible > 0)
@@ -169,14 +201,6 @@ namespace Auaora
                 {
                     gameObject.layer = 13;
                 }
-            }
-
-            if (Time.timeScale != 0)
-            {
-                attackIndicator.transform.LookAt(new Vector3(transform.position.x + AimInputVector().x, transform.position.y, transform.position.z + AimInputVector().y));
-                attackIndicatorGround.transform.position = new Vector3(Mathf.Round(attackIndicatorTarget.transform.position.x / 2) * 2, attackIndicatorGround.transform.position.y, Mathf.Round(attackIndicatorTarget.transform.position.z / 2) * 2);
-
-                HandleAnimation();
             }
         }
 
@@ -219,7 +243,7 @@ namespace Auaora
         //Ends dashing
         private void EndDash()
         {
-            internalDashCooldown = 0;
+            internalDashTimer = 0;
             currentState = PlayerState.Regular;
             gameObject.layer = 13;
         }
@@ -229,7 +253,9 @@ namespace Auaora
             Vector2 direction = new Vector2(Mathf.Clamp(Input.GetAxisRaw("Horizontal") * 1000, -1, 1), Mathf.Clamp(Input.GetAxisRaw("Vertical") * 1000, -1, 1)).normalized;
             rigRef.velocity = new Vector3(direction.x * dashSpeed, 0f, direction.y * dashSpeed);
             dashVector = direction;
-            internalDashCooldown = dashCooldown;
+            internalDashTimer = dashTime;
+            dashOffCooldown = false;
+            internalDashCooldown = 0f;
 
             currentState = PlayerState.Dashing;
             intangible = 0.8f;
@@ -248,10 +274,11 @@ namespace Auaora
                     return;
                 }
                 currentState = PlayerState.Hitstun;
+                attackSlowdown = false;
                 gameObject.layer = 16;
                 intangible = 2f;
                 currentHealth -= Mathf.FloorToInt(damage);
-                hudRef.SetHealthAmount(currentHealth, maxHealth);
+                hudRef.SetHealthAmount(currentHealth, maxHealth + AbilityManager.SoleManager.GetHealthBonus());
                 if (currentHealth <= 0)
                 {
                     BeKilled();
@@ -322,11 +349,11 @@ namespace Auaora
         public void HealPlayer(float health)
         {
             health = Mathf.Floor(Mathf.Clamp(health, 1f, 999f));
-            if (currentHealth < maxHealth && currentHealth > 0 && !dead)
+            if (currentHealth < (maxHealth + AbilityManager.SoleManager.GetHealthBonus()) && currentHealth > 0 && !dead)
             {
                 currentHealth += Mathf.FloorToInt(health);
             }
-            //sceneMuleRef.UpdateUi();
+            hudRef.SetHealthAmount(currentHealth, maxHealth + AbilityManager.SoleManager.GetHealthBonus());
         }
 
         public Vector2 AimInputVector()
@@ -358,7 +385,7 @@ namespace Auaora
         public void EnactAttack()
         {
             print("ATTACKING " + attackIndicatorTarget.transform.position);
-            Collider[] hitObjects = Physics.OverlapSphere(attackIndicatorTarget.transform.position, 2, attackMask);
+            Collider[] hitObjects = Physics.OverlapBox(attackIndicatorTarget.transform.position, new Vector3(1f * AbilityManager.SoleManager.GetAttackRangeBonus(), 0.3f, 1f * AbilityManager.SoleManager.GetAttackRangeBonus()), attackIndicator.transform.rotation, attackMask);
             bool enemy = hitObjects.Length > 0;
             print("THINGS HIT: " + hitObjects.Length);
             foreach (Collider hitCol in hitObjects)
@@ -387,6 +414,16 @@ namespace Auaora
         public void DeactivateAttackDashBlock()
         {
             attackBlockingDash = false;
+        }
+
+        public void ActivateAttackSlowdown()
+        {
+            attackSlowdown = true;
+        }
+
+        public void DeactivateAttackSlowdown()
+        {
+            attackSlowdown = false;
         }
 
         private void CancelMeleeAttack()
