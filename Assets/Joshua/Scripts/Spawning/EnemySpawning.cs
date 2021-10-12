@@ -103,8 +103,9 @@ public class EnemySpawning : MonoBehaviour
     {
         Debug.Log("Item get!");
 
-
-        Instantiate(itemPrefabs[Random.Range(0, itemPrefabs.Count)], new Vector3(10f, 2f, 10f), new Quaternion(0f, 0f, 0f, 0f));
+        int selectedItem = Random.Range(0, itemPrefabs.Count);
+        //(for testing) selectedItem = 5;
+        Instantiate(itemPrefabs[selectedItem], new Vector3(10f, 2f, 10f), new Quaternion(0f, 0f, 0f, 0f));
         //temporary
         //StartCoroutine(nameof(NextRoom));
     }
