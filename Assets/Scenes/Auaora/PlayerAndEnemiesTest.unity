@@ -644,11 +644,6 @@ PrefabInstance:
       propertyPath: cameraRef
       value: 
       objectReference: {fileID: 1409098918}
-    - target: {fileID: 7893520795365231517, guid: a834ba5a4c2197a4ba3b69ce422db662,
-        type: 3}
-      propertyPath: attackForce
-      value: 7.5
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a834ba5a4c2197a4ba3b69ce422db662, type: 3}
 --- !u!1 &1660569841 stripped

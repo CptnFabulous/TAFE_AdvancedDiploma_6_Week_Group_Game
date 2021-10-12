@@ -9,6 +9,7 @@ namespace Auaora
         [Header("References")]
         [SerializeField] private Rigidbody rigRef;
         [SerializeField] private Animator playerAnim;
+        [SerializeField] private Animator playerVisualsAnim;
         [SerializeField] private PlayerCameraScript cameraRef;
         [SerializeField] private GameObject attackIndicator;
         [SerializeField] private GameObject attackIndicatorTarget;
@@ -26,6 +27,7 @@ namespace Auaora
         [SerializeField] private float fallTimerMax = 0.5f;
         private float fallTimer = 1f;
         private bool attackSlowdown = false;
+        private bool attackStop = false;
 
         [Header("Dash Variables")]
         private bool attackBlockingDash = false;
@@ -41,6 +43,8 @@ namespace Auaora
         [SerializeField] private float attackSpeed = 1f;
         [SerializeField] private float attackForce = 5f;
         [SerializeField] private LayerMask attackMask;
+        [SerializeField] private LayerMask placeableMask;
+
         private PlayerState currentState = PlayerState.Regular;
         public PlayerState CurrentState { get { return currentState; } }
         [SerializeField] private int maxHealth;
@@ -60,6 +64,7 @@ namespace Auaora
             hudRef.SetHealthAmount(currentHealth, maxHealth + AbilityManager.SoleManager.GetHealthBonus());
 
             fallTimer = fallTimerMax;
+            AbilityManager.SoleManager.ZeroPlatforms(); //temp?
 
             if (!cameraRef && FindObjectOfType<PlayerCameraScript>())
             {
@@ -95,8 +100,11 @@ namespace Auaora
             {
                 if ((IfPlayerNotState(false, true, true, true, true) || (currentState == PlayerState.Attacking && !attackBlockingDash)) && dashOffCooldown)
                 {
-                    currentState = PlayerState.Dashing;
-                    BeginDash();
+                    if (!dead)
+                    {
+                        currentState = PlayerState.Dashing;
+                        BeginDash();
+                    }
                 }
             }
 
@@ -114,7 +122,11 @@ namespace Auaora
                 speed.x = Input.GetAxisRaw("Horizontal") * 10f;
                 speed.y = Input.GetAxisRaw("Vertical") * 10f;
                 speed.Normalize();
-                if (attackSlowdown)
+                if (attackStop)
+                {
+                    speed *= 0;
+                }
+                else if (attackSlowdown)
                 {
                     speed *= attackRunSpeed;
                 }
@@ -153,7 +165,7 @@ namespace Auaora
                         rigRef.velocity = Vector2.SmoothDamp(knockbackVector, Vector2.zero, ref knockbackVector, 1.5f);
                     }
                 }
-                
+
                 if (currentState != PlayerState.Dashing)
                 {
                     //print("Checking Fall");
@@ -206,13 +218,13 @@ namespace Auaora
 
         private void Fall()
         {
-            playerAnim.SetTrigger("Fall");
+            AnimateTrigger("Fall");
             Die();
         }
 
         private void BeKilled()
         {
-            playerAnim.SetTrigger("Death");
+            AnimateTrigger("Death");
             Die();
         }
 
@@ -237,7 +249,7 @@ namespace Auaora
         private void EndHitstun()
         {
             currentState = PlayerState.Regular;
-            playerAnim.SetTrigger("StunEnd");
+            AnimateTrigger("StunEnd");
         }
 
         //Ends dashing
@@ -251,6 +263,11 @@ namespace Auaora
         private void BeginDash()
         {
             Vector2 direction = new Vector2(Mathf.Clamp(Input.GetAxisRaw("Horizontal") * 1000, -1, 1), Mathf.Clamp(Input.GetAxisRaw("Vertical") * 1000, -1, 1)).normalized;
+            if (direction == Vector2.zero)
+            {
+                EndDash();
+                return;
+            }
             rigRef.velocity = new Vector3(direction.x * dashSpeed, 0f, direction.y * dashSpeed);
             dashVector = direction;
             internalDashTimer = dashTime;
@@ -261,7 +278,7 @@ namespace Auaora
             intangible = 0.8f;
             gameObject.layer = 16;
 
-            playerAnim.SetTrigger("Dash");
+            AnimateTrigger("Dash");
             RotateVisuals(rigRef.velocity);
         }
 
@@ -289,7 +306,7 @@ namespace Auaora
                     {
                         knockbackVector = (transform.position - damagePos).normalized * 20f;
                         rigRef.velocity = knockbackVector;
-                        playerAnim.SetTrigger("Stun");
+                        AnimateTrigger("Stun");
                     }
                 }
             }
@@ -331,14 +348,32 @@ namespace Auaora
         //Sends animation controller relevant information
         private void HandleAnimation()
         {
-            if (currentState == PlayerState.Regular && Input.GetAxisRaw("Horizontal") != 0)
+            if (currentState == PlayerState.Regular && (Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0))
             {
-                playerAnim.SetBool("Walk", true);
+                AnimateBool("Walk", true);
             }
             else
             {
-                playerAnim.SetBool("Walk", false);
+                AnimateBool("Walk", false);
             }
+        }
+
+        private void AnimateTrigger(string triggerName)
+        {
+            playerAnim.SetTrigger(triggerName);
+            playerVisualsAnim.SetTrigger(triggerName);
+        }
+
+        private void AnimateBool(string boolName, bool boolValue)
+        {
+            playerAnim.SetBool(boolName, boolValue);
+            playerVisualsAnim.SetBool(boolName, boolValue);
+        }
+
+        private void AnimateFloat(string floatName, float floatValue)
+        {
+            playerAnim.SetFloat(floatName, floatValue);
+            playerVisualsAnim.SetFloat(floatName, floatValue);
         }
 
         public bool IsIntangible()
@@ -361,7 +396,8 @@ namespace Auaora
             Vector2 direction = Vector2.zero;
             if (mouseAim)
             {
-                Vector3 smolDir = (cameraRef.GetComponent<Camera>().ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 1f)) - cameraRef.transform.position).normalized;
+                Vector3 smolDir = cameraRef.GetComponent<Camera>().ScreenPointToRay(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0f)).direction.normalized;
+                //Vector3 smolDir = (cameraRef.GetComponent<Camera>().ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 1f)) - cameraRef.transform.position).normalized;
                 smolDir *= 10f;
                 direction = cameraRef.transform.position + smolDir - gameObject.transform.position;
             }
@@ -375,8 +411,8 @@ namespace Auaora
 
         private void StartAttack()
         {
-            playerAnim.SetFloat("AttackSpeed", AbilityManager.SoleManager.GetAttackSpeed());
-            playerAnim.SetTrigger("Attack");
+            AnimateFloat("AttackSpeed", AbilityManager.SoleManager.GetAttackSpeed());
+            AnimateTrigger("Attack");
             currentState = PlayerState.Attacking;
             rigRef.velocity = Vector3.zero;
             RotateVisuals(attackIndicatorTarget.transform.position - transform.position);
@@ -396,13 +432,32 @@ namespace Auaora
                     Vector2 aim = AimInputVector();
                     Vector3 direction = new Vector3(aim.x, 0.25f, aim.y);
                     hitCol.GetComponent<EnemyBehaviour>().Knockback(direction * (attackForce + AbilityManager.SoleManager.GetAttackForceBonus()));
+                    if (AbilityManager.SoleManager.DoesPlayerHaveSpecialAbility(0))
+                    {
+                        AbilityManager.SoleManager.SpawnSpecialAbility(0, hitCol.transform.position + (hitCol.transform.position - transform.position).normalized).GetComponent<DelayedExplosiveScript>().SetFollow(hitCol.gameObject, (hitCol.transform.position - transform.position).normalized);
+                    }
                 }
             }
             if (!enemy)
             {
                 // break block beneath
-                if(blockInteraction.TryCheckBlock(attackIndicatorTarget.transform.position, Vector3.down))
+                if (blockInteraction.TryCheckBlock(attackIndicatorTarget.transform.position, Vector3.down))
+                {
                     blockInteraction.TargetedChunk.DamageBlock(blockInteraction.TargetedBlockCoords, 1);
+                }
+                RaycastHit hit;
+                Physics.Raycast(attackIndicatorTarget.transform.position, Vector3.down, out hit, 3f, placeableMask);
+                if (hit.collider)
+                {
+                    if (hit.collider.GetComponent<PlaceablePlatformScript>())
+                    {
+                        hit.collider.GetComponent<PlaceablePlatformScript>().BreakPlatform();
+                    }
+                }
+                else if (AbilityManager.SoleManager.DoesPlayerHaveSpecialAbility(1))
+                {
+                    AbilityManager.SoleManager.SpawnSpecialAbility(1, new Vector3(Mathf.Round(attackIndicatorTarget.transform.position.x / 2) * 2, 0.5f, Mathf.Round(attackIndicatorTarget.transform.position.z / 2) * 2));
+                }
             }
         }
 
@@ -424,6 +479,16 @@ namespace Auaora
         public void DeactivateAttackSlowdown()
         {
             attackSlowdown = false;
+        }
+
+        public void ActivateAttackStop()
+        {
+            attackStop = true;
+        }
+
+        public void DeactivateAttackStop()
+        {
+            attackStop = false;
         }
 
         private void CancelMeleeAttack()

@@ -48,7 +48,8 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: 95244f35e1674944589dbf413fff4611, type: 2}
+  m_Motion: {fileID: 1827226128182048838, guid: d3819dc064d88fb4eb8ad9892c9204b4,
+    type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -304,7 +305,7 @@ AnimatorController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: PlayerPrefab
+  m_Name: AbirController
   serializedVersion: 5
   m_AnimatorParameters:
   - m_Name: Attack
@@ -515,7 +516,8 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: 2094e00438cbc994fa91903576b91568, type: 2}
+  m_Motion: {fileID: 1827226128182048838, guid: f7a8b0dd34558c2459ebc4a2e66f976b,
+    type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -618,7 +620,8 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: 85a16650f8a0a684b81a1d569b4eec7b, type: 2}
+  m_Motion: {fileID: 1827226128182048838, guid: 942aa170f7432c04fada730dc73f901f,
+    type: 3}
   m_Tag: 
   m_SpeedParameter: AttackSpeed
   m_MirrorParameter: 
