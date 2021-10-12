@@ -27,6 +27,7 @@ namespace Auaora
         [SerializeField] private float fallTimerMax = 0.5f;
         private float fallTimer = 1f;
         private bool attackSlowdown = false;
+        private bool attackStop = false;
 
         [Header("Dash Variables")]
         private bool attackBlockingDash = false;
@@ -118,7 +119,11 @@ namespace Auaora
                 speed.x = Input.GetAxisRaw("Horizontal") * 10f;
                 speed.y = Input.GetAxisRaw("Vertical") * 10f;
                 speed.Normalize();
-                if (attackSlowdown)
+                if (attackStop)
+                {
+                    speed *= 0;
+                }
+                else if (attackSlowdown)
                 {
                     speed *= attackRunSpeed;
                 }
@@ -456,6 +461,16 @@ namespace Auaora
         public void DeactivateAttackSlowdown()
         {
             attackSlowdown = false;
+        }
+
+        public void ActivateAttackStop()
+        {
+            attackStop = true;
+        }
+
+        public void DeactivateAttackStop()
+        {
+            attackStop = false;
         }
 
         private void CancelMeleeAttack()
