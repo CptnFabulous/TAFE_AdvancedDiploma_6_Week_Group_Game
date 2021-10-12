@@ -45,3 +45,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   specialAbilityPrefabs:
   - {fileID: 7738754245645846446, guid: abfd6d809ec4a1947bcf54bc737356b9, type: 3}
+  - {fileID: 3052910865275875705, guid: 98386b1ae1e44b543b43aca071bf1962, type: 3}

@@ -197,10 +197,13 @@ MonoBehaviour:
   dashTime: 0.3
   dashCooldown: 0.7
   attackSpeed: 1
-  attackForce: 5
+  attackForce: 7.5
   attackMask:
     serializedVersion: 2
     m_Bits: 1280
+  placeableMask:
+    serializedVersion: 2
+    m_Bits: 256
   maxHealth: 10
   blockInteraction:
     raycastLength: 5

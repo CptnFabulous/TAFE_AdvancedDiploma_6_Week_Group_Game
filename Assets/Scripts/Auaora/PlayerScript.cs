@@ -43,6 +43,8 @@ namespace Auaora
         [SerializeField] private float attackSpeed = 1f;
         [SerializeField] private float attackForce = 5f;
         [SerializeField] private LayerMask attackMask;
+        [SerializeField] private LayerMask placeableMask;
+
         private PlayerState currentState = PlayerState.Regular;
         public PlayerState CurrentState { get { return currentState; } }
         [SerializeField] private int maxHealth;
@@ -62,6 +64,7 @@ namespace Auaora
             hudRef.SetHealthAmount(currentHealth, maxHealth + AbilityManager.SoleManager.GetHealthBonus());
 
             fallTimer = fallTimerMax;
+            AbilityManager.SoleManager.ZeroPlatforms(); //temp?
 
             if (!cameraRef && FindObjectOfType<PlayerCameraScript>())
             {
@@ -439,7 +442,22 @@ namespace Auaora
             {
                 // break block beneath
                 if (blockInteraction.TryCheckBlock(attackIndicatorTarget.transform.position, Vector3.down))
+                {
                     blockInteraction.TargetedChunk.DamageBlock(blockInteraction.TargetedBlockCoords, 1);
+                }
+                RaycastHit hit;
+                Physics.Raycast(attackIndicatorTarget.transform.position, Vector3.down, out hit, 3f, placeableMask);
+                if (hit.collider)
+                {
+                    if (hit.collider.GetComponent<PlaceablePlatformScript>())
+                    {
+                        hit.collider.GetComponent<PlaceablePlatformScript>().BreakPlatform();
+                    }
+                }
+                else if (AbilityManager.SoleManager.DoesPlayerHaveSpecialAbility(1))
+                {
+                    AbilityManager.SoleManager.SpawnSpecialAbility(1, new Vector3(Mathf.Round(attackIndicatorTarget.transform.position.x / 2) * 2, 0.5f, Mathf.Round(attackIndicatorTarget.transform.position.z / 2) * 2));
+                }
             }
         }
 

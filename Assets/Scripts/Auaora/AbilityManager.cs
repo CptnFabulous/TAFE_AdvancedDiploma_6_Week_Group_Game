@@ -23,12 +23,14 @@ public class AbilityManager : MonoBehaviour
 
     [SerializeField] private List<GameObject> specialAbilityPrefabs = new List<GameObject>();
 
-    private List<int> specialAbilities = new List<int>() { 0 };
+    private List<int> specialAbilities = new List<int>() { 0, 0 };
     private int attackSpeedUps = 0;
     private int healthUps = 0;
     private int attackForceUps = 0;
     private int attackRangeUps = 0;
     private int dashCooldownUps = 0;
+
+    private int currentPlatformsSpawned = 0;
 
     private void Start()
     {
@@ -63,6 +65,13 @@ public class AbilityManager : MonoBehaviour
                 break;
             case 0:
                 spawned = Instantiate(specialAbilityPrefabs[0], position, new Quaternion(0f, 0f, 0f, 0f));
+                break;
+            case 1:
+                if (currentPlatformsSpawned < GetSpecialAbilityLevel(1))
+                {
+                    spawned = Instantiate(specialAbilityPrefabs[1], position, new Quaternion(0f, 0f, 0f, 0f));
+                    currentPlatformsSpawned++;
+                }
                 break;
         }
         return spawned;
@@ -103,6 +112,10 @@ public class AbilityManager : MonoBehaviour
                 AddSpecialAbility(0);
                 hudRef.DisplayText("Delayed Explosive Up");
                 break;
+            case 6:
+                AddSpecialAbility(1);
+                hudRef.DisplayText("Placeable Block Up");
+                break;
         }
         hudRef.UpdateStatText();
     }
@@ -140,5 +153,15 @@ public class AbilityManager : MonoBehaviour
         int health = 0;
         health += (healthUps * 2);
         return health;
+    }
+
+    public void BreakPlatform()
+    {
+        currentPlatformsSpawned--;
+    }
+
+    public void ZeroPlatforms()
+    {
+        currentPlatformsSpawned = 0;
     }
 }
