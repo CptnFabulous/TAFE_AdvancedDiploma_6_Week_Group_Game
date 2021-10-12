@@ -10,9 +10,9 @@ public class MainMenu : MonoBehaviour
         SceneManager.LoadSceneAsync(1);
     }
 
-    public void Options()
+    public void HowToPlay()
     {
-
+        SceneManager.LoadSceneAsync("HowToPlay", LoadSceneMode.Additive);
     }
 
     public void Exit()
