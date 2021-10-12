@@ -120,7 +120,7 @@ NavMeshSettings:
     accuratePlacement: 0
     debug:
       m_Flags: 0
-  m_NavMeshData: {fileID: 23800000, guid: f24661c615a665741aaf7974dc21307d, type: 2}
+  m_NavMeshData: {fileID: 0}
 --- !u!1 &218806546
 GameObject:
   m_ObjectHideFlags: 0
@@ -668,7 +668,7 @@ GameObject:
   - component: {fileID: 1766579500}
   - component: {fileID: 1766579499}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: Grid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
