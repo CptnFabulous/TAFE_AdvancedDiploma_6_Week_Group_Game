@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Entry Door
   m_EditorClassIdentifier: 
   colourReferenceInSaveFile: {r: 1, g: 0, b: 0, a: 1}
-  prefabToSpawn: {fileID: 8104293901853492889, guid: 15361fb159a55a64b989f86fc0963626,
-    type: 3}
-  blockToPlaceOnFloor: {fileID: 11400000, guid: f955711c3cb8b104993cc68ce0b5ecfd,
-    type: 2}
+  possibleBlocks:
+  - {fileID: 11400000, guid: f955711c3cb8b104993cc68ce0b5ecfd, type: 2}
+  possiblePrefabs:
+  - {fileID: 8104293901853492889, guid: 15361fb159a55a64b989f86fc0963626, type: 3}
