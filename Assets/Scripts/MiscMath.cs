@@ -97,6 +97,31 @@ public static class MiscMath
 
 
 
+    public static T GetRandomFromArray<T>(T[] array)
+    {
+        if (array.Length <= 0)
+        {
+            return default;
+        }
+
+        int randomIndex = UnityEngine.Random.Range(0, array.Length);
+        return array[randomIndex];
+    }
+
+    /*
+    public static T GetRandomFromArray<T>(T[] array, AnimationCurve probabilityWeighting)
+    {
+        if (array.Length <= 0)
+        {
+            return default;
+        }
+
+        float weightedRandom = probabilityWeighting.Evaluate(UnityEngine.Random.Range(0f, 1f));
+        int randomIndex = Mathf.RoundToInt((array.Length - 1) * weightedRandom);
+        return array[randomIndex];
+    }
+    */
+
     public static Color32 FloatToColour(float value)
     {
         // Splits the 32 bits of a float into 4 sets of eight bits
