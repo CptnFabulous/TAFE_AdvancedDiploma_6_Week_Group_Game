@@ -282,10 +282,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8058344262412615027}
+  - component: {fileID: 7520523280446169613}
   - component: {fileID: 7520523280446169610}
   - component: {fileID: 7520523280446169606}
   - component: {fileID: 7520523280446169611}
-  - component: {fileID: 7520523280446169613}
   - component: {fileID: 7520523280446169608}
   m_Layer: 10
   m_Name: SmallSlime
@@ -311,6 +311,24 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7520523280446169613
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7250564253455312841}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ff1d0884ab7244498b8c2657692bee0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  idle: {fileID: 11400000, guid: 88dea6d497867ea44968deb37909f2ae, type: 2}
+  move: {fileID: 11400000, guid: 95a36e2fa97c34e4a9d0ac84c1716c81, type: 2}
+  attack: {fileID: 11400000, guid: 4d5240de63a9ab24eb73389d717d7de3, type: 2}
+  largeEnemy: 0
+  attackIndicatorTemplate: {fileID: 8124059518419296386, guid: 83de1fffffe7bfe4580573b7b777b567,
+    type: 3}
 --- !u!54 &7520523280446169610
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -359,22 +377,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &7520523280446169613
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7250564253455312841}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2ff1d0884ab7244498b8c2657692bee0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  idle: {fileID: 11400000, guid: 88dea6d497867ea44968deb37909f2ae, type: 2}
-  move: {fileID: 11400000, guid: 95a36e2fa97c34e4a9d0ac84c1716c81, type: 2}
-  attack: {fileID: 11400000, guid: 4d5240de63a9ab24eb73389d717d7de3, type: 2}
-  largeEnemy: 0
 --- !u!195 &7520523280446169608
 NavMeshAgent:
   m_ObjectHideFlags: 0

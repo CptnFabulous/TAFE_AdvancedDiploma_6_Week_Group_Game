@@ -24,9 +24,12 @@ public class EnemyBehaviour : MonoBehaviour
 
     private List<EnemyBehaviour> spawner;
 
+    [SerializeField] private GameObject attackIndicatorTemplate;
+    private GameObject attackIndicator;
+
     private void Awake()
     {
-        if(idle == null)
+        if (idle == null)
         {
             idle = ScriptableObject.CreateInstance<EnemyIdle>();
         }
@@ -50,12 +53,22 @@ public class EnemyBehaviour : MonoBehaviour
 
         groundYValue = transform.position.y;
         GroundMask = LayerMask.GetMask("Ground", "Level Geometry");
+        if (attackIndicatorTemplate != null)
+        {
+            attackIndicator = Instantiate(attackIndicatorTemplate);
+        }
+        else
+        {
+            attackIndicator = Instantiate(new GameObject());
+            Debug.LogWarning("There's no attack indicator for " + gameObject.name);
+        }
+        attackIndicator.SetActive(false);
     }
 
     private void Start()
     {
         playerTransform = GameObject.FindWithTag("Player").transform;
-        if(playerTransform == null)
+        if (playerTransform == null)
         {
             Debug.LogError("There's no player in this scene. Add an object tagged 'Player' or this enemy won't work.");
             gameObject.SetActive(false);
@@ -72,10 +85,10 @@ public class EnemyBehaviour : MonoBehaviour
         }
 
         groundCheckTimer += Time.deltaTime * GROUND_CHECK_RATE;
-        if(groundCheckTimer > 1)
+        if (groundCheckTimer > 1)
         {
             groundCheckTimer = 0;
-            if(!currentState.GroundCheck())
+            if (!currentState.GroundCheck())
             {
                 Die();
             }
@@ -121,12 +134,12 @@ public class EnemyBehaviour : MonoBehaviour
 
     public void ChangeState(BaseState _state)
     {
-        if(currentState != null)
+        if (currentState != null)
         {
             currentState.DestroyState();
         }
         currentState = _state;
-        if(currentState != null)
+        if (currentState != null)
         {
             currentState.machine = this;
             currentState.EnterState();
@@ -167,7 +180,7 @@ public class EnemyBehaviour : MonoBehaviour
 
     public void SetAgentDestination(Vector3 _target)
     {
-        if(agent.enabled)
+        if (agent.enabled)
             agent.SetDestination(_target);
     }
 
@@ -239,5 +252,21 @@ public class EnemyBehaviour : MonoBehaviour
     {
         return transform.position.y <= groundYValue;
         //return Mathf.Abs(transform.position.y - groundYValue) < 0.1;
+    }
+
+    public void ActivateIndicator(Vector3 _position)
+    {
+        attackIndicator.SetActive(true);
+        attackIndicator.transform.SetPositionAndRotation(_position, transform.rotation);
+    }
+
+    public void DeactivateIndicator()
+    {
+        attackIndicator.SetActive(false);
+    }
+
+    private void OnDestroy()
+    {
+        Destroy(attackIndicator);
     }
 }
