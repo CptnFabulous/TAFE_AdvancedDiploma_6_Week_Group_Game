@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Level Exit
   m_EditorClassIdentifier: 
   colourReferenceInSaveFile: {r: 0, g: 0, b: 1, a: 1}
-  prefabToSpawn: {fileID: 0}
-  blockToPlaceOnFloor: {fileID: 11400000, guid: f955711c3cb8b104993cc68ce0b5ecfd,
-    type: 2}
+  possibleBlocks:
+  - {fileID: 11400000, guid: f955711c3cb8b104993cc68ce0b5ecfd, type: 2}
+  possiblePrefabs: []

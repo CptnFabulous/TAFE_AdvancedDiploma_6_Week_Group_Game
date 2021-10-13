@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Wall
   m_EditorClassIdentifier: 
   colourReferenceInSaveFile: {r: 0, g: 0, b: 0, a: 1}
-  prefabToSpawn: {fileID: 1372551144729821696, guid: 2b6d1a29f10a0904d9d4c82804ef8027,
-    type: 3}
-  blockToPlaceOnFloor: {fileID: 11400000, guid: f955711c3cb8b104993cc68ce0b5ecfd,
-    type: 2}
+  possibleBlocks:
+  - {fileID: 11400000, guid: f955711c3cb8b104993cc68ce0b5ecfd, type: 2}
+  possiblePrefabs:
+  - {fileID: 1372551144729821696, guid: 2b6d1a29f10a0904d9d4c82804ef8027, type: 3}

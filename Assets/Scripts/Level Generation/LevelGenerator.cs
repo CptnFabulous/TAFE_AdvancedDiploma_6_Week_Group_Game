@@ -28,14 +28,23 @@ public class LevelGenerator : MonoBehaviour
         for (int i = 0; i < numberOfRooms; i++)
         {
             // Selects a random room
-            int randomIndex = Random.Range(0, roomLayouts.Length);
-            AddRoom(roomLayouts[randomIndex]);
 
+            //int randomIndex = Random.Range(0, roomLayouts.Length - 1);
+            //AddRoom(roomLayouts[randomIndex]);
+
+            AddRoom(MiscMath.GetRandomFromArray(roomLayouts));
+
+            if (MiscMath.CoinFlip(0.5f))
+            {
+                AddRoom(MiscMath.GetRandomFromArray(hallwayLayouts));
+            }
+            /*
             if (hallwayLayouts.Length > 0 && MiscMath.CoinFlip(0.5f))
             {
                 randomIndex = Random.Range(0, hallwayLayouts.Length);
                 AddRoom(hallwayLayouts[randomIndex]);
             }
+            */
         }
 
         AddRoom(exitRoom);
@@ -157,17 +166,17 @@ public class LevelGenerator : MonoBehaviour
                 Vector3Int coordinates = MiscMath.IndexFor3DArrayFromSingle(p, size);
 
                 // Place block on floor
-                BlockData block = reference.GetBlock;
+                BlockData block = reference.GetBlock();
                 if (block != null)
                 {
                     blocksForChunk[coordinates.x, coordinates.y, coordinates.z].type = block;
                     blocksForChunk[coordinates.x, coordinates.y, coordinates.z].health = block.maxHealth;
                 }
                 // Spawn object in space
-                GameObject prefab = reference.GetPrefab;
+                GameObject prefab = reference.GetPrefab();
                 if (prefab != null)
                 {
-                    GameObject prefabOnFloor = Instantiate(reference.prefabToSpawn, newRoom.transform);
+                    GameObject prefabOnFloor = Instantiate(prefab, newRoom.transform);
                     //prefabOnFloor.transform.localRotation = Quaternion.Euler(reference.defaultRotationEulerAngles);
                     // Get total height of object after rotation
                     float heightOfCenterFromFloor = 0.5f;
@@ -177,7 +186,7 @@ public class LevelGenerator : MonoBehaviour
                         heightOfCenterFromFloor += renderer.bounds.extents.y;
                     }
                     // Sets object to appropriate position and raises altitude so it clears the floor.
-                    prefabOnFloor.transform.localPosition = coordinates + Vector3.up * heightOfCenterFromFloor;
+                    prefabOnFloor.transform.localPosition = coordinates + transform.up * heightOfCenterFromFloor;
                 }
             }
 

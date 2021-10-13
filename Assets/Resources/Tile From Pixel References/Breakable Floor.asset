@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Breakable Floor
   m_EditorClassIdentifier: 
   colourReferenceInSaveFile: {r: 0.5019608, g: 0.5019608, b: 0.5019608, a: 1}
-  prefabToSpawn: {fileID: 0}
-  blockToPlaceOnFloor: {fileID: 11400000, guid: 4cf44b270811bf147a5543c5767fbe6a,
-    type: 2}
+  possibleBlocks:
+  - {fileID: 11400000, guid: 4cf44b270811bf147a5543c5767fbe6a, type: 2}
+  possiblePrefabs: []

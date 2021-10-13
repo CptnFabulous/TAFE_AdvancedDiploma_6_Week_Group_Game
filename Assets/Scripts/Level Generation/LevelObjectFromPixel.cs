@@ -6,29 +6,21 @@ using UnityEngine;
 public class LevelObjectFromPixel : ScriptableObject
 {
     public Color colourReferenceInSaveFile = Color.white;
-    public GameObject prefabToSpawn;
-    public BlockData blockToPlaceOnFloor;
+    public BlockData[] possibleBlocks;
+    public GameObject[] possiblePrefabs;
 
-
-
-    public virtual GameObject GetPrefab
+    public virtual BlockData GetBlock()
     {
-        get
-        {
-            return prefabToSpawn;
-        }
+        return MiscMath.GetRandomFromArray(possibleBlocks);
     }
 
-    public virtual BlockData GetBlock
+    public virtual GameObject GetPrefab()
     {
-        get
-        {
-            return blockToPlaceOnFloor;
-        }
+        return MiscMath.GetRandomFromArray(possiblePrefabs);
     }
 
+    
 
-    static LevelObjectFromPixel[] internalList;
     public static LevelObjectFromPixel[] All
     {
         get
@@ -41,4 +33,5 @@ public class LevelObjectFromPixel : ScriptableObject
             return internalList;
         }
     }
+    static LevelObjectFromPixel[] internalList;
 }
