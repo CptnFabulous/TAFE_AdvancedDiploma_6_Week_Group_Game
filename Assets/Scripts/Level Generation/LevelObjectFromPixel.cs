@@ -6,8 +6,9 @@ using UnityEngine;
 public class LevelObjectFromPixel : ScriptableObject
 {
     public Color colourReferenceInSaveFile = Color.white;
-    public BlockData[] possibleBlocks;
-    public GameObject[] possiblePrefabs;
+    public BlockData[] possibleBlocks = new BlockData[1];
+    public GameObject[] possiblePrefabs = new GameObject[1];
+
 
     public virtual BlockData GetBlock()
     {

@@ -14,6 +14,7 @@ public class LevelGenerator : MonoBehaviour
     public Texture2D exitRoom;
 
     List<Chunk> allRooms = new List<Chunk>();
+    int directionsToAngleObjects = 8;
 
 
     private void Start()
@@ -34,7 +35,7 @@ public class LevelGenerator : MonoBehaviour
 
             AddRoom(MiscMath.GetRandomFromArray(roomLayouts));
 
-            if (MiscMath.CoinFlip(0.5f))
+            if (MiscMath.CoinFlip(1))
             {
                 AddRoom(MiscMath.GetRandomFromArray(hallwayLayouts));
             }
@@ -152,15 +153,29 @@ public class LevelGenerator : MonoBehaviour
         Color[] pixels = imageFile.GetPixels();
         for (int p = 0; p < pixels.Length; p++)
         {
+            
+            if (pixels[p] == Color.clear) // If pixel is clear, obviously nothing will be spawned here
+            {
+                continue;
+            }
+            
             // Check each pixel against the available pixels to scan for
             for (int r = 0; r < LevelObjectFromPixel.All.Length; r++)
             {
                 // Check if the current pixel matches a 
                 LevelObjectFromPixel reference = LevelObjectFromPixel.All[r];
-                if (pixels[p] != reference.colourReferenceInSaveFile)
+                Color pixelColourNoAlpha = pixels[p];
+                pixelColourNoAlpha.a = 1;
+                Color referenceColourNoAlpha = reference.colourReferenceInSaveFile;
+                referenceColourNoAlpha.a = 1;
+
+                if (pixelColourNoAlpha != referenceColourNoAlpha)
                 {
+                    Debug.Log(pixelColourNoAlpha + ", " + referenceColourNoAlpha);
                     continue;
                 }
+
+                
 
                 // If the current pixel matches a colour reference, this room needs to be populated with a specific thing.
                 Vector3Int coordinates = MiscMath.IndexFor3DArrayFromSingle(p, size);
@@ -187,6 +202,24 @@ public class LevelGenerator : MonoBehaviour
                     }
                     // Sets object to appropriate position and raises altitude so it clears the floor.
                     prefabOnFloor.transform.localPosition = coordinates + transform.up * heightOfCenterFromFloor;
+
+
+                    float alpha = pixels[p].a;
+                    float segmentSize = 1f / directionsToAngleObjects;
+                    for (int cd = 0; cd < directionsToAngleObjects + 1; cd++)
+                    {
+                        float amountOfSegments = segmentSize * cd;
+                        bool greaterThanMin = alpha > amountOfSegments - (segmentSize / 2);
+                        bool lessThanMax = alpha < amountOfSegments + (segmentSize / 2);
+                        //Debug.Log(prefab + ", " + alpha + ", " + segmentSize + ", " + amountOfSegments + ", " + greaterThanMin + ", " + lessThanMax);
+                        if (greaterThanMin && lessThanMax)
+                        {
+                            float angle = 360 / directionsToAngleObjects * cd;
+                            //Debug.Log("Placement angle for " + prefabOnFloor + " is " + angle);
+                            prefabOnFloor.transform.localRotation = Quaternion.Euler(0, angle, 0);
+                            break;
+                        }
+                    }
                 }
             }
 
