@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: JumpSlimeAnim
+  m_Controller: {fileID: 9100000, guid: a414daac66fe3e3479b7866f380e0275, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: 7400000, guid: 75ba843f018a0c04292be6b5b9c12fcd, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: a8e9bf3c19612034ead543bd17811136, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 7704afbe40aeb0649a57952a457266fd, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 9f5793096bf6d5f4b9ea6d7eed1f30b1, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 1051e174b8354ec46b7b652b1ac90967, type: 2}
+    m_OverrideClip: {fileID: 1827226128182048838, guid: b7b75d3b604afa34bbdb4dde158ced9b,
+      type: 3}
+  - m_OriginalClip: {fileID: 7400000, guid: 6dbe4110c3d0df341bdd2feddacbcccd, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: b6d5f7d3d2eb0e246a21d85299558f6b, type: 2}
