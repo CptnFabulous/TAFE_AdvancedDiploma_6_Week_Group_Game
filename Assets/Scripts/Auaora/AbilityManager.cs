@@ -21,12 +21,16 @@ public class AbilityManager : MonoBehaviour
         }
     }
 
-    private List<int> specialAbilities = new List<int>();
+    [SerializeField] private List<GameObject> specialAbilityPrefabs = new List<GameObject>();
+
+    private List<int> specialAbilities = new List<int>() { 0, 0 };
     private int attackSpeedUps = 0;
     private int healthUps = 0;
     private int attackForceUps = 0;
     private int attackRangeUps = 0;
     private int dashCooldownUps = 0;
+
+    private int currentPlatformsSpawned = 0;
 
     private void Start()
     {
@@ -43,15 +47,39 @@ public class AbilityManager : MonoBehaviour
 
     public void AddSpecialAbility(int abilityID)
     {
-        if (!specialAbilities.Contains(abilityID))
-        {
-            specialAbilities.Add(abilityID);
-        }
+        specialAbilities[abilityID]++;
     }
 
-    public bool DoesPlayerHaveSpecialAbility(int abilityID)
+    public bool DoesPlayerHaveSpecialAbility(int specialAbilityID)
     {
-        return specialAbilities.Contains(abilityID);
+        return specialAbilities[specialAbilityID] > 0;
+    }
+
+    public GameObject SpawnSpecialAbility(int specialAbilityID, Vector3 position)
+    {
+        GameObject spawned = null;
+        switch (specialAbilityID)
+        {
+            default:
+                print("No special ability to spawn");
+                break;
+            case 0:
+                spawned = Instantiate(specialAbilityPrefabs[0], position, new Quaternion(0f, 0f, 0f, 0f));
+                break;
+            case 1:
+                if (currentPlatformsSpawned < GetSpecialAbilityLevel(1))
+                {
+                    spawned = Instantiate(specialAbilityPrefabs[1], position, new Quaternion(0f, 0f, 0f, 0f));
+                    currentPlatformsSpawned++;
+                }
+                break;
+        }
+        return spawned;
+    }
+
+    public int GetSpecialAbilityLevel(int specialAbilityID)
+    {
+        return specialAbilities[specialAbilityID];
     }
 
     public void AddItem(int itemID)
@@ -79,6 +107,14 @@ public class AbilityManager : MonoBehaviour
             case 4:
                 dashCooldownUps++;
                 hudRef.DisplayText("Dash Cooldown Down");
+                break;
+            case 5:
+                AddSpecialAbility(0);
+                hudRef.DisplayText("Delayed Explosive Up");
+                break;
+            case 6:
+                AddSpecialAbility(1);
+                hudRef.DisplayText("Placeable Block Up");
                 break;
         }
         hudRef.UpdateStatText();
@@ -117,5 +153,15 @@ public class AbilityManager : MonoBehaviour
         int health = 0;
         health += (healthUps * 2);
         return health;
+    }
+
+    public void BreakPlatform()
+    {
+        currentPlatformsSpawned--;
+    }
+
+    public void ZeroPlatforms()
+    {
+        currentPlatformsSpawned = 0;
     }
 }
