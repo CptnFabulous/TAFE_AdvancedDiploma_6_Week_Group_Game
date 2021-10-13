@@ -43,6 +43,7 @@ public class EnemyJump : EnemyMove
         jumpSpeed = 1 / jumpDuration;
         origin = machine.transform.position;
         destination = SelectJumpDestination();
+        machine.ActivateIndicator(destination);
     }
 
     public override void UpdateState()
@@ -104,6 +105,7 @@ public class EnemyJump : EnemyMove
         }
         */
         machine.SetAnimFloat("Move", 0);
+        machine.DeactivateIndicator();
         base.DestroyState();
     }
 

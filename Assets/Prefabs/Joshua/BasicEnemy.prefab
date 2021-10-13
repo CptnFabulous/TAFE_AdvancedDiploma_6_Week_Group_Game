@@ -194,6 +194,8 @@ MonoBehaviour:
   move: {fileID: 11400000, guid: 6473d8655e9710242ac012ea1351080a, type: 2}
   attack: {fileID: 11400000, guid: f42365f2819c47043b42fc010e62062a, type: 2}
   largeEnemy: 0
+  attackIndicatorTemplate: {fileID: 8124059518419296386, guid: 4b01629d8097c1f4e8f3248a8d58b004,
+    type: 3}
 --- !u!95 &8120905295174416226
 Animator:
   serializedVersion: 3
