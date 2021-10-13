@@ -232,7 +232,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: TestDash
-  m_Speed: 1
+  m_Speed: 2.65
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: -1685054358052036838}
@@ -245,7 +245,8 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: 71ac970632dad4b41b79ae7139cecf06, type: 2}
+  m_Motion: {fileID: -7429363614361814612, guid: ac2f80d29d7b0ee4a9dc5313f922a7c2,
+    type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -516,7 +517,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 1827226128182048838, guid: f7a8b0dd34558c2459ebc4a2e66f976b,
+  m_Motion: {fileID: 1827226128182048838, guid: 0f7e6bd37ce3fa843b38f7ee483f691d,
     type: 3}
   m_Tag: 
   m_SpeedParameter: 
@@ -606,7 +607,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: TestAttack
-  m_Speed: 1
+  m_Speed: 1.2
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: -4013726426415555600}
