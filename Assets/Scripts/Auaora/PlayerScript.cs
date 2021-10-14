@@ -420,6 +420,9 @@ namespace Auaora
 
         public void EnactAttack()
         {
+            //particle effect
+            Instantiate(Resources.Load("Effects/Shockwave"), attackIndicatorTarget.transform.position, Quaternion.identity);
+
             print("ATTACKING " + attackIndicatorTarget.transform.position);
             Collider[] hitObjects = Physics.OverlapBox(attackIndicatorTarget.transform.position, new Vector3(1f * AbilityManager.SoleManager.GetAttackRangeBonus(), 0.3f, 1f * AbilityManager.SoleManager.GetAttackRangeBonus()), attackIndicator.transform.rotation, attackMask);
             bool enemy = hitObjects.Length > 0;
