@@ -101,25 +101,12 @@ public class LevelGenerator : MonoBehaviour
             }
 
 
-            newRoom.transform.rotation = exitDoor.transform.rotation * entryDoor.transform.rotation;
-
-            // Rotate room so the entry is in the same direction as the exit
-            /*
-            Vector3 globalExitDoorRotation = exitDoor.transform.localPosition - oldRoom.transform.InverseTransformPoint(oldRoom.terrainMesh.bounds.center);
-            globalExitDoorRotation = MiscMath.ConvertDirectionToCardinalDirection(globalExitDoorRotation.normalized);
-            globalExitDoorRotation = oldRoom.transform.TransformDirection(globalExitDoorRotation);
-            Vector3 localEntryDoorRotation = entryDoor.transform.localPosition - newRoom.transform.InverseTransformPoint(newRoom.terrainMesh.bounds.center);
-            localEntryDoorRotation = MiscMath.ConvertDirectionToCardinalDirection(localEntryDoorRotation.normalized);
-            Quaternion entryDoorLocalQuaternion = Quaternion.LookRotation(localEntryDoorRotation, transform.up);
-            // Rotates the new room to the same direction as the exit door, plus the relative rotation of its entry door
-            newRoom.transform.LookAt(newRoom.transform.position + (entryDoorLocalQuaternion * globalExitDoorRotation), transform.up);
-            */
+            newRoom.transform.rotation = exitDoor.transform.rotation * entryDoor.transform.localRotation;
 
             // Position new room so its entry lines up with the old room's exit
             Vector3 positionForEntryDoor = exitDoor.transform.position + exitDoor.transform.forward;
             Vector3 relativePositionOfEntryDoorFromRoomTransform = entryDoor.transform.position - newRoom.transform.position;
-            Vector3 positionForNewRoom = positionForEntryDoor - relativePositionOfEntryDoorFromRoomTransform;
-            newRoom.transform.position = positionForNewRoom;
+            newRoom.transform.position = positionForEntryDoor - relativePositionOfEntryDoorFromRoomTransform;
         }
         else
         {
@@ -162,22 +149,21 @@ public class LevelGenerator : MonoBehaviour
             // Check each pixel against the available pixels to scan for
             for (int r = 0; r < LevelObjectFromPixel.All.Length; r++)
             {
-                // Check if the current pixel matches a 
+                // Check if the current pixel has the same colour as one of the tile's reference colour.
+                // Alpha value is ignored because that is used to calculate rotation.
                 LevelObjectFromPixel reference = LevelObjectFromPixel.All[r];
                 Color pixelColourNoAlpha = pixels[p];
                 pixelColourNoAlpha.a = 1;
                 Color referenceColourNoAlpha = reference.colourReferenceInSaveFile;
                 referenceColourNoAlpha.a = 1;
-
                 if (pixelColourNoAlpha != referenceColourNoAlpha)
                 {
-                    Debug.Log(pixelColourNoAlpha + ", " + referenceColourNoAlpha);
+                    //Debug.Log(pixelColourNoAlpha + ", " + referenceColourNoAlpha);
                     continue;
                 }
 
-                
-
                 // If the current pixel matches a colour reference, this room needs to be populated with a specific thing.
+                // Calculate coordinates based off position in array
                 Vector3Int coordinates = MiscMath.IndexFor3DArrayFromSingle(p, size);
 
                 // Place block on floor
@@ -192,18 +178,30 @@ public class LevelGenerator : MonoBehaviour
                 if (prefab != null)
                 {
                     GameObject prefabOnFloor = Instantiate(prefab, newRoom.transform);
-                    //prefabOnFloor.transform.localRotation = Quaternion.Euler(reference.defaultRotationEulerAngles);
+
                     // Get total height of object after rotation
                     float heightOfCenterFromFloor = 0.5f;
                     MeshRenderer renderer = prefabOnFloor.GetComponent<MeshRenderer>();
                     if (renderer != null)
                     {
-                        heightOfCenterFromFloor += renderer.bounds.extents.y;
+                        Vector3 upper = new Vector3(0, prefabOnFloor.transform.position.y, 0);
+                        Vector3 lower = new Vector3(0, renderer.bounds.min.y, 0);
+                        heightOfCenterFromFloor += Vector3.Distance(upper, lower);
+                    }
+                    else
+                    {
+                        Collider collider = prefabOnFloor.GetComponent<Collider>();
+                        if (collider != null)
+                        {
+                            Vector3 upper = new Vector3(0, prefabOnFloor.transform.position.y, 0);
+                            Vector3 lower = new Vector3(0, collider.bounds.min.y, 0);
+                            heightOfCenterFromFloor += Vector3.Distance(upper, lower);
+                        }
                     }
                     // Sets object to appropriate position and raises altitude so it clears the floor.
                     prefabOnFloor.transform.localPosition = coordinates + transform.up * heightOfCenterFromFloor;
 
-
+                    // Determine which direction to rotate the object based on the alpha value in the save file pixel.
                     float alpha = pixels[p].a;
                     float segmentSize = 1f / directionsToAngleObjects;
                     for (int cd = 0; cd < directionsToAngleObjects + 1; cd++)
@@ -211,11 +209,9 @@ public class LevelGenerator : MonoBehaviour
                         float amountOfSegments = segmentSize * cd;
                         bool greaterThanMin = alpha > amountOfSegments - (segmentSize / 2);
                         bool lessThanMax = alpha < amountOfSegments + (segmentSize / 2);
-                        //Debug.Log(prefab + ", " + alpha + ", " + segmentSize + ", " + amountOfSegments + ", " + greaterThanMin + ", " + lessThanMax);
                         if (greaterThanMin && lessThanMax)
                         {
                             float angle = 360 / directionsToAngleObjects * cd;
-                            //Debug.Log("Placement angle for " + prefabOnFloor + " is " + angle);
                             prefabOnFloor.transform.localRotation = Quaternion.Euler(0, angle, 0);
                             break;
                         }
@@ -225,6 +221,7 @@ public class LevelGenerator : MonoBehaviour
 
         }
 
+        // Add block data to chunk
         newRoom.Rewrite(blocksForChunk);
 
         return newRoom;
