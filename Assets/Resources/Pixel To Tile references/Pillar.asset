@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0396e82b143f78a43ac1d327988916d7, type: 3}
-  m_Name: Entry Door
+  m_Name: Pillar
   m_EditorClassIdentifier: 
-  colourReferenceInSaveFile: {r: 1, g: 0, b: 0, a: 1}
+  colourReferenceInSaveFile: {r: 0, g: 0, b: 0, a: 1}
   possibleBlocks:
   - {fileID: 11400000, guid: f955711c3cb8b104993cc68ce0b5ecfd, type: 2}
   possiblePrefabs:
-  - {fileID: 1473141748842283780, guid: defbff8e1f429d54a9db003e53716fd9, type: 3}
+  - {fileID: 821689910462848459, guid: 49677cfbfdbc6164e8e825c9da384d80, type: 3}
