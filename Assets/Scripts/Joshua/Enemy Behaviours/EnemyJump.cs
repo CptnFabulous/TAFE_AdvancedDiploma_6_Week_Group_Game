@@ -84,7 +84,7 @@ public class EnemyJump : EnemyMove
 
     private bool CheckIfWalkable(Vector3 _pos)
     {
-        return Physics.Raycast(_pos, Vector3.down, 10f, groundMask);
+        return Physics.Raycast(_pos + Vector3.up, Vector3.down, 10f, groundMask);
     }
 
     protected override void Move()

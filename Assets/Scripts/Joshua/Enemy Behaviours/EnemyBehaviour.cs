@@ -24,8 +24,7 @@ public class EnemyBehaviour : MonoBehaviour
 
     private List<EnemyBehaviour> spawner;
 
-    [SerializeField] private GameObject attackIndicatorTemplate;
-    private GameObject attackIndicator;
+    [SerializeField] private GameObject attackIndicator;
 
     private void Awake()
     {
@@ -53,28 +52,33 @@ public class EnemyBehaviour : MonoBehaviour
 
         groundYValue = transform.position.y;
         GroundMask = LayerMask.GetMask("Ground", "Level Geometry");
-        if (attackIndicatorTemplate != null)
-        {
-            attackIndicator = Instantiate(attackIndicatorTemplate);
-        }
-        else
+        if(attackIndicator == null)
         {
             attackIndicator = Instantiate(new GameObject());
             Debug.LogWarning("There's no attack indicator for " + gameObject.name);
+        }
+        else
+        {
+            attackIndicator.transform.parent = null;
         }
         attackIndicator.SetActive(false);
     }
 
     private void Start()
     {
-        playerTransform = GameObject.FindWithTag("Player").transform;
-        if (playerTransform == null)
+        GameObject player = GameObject.FindWithTag("Player");
+        if (player == null)
         {
             Debug.LogError("There's no player in this scene. Add an object tagged 'Player' or this enemy won't work.");
             gameObject.SetActive(false);
         }
+        else
+        {
+            playerTransform = player.transform;
+        }
 
         ChangeState(idle.GetStateCopy());
+        Debug.Log("a");
     }
 
     private void Update()
@@ -103,7 +107,7 @@ public class EnemyBehaviour : MonoBehaviour
 
     public void Die()
     {
-        spawner.Remove(this);
+        //spawner.Remove(this);
         Destroy(gameObject);
     }
 
@@ -113,7 +117,7 @@ public class EnemyBehaviour : MonoBehaviour
     /// <returns></returns>
     public bool GroundCheck()
     {
-        return largeEnemy ? Physics.CheckSphere(transform.position, 1, GroundMask) : Physics.Raycast(transform.position, Vector3.down, 10f, GroundMask) && rigid.isKinematic;
+        return largeEnemy ? Physics.CheckSphere(transform.position, 1, GroundMask) : Physics.Raycast(transform.position + Vector3.up, Vector3.down, 10f, GroundMask) && rigid.isKinematic;
     }
 
     #region StateMachine
