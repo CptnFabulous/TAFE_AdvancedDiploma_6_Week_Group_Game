@@ -108,6 +108,12 @@ public class EnemyBehaviour : MonoBehaviour
     public void Die()
     {
         //spawner.Remove(this);
+
+        if (spawner != null)
+        {
+            spawner.Remove(this);
+        }
+
         Destroy(gameObject);
     }
 
