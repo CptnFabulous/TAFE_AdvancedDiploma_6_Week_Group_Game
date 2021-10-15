@@ -73,7 +73,7 @@ public class EnemyJump : EnemyMove
                     break;
             }
         }
-        if (CheckIfWalkable(target))
+        if (CheckIfInRange() && CheckIfWalkable(target))
         {
             machine.transform.forward = (target - origin).normalized;
             return target;
@@ -84,7 +84,7 @@ public class EnemyJump : EnemyMove
 
     private bool CheckIfWalkable(Vector3 _pos)
     {
-        return Physics.Raycast(_pos + Vector3.up, Vector3.down, 10f, groundMask);
+        return Physics.RaycastAll(_pos + (10 * Vector3.up), Vector3.down, 20f, groundMask).Length == 1;
     }
 
     protected override void Move()
