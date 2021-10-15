@@ -117,7 +117,7 @@ public class EnemyBehaviour : MonoBehaviour
     /// <returns></returns>
     public bool GroundCheck()
     {
-        return largeEnemy ? Physics.CheckSphere(transform.position, 1, GroundMask) : Physics.Raycast(transform.position + Vector3.up, Vector3.down, 10f, GroundMask) && rigid.isKinematic;
+        return largeEnemy ? Physics.CheckSphere(transform.position, 0.5f, GroundMask) : Physics.Raycast(transform.position + Vector3.up, Vector3.down, 10f, GroundMask) && rigid.isKinematic;
     }
 
     #region StateMachine
