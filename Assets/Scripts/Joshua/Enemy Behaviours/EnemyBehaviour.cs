@@ -248,6 +248,7 @@ public class EnemyBehaviour : MonoBehaviour
         agent.enabled = move.usingAgent;
         rigid.isKinematic = true;
     }
+
     /*
     public void Knockback(Vector3 _force, float _knockbackTime)
     {
@@ -271,6 +272,11 @@ public class EnemyBehaviour : MonoBehaviour
     {
         return transform.position.y <= groundYValue;
         //return Mathf.Abs(transform.position.y - groundYValue) < 0.1;
+    }
+
+    public void SetGroundYValue()
+    {
+        groundYValue = transform.position.y;
     }
 
     public void ActivateIndicator(Vector3 _position)

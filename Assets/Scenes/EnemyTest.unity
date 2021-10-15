@@ -873,6 +873,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spawnTable:
+  - enemy: {fileID: 2370708808840157254, guid: 633cb3ee9e6cb7546983f4acd614a83f, type: 3}
+    weight: 2
+  - enemy: {fileID: 7250564253455312841, guid: 22cb90f9ae144254692054b49ec136a6, type: 3}
+    weight: 2
   - enemy: {fileID: 2004432076268108989, guid: cafc3c1d997a95542a1683904f858384, type: 3}
     weight: 2
   minEnemySpawns: 3

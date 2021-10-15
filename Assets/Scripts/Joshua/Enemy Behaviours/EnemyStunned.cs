@@ -5,6 +5,7 @@ using UnityEngine;
 public class EnemyStunned : BaseState
 {
     private float waitTime = 0.1f;
+
     public override bool GroundCheck()
     {
         return true;
@@ -12,18 +13,29 @@ public class EnemyStunned : BaseState
 
     public override void UpdateState()
     {
+        waitTime -= Time.deltaTime;
         if (waitTime > 0)
         {
-            waitTime -= Time.deltaTime;
+            return;
         }
-        else if (machine.IsAtGround())
+        if (machine.IsAtGround())
         {
-            machine.EndKnockback();
-            if (!machine.GroundCheck())
-            {
-                machine.Die();
-            }
-            machine.ChangeState(machine.GetIdle().GetStateCopy());
+            EndKnockback();
         }
+        if (waitTime < -1f)
+        {
+            machine.SetGroundYValue();
+            EndKnockback();
+        }
+    }
+
+    private void EndKnockback()
+    {
+        machine.EndKnockback();
+        if (!machine.GroundCheck())
+        {
+            machine.Die();
+        }
+        machine.ChangeState(machine.GetIdle().GetStateCopy());
     }
 }

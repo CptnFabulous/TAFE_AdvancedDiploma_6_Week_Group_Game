@@ -9,6 +9,7 @@ public class EnemyMove : BaseState
     public float detectionRadius = 5;
     public bool usingAgent = true;
     public bool needsLineOfSight = true;
+
     public override BaseState GetStateCopy()
     {
         return CreateInstance<EnemyMove>();
