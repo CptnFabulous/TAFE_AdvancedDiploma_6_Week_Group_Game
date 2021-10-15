@@ -16,4 +16,4 @@ MonoBehaviour:
   possibleBlocks:
   - {fileID: 11400000, guid: f955711c3cb8b104993cc68ce0b5ecfd, type: 2}
   possiblePrefabs:
-  - {fileID: 526430358046522596, guid: f51c96369f175574ba17dd6f9500f3cc, type: 3}
+  - {fileID: 3457226994115517097, guid: 11d5d2ad8a89d9a4a9d360ab2e33b040, type: 3}

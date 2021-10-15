@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0396e82b143f78a43ac1d327988916d7, type: 3}
   m_Name: Wall
   m_EditorClassIdentifier: 
-  colourReferenceInSaveFile: {r: 0, g: 0, b: 0, a: 1}
+  colourReferenceInSaveFile: {r: 0.06666667, g: 0.06666667, b: 0.06666667, a: 1}
   possibleBlocks:
   - {fileID: 11400000, guid: f955711c3cb8b104993cc68ce0b5ecfd, type: 2}
   possiblePrefabs:
-  - {fileID: 821689910462848459, guid: 49677cfbfdbc6164e8e825c9da384d80, type: 3}
+  - {fileID: 1752205555686077261, guid: 7e82df8596414f04fbe5bfa25c8202e5, type: 3}
+  - {fileID: 3288886724844131768, guid: b6a037c32bc96cb4fa5d706b3970b1bc, type: 3}

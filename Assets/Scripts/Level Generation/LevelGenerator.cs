@@ -14,6 +14,7 @@ public class LevelGenerator : MonoBehaviour
     public Texture2D exitRoom;
 
     List<Chunk> allRooms = new List<Chunk>();
+    int directionsToAngleObjects = 8;
 
 
     private void Start()
@@ -29,27 +30,32 @@ public class LevelGenerator : MonoBehaviour
         {
             // Selects a random room
 
-            //int randomIndex = Random.Range(0, roomLayouts.Length - 1);
-            //AddRoom(roomLayouts[randomIndex]);
-
             AddRoom(MiscMath.GetRandomFromArray(roomLayouts));
 
-            if (MiscMath.CoinFlip(0.5f))
+            if (MiscMath.CoinFlip(1) && i < numberOfRooms - 1)
             {
                 AddRoom(MiscMath.GetRandomFromArray(hallwayLayouts));
             }
-            /*
-            if (hallwayLayouts.Length > 0 && MiscMath.CoinFlip(0.5f))
-            {
-                randomIndex = Random.Range(0, hallwayLayouts.Length);
-                AddRoom(hallwayLayouts[randomIndex]);
-            }
-            */
         }
 
         AddRoom(exitRoom);
 
         NavMeshUpdateHandler.Current.SetupMesh();
+
+        /*
+        UnityEngine.AI.NavMeshAgent[] agents = GetComponentsInChildren<UnityEngine.AI.NavMeshAgent>();
+        for(int i = 0; i < agents.Length; i++)
+        {
+            if (agents[i].isOnNavMesh == false)
+            {
+                Debug.Log(agents[i].name + " is not bound to the navmesh");
+                //agents[i].gameObject.SetActive(false);
+                //agents[i].gameObject.SetActive(true);
+                agents[i].Warp(agents[i].transform.position);
+            }
+        }
+        */
+        
     }
 
     void AddRoom(Texture2D imageFile)
@@ -100,25 +106,12 @@ public class LevelGenerator : MonoBehaviour
             }
 
 
-            newRoom.transform.rotation = exitDoor.transform.rotation * entryDoor.transform.rotation;
-
-            // Rotate room so the entry is in the same direction as the exit
-            /*
-            Vector3 globalExitDoorRotation = exitDoor.transform.localPosition - oldRoom.transform.InverseTransformPoint(oldRoom.terrainMesh.bounds.center);
-            globalExitDoorRotation = MiscMath.ConvertDirectionToCardinalDirection(globalExitDoorRotation.normalized);
-            globalExitDoorRotation = oldRoom.transform.TransformDirection(globalExitDoorRotation);
-            Vector3 localEntryDoorRotation = entryDoor.transform.localPosition - newRoom.transform.InverseTransformPoint(newRoom.terrainMesh.bounds.center);
-            localEntryDoorRotation = MiscMath.ConvertDirectionToCardinalDirection(localEntryDoorRotation.normalized);
-            Quaternion entryDoorLocalQuaternion = Quaternion.LookRotation(localEntryDoorRotation, transform.up);
-            // Rotates the new room to the same direction as the exit door, plus the relative rotation of its entry door
-            newRoom.transform.LookAt(newRoom.transform.position + (entryDoorLocalQuaternion * globalExitDoorRotation), transform.up);
-            */
+            newRoom.transform.rotation = exitDoor.transform.rotation * entryDoor.transform.localRotation;
 
             // Position new room so its entry lines up with the old room's exit
             Vector3 positionForEntryDoor = exitDoor.transform.position + exitDoor.transform.forward;
             Vector3 relativePositionOfEntryDoorFromRoomTransform = entryDoor.transform.position - newRoom.transform.position;
-            Vector3 positionForNewRoom = positionForEntryDoor - relativePositionOfEntryDoorFromRoomTransform;
-            newRoom.transform.position = positionForNewRoom;
+            newRoom.transform.position = positionForEntryDoor - relativePositionOfEntryDoorFromRoomTransform;
         }
         else
         {
@@ -152,17 +145,30 @@ public class LevelGenerator : MonoBehaviour
         Color[] pixels = imageFile.GetPixels();
         for (int p = 0; p < pixels.Length; p++)
         {
+            
+            if (pixels[p] == Color.clear) // If pixel is clear, obviously nothing will be spawned here
+            {
+                continue;
+            }
+            
             // Check each pixel against the available pixels to scan for
             for (int r = 0; r < LevelObjectFromPixel.All.Length; r++)
             {
-                // Check if the current pixel matches a 
+                // Check if the current pixel has the same colour as one of the tile's reference colour.
+                // Alpha value is ignored because that is used to calculate rotation.
                 LevelObjectFromPixel reference = LevelObjectFromPixel.All[r];
-                if (pixels[p] != reference.colourReferenceInSaveFile)
+                Color pixelColourNoAlpha = pixels[p];
+                pixelColourNoAlpha.a = 1;
+                Color referenceColourNoAlpha = reference.colourReferenceInSaveFile;
+                referenceColourNoAlpha.a = 1;
+                if (pixelColourNoAlpha != referenceColourNoAlpha)
                 {
+                    //Debug.Log(pixelColourNoAlpha + ", " + referenceColourNoAlpha);
                     continue;
                 }
 
                 // If the current pixel matches a colour reference, this room needs to be populated with a specific thing.
+                // Calculate coordinates based off position in array
                 Vector3Int coordinates = MiscMath.IndexFor3DArrayFromSingle(p, size);
 
                 // Place block on floor
@@ -177,21 +183,59 @@ public class LevelGenerator : MonoBehaviour
                 if (prefab != null)
                 {
                     GameObject prefabOnFloor = Instantiate(prefab, newRoom.transform);
-                    //prefabOnFloor.transform.localRotation = Quaternion.Euler(reference.defaultRotationEulerAngles);
+
+                    #region Set position
                     // Get total height of object after rotation
                     float heightOfCenterFromFloor = 0.5f;
                     MeshRenderer renderer = prefabOnFloor.GetComponent<MeshRenderer>();
                     if (renderer != null)
                     {
-                        heightOfCenterFromFloor += renderer.bounds.extents.y;
+                        Vector3 upper = new Vector3(0, prefabOnFloor.transform.position.y, 0);
+                        Vector3 lower = new Vector3(0, renderer.bounds.min.y, 0);
+                        heightOfCenterFromFloor += Vector3.Distance(upper, lower);
+                    }
+                    else
+                    {
+                        Collider collider = prefabOnFloor.GetComponent<Collider>();
+                        if (collider != null)
+                        {
+                            Vector3 upper = new Vector3(0, prefabOnFloor.transform.position.y, 0);
+                            Vector3 lower = new Vector3(0, collider.bounds.min.y, 0);
+                            heightOfCenterFromFloor += Vector3.Distance(upper, lower);
+                        }
                     }
                     // Sets object to appropriate position and raises altitude so it clears the floor.
                     prefabOnFloor.transform.localPosition = coordinates + transform.up * heightOfCenterFromFloor;
+                    #endregion
+
+                    #region Set rotation
+                    // Determine which direction to rotate the object based on the alpha value in the save file pixel.
+                    float alpha = pixels[p].a;
+                    float segmentSize = 1f / directionsToAngleObjects;
+                    for (int cd = 0; cd < directionsToAngleObjects + 1; cd++)
+                    {
+                        float amountOfSegments = segmentSize * cd;
+                        bool greaterThanMin = alpha > amountOfSegments - (segmentSize / 2);
+                        bool lessThanMax = alpha < amountOfSegments + (segmentSize / 2);
+                        if (greaterThanMin && lessThanMax)
+                        {
+                            float angle = 360 / directionsToAngleObjects * cd;
+                            prefabOnFloor.transform.localRotation = Quaternion.Euler(0, angle, 0);
+                            break;
+                        }
+                    }
+                    #endregion
+
+                    if (prefabOnFloor.GetComponent<Auaora.PlayerScript>())
+                    {
+                        prefabOnFloor.transform.parent = null;
+                    }
                 }
             }
 
         }
 
+        // Add block data to chunk
         newRoom.Rewrite(blocksForChunk);
 
         return newRoom;
