@@ -190,6 +190,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5f170c91a7df9ca4c922983b995188f2, type: 3}
+--- !u!1 &679611921 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4301616209809646290, guid: 5f170c91a7df9ca4c922983b995188f2,
+    type: 3}
+  m_PrefabInstance: {fileID: 679611920}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &679611922
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 679611921}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eef8ce713b1df9d4eac19be248a7b2b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxRooms: 10
+  roomPrefabs: []
+  gameSceneName: GameLevel
 --- !u!1 &1178993310
 GameObject:
   m_ObjectHideFlags: 0
@@ -393,7 +414,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1959063874
 GameObject:
