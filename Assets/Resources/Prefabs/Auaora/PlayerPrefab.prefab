@@ -184,7 +184,7 @@ MonoBehaviour:
   rigRef: {fileID: 2164860852670962302}
   playerAnim: {fileID: 5031130327351474377}
   playerVisualsAnim: {fileID: 3716548963199219599}
-  cameraRef: {fileID: 0}
+  cameraRef: {fileID: 814697069790384437}
   attackIndicator: {fileID: 6748481427600532175}
   attackIndicatorTarget: {fileID: 65064418150573754}
   attackIndicatorGround: {fileID: 1825112149472741025}
@@ -976,6 +976,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7ce7139bcbfebce408f6359b3dc59acc, type: 3}
+--- !u!114 &814697069790384437 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3397893814856893479, guid: 7ce7139bcbfebce408f6359b3dc59acc,
+    type: 3}
+  m_PrefabInstance: {fileID: 2623870978859635986}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d377e20798dd4244d866293f1e093db8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &8184702936655259335 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6195892281947222997, guid: 7ce7139bcbfebce408f6359b3dc59acc,
