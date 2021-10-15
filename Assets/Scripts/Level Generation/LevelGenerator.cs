@@ -30,27 +30,32 @@ public class LevelGenerator : MonoBehaviour
         {
             // Selects a random room
 
-            //int randomIndex = Random.Range(0, roomLayouts.Length - 1);
-            //AddRoom(roomLayouts[randomIndex]);
-
             AddRoom(MiscMath.GetRandomFromArray(roomLayouts));
 
-            if (MiscMath.CoinFlip(1))
+            if (MiscMath.CoinFlip(1) && i < numberOfRooms - 1)
             {
                 AddRoom(MiscMath.GetRandomFromArray(hallwayLayouts));
             }
-            /*
-            if (hallwayLayouts.Length > 0 && MiscMath.CoinFlip(0.5f))
-            {
-                randomIndex = Random.Range(0, hallwayLayouts.Length);
-                AddRoom(hallwayLayouts[randomIndex]);
-            }
-            */
         }
 
         AddRoom(exitRoom);
 
         NavMeshUpdateHandler.Current.SetupMesh();
+
+        /*
+        UnityEngine.AI.NavMeshAgent[] agents = GetComponentsInChildren<UnityEngine.AI.NavMeshAgent>();
+        for(int i = 0; i < agents.Length; i++)
+        {
+            if (agents[i].isOnNavMesh == false)
+            {
+                Debug.Log(agents[i].name + " is not bound to the navmesh");
+                //agents[i].gameObject.SetActive(false);
+                //agents[i].gameObject.SetActive(true);
+                agents[i].Warp(agents[i].transform.position);
+            }
+        }
+        */
+        
     }
 
     void AddRoom(Texture2D imageFile)
@@ -179,6 +184,7 @@ public class LevelGenerator : MonoBehaviour
                 {
                     GameObject prefabOnFloor = Instantiate(prefab, newRoom.transform);
 
+                    #region Set position
                     // Get total height of object after rotation
                     float heightOfCenterFromFloor = 0.5f;
                     MeshRenderer renderer = prefabOnFloor.GetComponent<MeshRenderer>();
@@ -200,7 +206,9 @@ public class LevelGenerator : MonoBehaviour
                     }
                     // Sets object to appropriate position and raises altitude so it clears the floor.
                     prefabOnFloor.transform.localPosition = coordinates + transform.up * heightOfCenterFromFloor;
+                    #endregion
 
+                    #region Set rotation
                     // Determine which direction to rotate the object based on the alpha value in the save file pixel.
                     float alpha = pixels[p].a;
                     float segmentSize = 1f / directionsToAngleObjects;
@@ -215,6 +223,12 @@ public class LevelGenerator : MonoBehaviour
                             prefabOnFloor.transform.localRotation = Quaternion.Euler(0, angle, 0);
                             break;
                         }
+                    }
+                    #endregion
+
+                    if (prefabOnFloor.GetComponent<Auaora.PlayerScript>())
+                    {
+                        prefabOnFloor.transform.parent = null;
                     }
                 }
             }

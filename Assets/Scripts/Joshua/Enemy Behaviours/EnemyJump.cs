@@ -43,6 +43,7 @@ public class EnemyJump : EnemyMove
         jumpSpeed = 1 / jumpDuration;
         origin = machine.transform.position;
         destination = SelectJumpDestination();
+        machine.ActivateIndicator(destination);
     }
 
     public override void UpdateState()
@@ -50,7 +51,7 @@ public class EnemyJump : EnemyMove
         Move();
         jumpProgress += Time.deltaTime * jumpSpeed;
 
-        if(jumpProgress >= 1)
+        if (jumpProgress >= 1)
         {
             machine.transform.position = destination;
             machine.ChangeState(machine.GetAttack().GetStateCopy());
@@ -60,9 +61,9 @@ public class EnemyJump : EnemyMove
     private Vector3 SelectJumpDestination()
     {
         Vector3 target = origin;
-        for(int i = 0; i < jumpRange; i++)
+        for (int i = 0; i < jumpRange; i++)
         {
-            switch(Random.Range(0, 2))
+            switch (Random.Range(0, 2))
             {
                 case 0:
                     target += Vector3.right * direction.x;
@@ -83,7 +84,7 @@ public class EnemyJump : EnemyMove
 
     private bool CheckIfWalkable(Vector3 _pos)
     {
-        return Physics.Raycast(_pos, Vector3.down, 10f, groundMask);
+        return Physics.Raycast(_pos + Vector3.up, Vector3.down, 10f, groundMask);
     }
 
     protected override void Move()
@@ -104,6 +105,7 @@ public class EnemyJump : EnemyMove
         }
         */
         machine.SetAnimFloat("Move", 0);
+        machine.DeactivateIndicator();
         base.DestroyState();
     }
 

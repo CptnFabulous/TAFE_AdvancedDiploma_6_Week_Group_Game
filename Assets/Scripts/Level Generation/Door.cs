@@ -17,7 +17,7 @@ public class Door : MonoBehaviour
     }
 
 
-    public DoorType type;
+    public DoorType type = DoorType.EntryAndExit;
     public UnityEvent onOpen;
     public UnityEvent onClose;
 
@@ -29,21 +29,41 @@ public class Door : MonoBehaviour
     {
         playerBlocker = GetComponent<Collider>();
         aiBlocker = GetComponent<NavMeshObstacle>();
+
+        if (enabled)
+        {
+            Close();
+        }
+        else
+        {
+            Open();
+        }
     }
 
-    void SetOpenState(bool open)
-    {
-        playerBlocker.enabled = !open;
-        aiBlocker.enabled = !open;
-    }
 
     private void OnEnable()
     {
-        SetOpenState(false);
+        Close();
     }
 
     private void OnDisable()
     {
-        SetOpenState(true);
+        Open();
+    }
+
+    void Open()
+    {
+        //Debug.Log("Opening");
+        playerBlocker.enabled = false;
+        aiBlocker.enabled = false;
+        onOpen.Invoke();
+    }
+
+    void Close()
+    {
+        //Debug.Log("Closing");
+        playerBlocker.enabled = true;
+        aiBlocker.enabled = true;
+        onClose.Invoke();
     }
 }

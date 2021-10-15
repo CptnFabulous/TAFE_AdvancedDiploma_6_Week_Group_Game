@@ -5,16 +5,21 @@ using UnityEngine;
 public class RoomManager : MonoBehaviour
 {
 
-
+    //public Chunk destructibleMesh;
     public EnemyBehaviour[] enemiesInRoom;
     public Door entryDoor;
     public Door exitDoor;
+    public BoxCollider entryAndExitTrigger;
 
-    private void Start()
+
+    
+    public void Initialise()
     {
         enemiesInRoom = GetComponentsInChildren<EnemyBehaviour>();
-    }
 
+
+        // Update collider dimensions, then reduce the X and Z extents by one each
+    }
 
 
     public bool AllEnemiesDefeated()
@@ -29,5 +34,15 @@ public class RoomManager : MonoBehaviour
         }
 
         return true;
+    }
+
+
+
+    public void CheckAndUpdate()
+    {
+        bool allDead = AllEnemiesDefeated();
+        entryDoor.enabled = allDead;
+        exitDoor.enabled = allDead;
+
     }
 }
