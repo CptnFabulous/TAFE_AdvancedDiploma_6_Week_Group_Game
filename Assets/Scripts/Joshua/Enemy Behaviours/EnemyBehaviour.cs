@@ -87,6 +87,10 @@ public class EnemyBehaviour : MonoBehaviour
         {
             currentState.UpdateState();
         }
+        else
+        {
+            return;
+        }
 
         groundCheckTimer += Time.deltaTime * GROUND_CHECK_RATE;
         if (groundCheckTimer > 1)
@@ -107,8 +111,14 @@ public class EnemyBehaviour : MonoBehaviour
 
     public void Die()
     {
-        //spawner.Remove(this);
-        Destroy(gameObject);
+        if(spawner != null)
+        {
+            spawner.Remove(this);
+        }
+        animator.SetTrigger("Die");
+        Knockback(10 * Vector3.down);
+        ChangeState(null);
+        Destroy(gameObject, 1);
     }
 
     /// <summary>
@@ -117,7 +127,7 @@ public class EnemyBehaviour : MonoBehaviour
     /// <returns></returns>
     public bool GroundCheck()
     {
-        return largeEnemy ? Physics.CheckSphere(transform.position, 0.5f, GroundMask) : Physics.Raycast(transform.position + Vector3.up, Vector3.down, 10f, GroundMask) && rigid.isKinematic;
+        return largeEnemy ? Physics.CheckSphere(transform.position, 0.75f, GroundMask) : Physics.Raycast(transform.position + Vector3.up, Vector3.down, 10f, GroundMask) && rigid.isKinematic;
     }
 
     #region StateMachine
