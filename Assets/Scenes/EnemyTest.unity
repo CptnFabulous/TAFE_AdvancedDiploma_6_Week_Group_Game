@@ -728,6 +728,7 @@ MonoBehaviour:
   move: {fileID: 11400000, guid: eb2bc226352eb7a4f8706db996f516fc, type: 2}
   attack: {fileID: 11400000, guid: 4d5240de63a9ab24eb73389d717d7de3, type: 2}
   largeEnemy: 0
+  attackIndicator: {fileID: 0}
 --- !u!54 &998444484
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -872,14 +873,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spawnTable:
-  - enemy: {fileID: 8120905295174416153, guid: 5ea81fd11e962374c852716396e9dc8b, type: 3}
+  - enemy: {fileID: 2004432076268108989, guid: cafc3c1d997a95542a1683904f858384, type: 3}
     weight: 2
-  - enemy: {fileID: 2370708808840157254, guid: 633cb3ee9e6cb7546983f4acd614a83f, type: 3}
-    weight: 1
   minEnemySpawns: 3
   minSpawnTime: 1
   maxSpawnTime: 5
   isSpawning: 1
+  itemPrefabs: []
 --- !u!4 &1291912256 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8120905295174416227, guid: 5ea81fd11e962374c852716396e9dc8b,
@@ -1038,6 +1038,7 @@ MonoBehaviour:
   move: {fileID: 11400000, guid: eb2bc226352eb7a4f8706db996f516fc, type: 2}
   attack: {fileID: 11400000, guid: 4d5240de63a9ab24eb73389d717d7de3, type: 2}
   largeEnemy: 0
+  attackIndicator: {fileID: 0}
 --- !u!195 &1486425954
 NavMeshAgent:
   m_ObjectHideFlags: 0

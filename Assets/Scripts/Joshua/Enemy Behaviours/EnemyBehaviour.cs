@@ -213,6 +213,11 @@ public class EnemyBehaviour : MonoBehaviour
         return agent.hasPath;
     }
 
+    public float GetAgentSpeed()
+    {
+        return agent.velocity.magnitude;
+    }
+
     public void SetAnimTrigger(string _triggerName)
     {
         animator.SetTrigger(_triggerName);

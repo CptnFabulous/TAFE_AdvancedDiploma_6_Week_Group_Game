@@ -30,6 +30,8 @@ public class EnemyMove : BaseState
         {
             Move();
         }
+
+        machine.SetAnimFloat("Move", machine.GetAgentSpeed() / moveSpeed);
     }
 
     protected virtual bool CheckIfInRange()
