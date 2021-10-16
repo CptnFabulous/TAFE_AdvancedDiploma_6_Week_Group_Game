@@ -6,12 +6,12 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/MainMenu.unity
+    path: Assets/Scenes/Joshua/MainMenu.unity
     guid: 5ca7df72e1d12124992334f4a3882863
   - enabled: 1
-    path: Assets/Scenes/Auaora/PlayerAndEnemiesTest.unity
-    guid: 4aa0979aa2486e645b962075b677b83d
-  - enabled: 1
-    path: Assets/Scenes/HowToPlay.unity
+    path: Assets/Scenes/Joshua/HowToPlay.unity
     guid: dd39065ad3fd3144e9f77e81b328be85
+  - enabled: 1
+    path: Assets/Scenes/GameLevel.unity
+    guid: 39c41db59e29d90409ba7d78ae921282
   m_configObjects: {}

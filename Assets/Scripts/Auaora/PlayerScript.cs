@@ -280,6 +280,8 @@ namespace Auaora
 
             AnimateTrigger("Dash");
             RotateVisuals(rigRef.velocity);
+
+            Instantiate(Resources.Load("Effects/Dash"), transform.position, visualRef.transform.rotation);
         }
 
         public void TakeDamage(float damage, Vector3 damagePos, bool knockback = true)

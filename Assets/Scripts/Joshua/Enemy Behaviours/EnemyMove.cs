@@ -32,7 +32,7 @@ public class EnemyMove : BaseState
             Move();
         }
 
-        machine.SetAnimFloat("Move", machine.GetAgentSpeed() / moveSpeed);
+        machine.SetAnimFloat("Move", machine.GetAgentSpeed() / (moveSpeed * 0.6f));
     }
 
     protected virtual bool CheckIfInRange()
