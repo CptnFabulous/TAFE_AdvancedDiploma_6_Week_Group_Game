@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[DefaultExecutionOrder(-1)]
 public class LevelGenerator : MonoBehaviour
 {
     public int numberOfRooms = 8;
+    public float environmentScale = 1;
     public Chunk roomPrefab;
+    public LevelCompletionCheck winStateCheck;
 
     [Header("Rooms")]
     public Texture2D entryRoom;
@@ -40,8 +43,21 @@ public class LevelGenerator : MonoBehaviour
 
         AddRoom(exitRoom);
 
-        NavMeshUpdateHandler.Current.SetupMesh();
 
+        /*
+        transform.localScale = transform.localScale * environmentScale;
+        Transform[] childObjects = GetComponentsInChildren<Transform>();
+        for (int i = 1; i < childObjects.Length; i++)
+        {
+            if (!MiscMath.IsObjectInLayerMask(childObjects[i].gameObject.layer, NavMeshUpdateHandler.Current.autoFindTerrainLayers))
+            {
+                childObjects[i].localScale = childObjects[i].localScale / environmentScale;
+            }
+        }
+        */
+
+        NavMeshUpdateHandler.Current.SetupMesh();
+        winStateCheck.Initialise();
         /*
         UnityEngine.AI.NavMeshAgent[] agents = GetComponentsInChildren<UnityEngine.AI.NavMeshAgent>();
         for(int i = 0; i < agents.Length; i++)
@@ -204,8 +220,10 @@ public class LevelGenerator : MonoBehaviour
                             heightOfCenterFromFloor += Vector3.Distance(upper, lower);
                         }
                     }
-                    // Sets object to appropriate position and raises altitude so it clears the floor.
-                    prefabOnFloor.transform.localPosition = coordinates + transform.up * heightOfCenterFromFloor;
+                    // Sets object to appropriate position on the grid
+                    prefabOnFloor.transform.localPosition = coordinates;
+                    // Raises altitude using world values so it clears the floor.
+                    prefabOnFloor.transform.position = prefabOnFloor.transform.position + transform.up * heightOfCenterFromFloor;
                     #endregion
 
                     #region Set rotation
@@ -225,11 +243,13 @@ public class LevelGenerator : MonoBehaviour
                         }
                     }
                     #endregion
-
+                    /*
                     if (prefabOnFloor.GetComponent<Auaora.PlayerScript>())
                     {
                         prefabOnFloor.transform.parent = null;
                     }
+                    */
+
                 }
             }
 
