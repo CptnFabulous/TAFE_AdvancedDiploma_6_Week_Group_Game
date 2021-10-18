@@ -17,4 +17,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Joshua/PauseMenu.unity
     guid: d868acd7ac5bb5042ad944074933b704
+  - enabled: 1
+    path: Assets/Scenes/Joshua/GameOver.unity
+    guid: 443e6de66492eac48bf5c758df34ed41
   m_configObjects: {}

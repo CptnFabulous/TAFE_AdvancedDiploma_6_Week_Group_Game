@@ -53,10 +53,10 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void StartAgain()
+    public void GameOver()
     {
         currentRoom = 0;
-        SceneManager.LoadScene(gameSceneName);
+        SceneManager.LoadScene("GameOver");
     }
 
     private void Victory()

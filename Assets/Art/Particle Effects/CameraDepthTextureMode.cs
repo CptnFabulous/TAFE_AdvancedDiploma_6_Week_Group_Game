@@ -7,8 +7,8 @@ public class CameraDepthTextureMode : MonoBehaviour
 {
     [SerializeField] private Color color;
     [SerializeField, Range(0, 1)] private float strength;
-    [SerializeField, Range(0, 0.03f)] private float lowBound;
-    [SerializeField, Range(0.9f, 1)] private float highBound;
+    [SerializeField, Range(0, 0.03f)] private float lowBound = 0.025f;
+    [SerializeField, Range(0.9f, 1)] private float highBound = 0.95f;
     private Material material;
 
     private void Awake()

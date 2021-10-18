@@ -248,7 +248,7 @@ namespace Auaora
         private IEnumerator StartAgain()
         {
             yield return new WaitForSeconds(3);
-            GameManager.Instance.StartAgain();
+            GameManager.Instance.GameOver();
         }
 
         private void EndHitstun()
