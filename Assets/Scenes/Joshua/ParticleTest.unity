@@ -666,6 +666,11 @@ PrefabInstance:
       propertyPath: looping
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1855431913231183029, guid: 9f08ac6730b4dca45b1f1d33dce88825,
+        type: 3}
+      propertyPath: ShapeModule.arc.speed.scalar
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9f08ac6730b4dca45b1f1d33dce88825, type: 3}
 --- !u!1001 &2703250726004822096
