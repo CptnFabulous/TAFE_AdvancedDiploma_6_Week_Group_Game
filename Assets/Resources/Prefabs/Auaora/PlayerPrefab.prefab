@@ -189,16 +189,16 @@ MonoBehaviour:
   attackIndicatorTarget: {fileID: 65064418150573754}
   attackIndicatorGround: {fileID: 1825112149472741025}
   visualRef: {fileID: 3736775924968168126}
-  runSpeed: 5
-  attackRunSpeed: 2
+  runSpeed: 3.5
+  attackRunSpeed: 1
   groundMask:
     serializedVersion: 2
     m_Bits: 2304
   fallTimerMax: 0.2
-  dashSpeed: 15
+  dashSpeed: 7
   dashTime: 0.3
   dashCooldown: 0.7
-  maxRange: 2
+  maxRange: 3
   attackSpeed: 1
   attackForce: 7.5
   attackMask:
