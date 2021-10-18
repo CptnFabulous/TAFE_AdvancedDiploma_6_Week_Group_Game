@@ -406,6 +406,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   color: {r: 0.31706125, g: 0.37537685, b: 0.7075472, a: 1}
   strength: 0
+  lowBound: 0
+  highBound: 0
 --- !u!1 &1609041403
 GameObject:
   m_ObjectHideFlags: 0
@@ -658,6 +660,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1855431913231183029, guid: 9f08ac6730b4dca45b1f1d33dce88825,
+        type: 3}
+      propertyPath: looping
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9f08ac6730b4dca45b1f1d33dce88825, type: 3}

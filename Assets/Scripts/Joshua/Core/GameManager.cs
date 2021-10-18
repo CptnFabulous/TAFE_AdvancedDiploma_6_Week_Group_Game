@@ -25,12 +25,13 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int maxRooms = 10;
     [SerializeField] private List<GameObject> roomPrefabs;
     [SerializeField] private string gameSceneName;
+    public bool paused = false;
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Escape) && !paused)
         {
-            SceneManager.LoadSceneAsync(0);
+            SceneManager.LoadSceneAsync("PauseMenu", LoadSceneMode.Additive);
         }
     }
 

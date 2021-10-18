@@ -340,6 +340,7 @@ GameObject:
   - component: {fileID: 504745398}
   - component: {fileID: 504745397}
   - component: {fileID: 504745396}
+  - component: {fileID: 504745400}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -428,6 +429,18 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &504745400
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 504745395}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 660cbe298bad4e544a4a0324a240e98e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &729716211
 GameObject:
   m_ObjectHideFlags: 0
@@ -509,7 +522,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 729716214}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 504745400}
+        m_MethodName: ExitGame
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &729716214
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -894,7 +918,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1258799946}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 504745400}
+        m_MethodName: BackToMenu
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1258799946
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1345,7 +1380,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1948376884}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 504745400}
+        m_MethodName: HowToPlay
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1948376884
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1464,7 +1510,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1952295361}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 504745400}
+        m_MethodName: Resume
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1952295361
 MonoBehaviour:
   m_ObjectHideFlags: 0
