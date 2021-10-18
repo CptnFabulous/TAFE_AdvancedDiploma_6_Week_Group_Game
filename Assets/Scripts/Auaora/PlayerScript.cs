@@ -292,6 +292,8 @@ namespace Auaora
                 {
                     return;
                 }
+                DeactivateAttackSlowdown();
+                DeactivateAttackStop();
                 currentState = PlayerState.Hitstun;
                 attackSlowdown = false;
                 gameObject.layer = 16;
