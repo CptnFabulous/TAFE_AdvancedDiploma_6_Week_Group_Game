@@ -211,6 +211,7 @@ MonoBehaviour:
   maxRooms: 10
   roomPrefabs: []
   gameSceneName: GameLevel
+  paused: 0
 --- !u!1 &1178993310
 GameObject:
   m_ObjectHideFlags: 0
@@ -482,7 +483,11 @@ MonoBehaviour:
   - {fileID: 2800000, guid: 7e9e4ec8302d6f84b834da0350faf41d, type: 3}
   - {fileID: 2800000, guid: 1e6c62b858e80954dbfa9171bde34aca, type: 3}
   - {fileID: 2800000, guid: b959472bed1cd7a408be94bca71af5ef, type: 3}
+  - {fileID: 2800000, guid: dac618bdb6113a14ba205241586c6566, type: 3}
   - {fileID: 2800000, guid: 0ae7e4ae747b7704bb1c08181ac751fa, type: 3}
+  - {fileID: 2800000, guid: e989dfcfab870c242b8dce47796ef8d2, type: 3}
+  - {fileID: 2800000, guid: c8cf77a78c8fa704c8a9ea57e3a46b77, type: 3}
+  - {fileID: 2800000, guid: a706c50e037375e47b186ed1c8e5a7c6, type: 3}
   hallwayLayouts: []
   exitRoom: {fileID: 2800000, guid: a0bce8c03ae64574e9476daf95b40275, type: 3}
 --- !u!4 &1959063877
