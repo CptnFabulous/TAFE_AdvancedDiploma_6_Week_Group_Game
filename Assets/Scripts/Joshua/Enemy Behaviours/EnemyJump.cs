@@ -24,15 +24,18 @@ public class EnemyJump : EnemyMove
     public override BaseState GetStateCopy()
     {
         EnemyJump newState = CreateInstance<EnemyJump>();
-        newState.SetValues(jumpHeight, jumpRange, jumpDuration);
+        newState.SetValues(jumpHeight, jumpRange, jumpDuration, detectionRadius, needsLineOfSight, usingAgent);
         return newState;
     }
 
-    private void SetValues(float _jumpHeight, int _jumpRange, float _jumpDuration)
+    private void SetValues(float _jumpHeight, int _jumpRange, float _jumpDuration, float _detectionRadius, bool _needsLineOfSight, bool _usingAgent)
     {
         jumpHeight = _jumpHeight;
         jumpRange = _jumpRange;
         jumpDuration = _jumpDuration;
+        detectionRadius = _detectionRadius;
+        needsLineOfSight = _needsLineOfSight;
+        usingAgent = _usingAgent;
     }
 
     public override void EnterState()
@@ -99,6 +102,7 @@ public class EnemyJump : EnemyMove
 
     public override void DestroyState()
     {
+        Instantiate(Resources.Load("Effects/Slime"), machine.transform.position, Quaternion.identity);
         /*
         if(machine.transform.position != destination)
         {

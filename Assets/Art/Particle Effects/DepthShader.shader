@@ -5,6 +5,8 @@
         _MainTex ("Texture", 2D) = "white" {}
         _Color ("Color", Color) = (1, 1, 1, 1)
         _Strength("Strength", Range(0, 1)) = 0.5
+        _LowBound("Low", Range(0, 0.03)) = 0.025
+        _HighBound("High", Range(0.9, 1)) = 0.9
     }
     SubShader
     {
@@ -41,14 +43,14 @@
 
             sampler2D _MainTex, _CameraDepthTexture;
             float4 _Color;
-            float _Strength;
+            float _Strength, _LowBound, _HighBound;
 
             fixed4 frag (v2f i) : SV_Target
             {
                 fixed4 col = tex2D(_MainTex, i.uv);
                 // just invert the colors
                 float depth = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, i.uv);
-                depth = smoothstep(0.01, 0.99, depth);
+                depth = smoothstep(_LowBound, _HighBound, depth);
                 depth = Linear01Depth(depth);
                 return lerp(col, _Color, depth * _Strength);
             }

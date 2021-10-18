@@ -924,7 +924,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   color: {r: 0.3186632, g: 0.63859993, b: 0.8773585, a: 0}
-  strength: 1
+  strength: 0.4
+  lowBound: 0.025
+  highBound: 1
 --- !u!1 &1360696002
 GameObject:
   m_ObjectHideFlags: 0
