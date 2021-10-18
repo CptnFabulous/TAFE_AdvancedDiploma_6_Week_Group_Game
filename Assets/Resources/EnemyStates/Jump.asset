@@ -17,6 +17,6 @@ MonoBehaviour:
   detectionRadius: 8
   usingAgent: 0
   needsLineOfSight: 0
-  jumpHeight: 5
+  jumpHeight: 3
   jumpRange: 5
   jumpDuration: 2
