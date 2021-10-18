@@ -18,3 +18,4 @@ MonoBehaviour:
   possiblePrefabs:
   - {fileID: 7250564253455312841, guid: 22cb90f9ae144254692054b49ec136a6, type: 3}
   - {fileID: 2370708808840157254, guid: 633cb3ee9e6cb7546983f4acd614a83f, type: 3}
+  - {fileID: 0}
