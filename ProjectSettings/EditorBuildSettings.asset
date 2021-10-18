@@ -20,4 +20,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Joshua/GameOver.unity
     guid: 443e6de66492eac48bf5c758df34ed41
+  - enabled: 1
+    path: Assets/Scenes/Joshua/Victory.unity
+    guid: 1e0c84e55f0e3c946a87f001bb349c2e
   m_configObjects: {}

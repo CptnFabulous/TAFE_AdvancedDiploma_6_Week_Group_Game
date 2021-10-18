@@ -61,6 +61,7 @@ public class GameManager : MonoBehaviour
 
     private void Victory()
     {
-
+        currentRoom = 0;
+        SceneManager.LoadSceneAsync("Victory");
     }
 }
