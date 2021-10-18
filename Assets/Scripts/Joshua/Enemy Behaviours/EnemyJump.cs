@@ -44,6 +44,7 @@ public class EnemyJump : EnemyMove
         origin = machine.transform.position;
         destination = SelectJumpDestination();
         machine.ActivateIndicator(destination);
+        Instantiate(Resources.Load("Effects/Slime"), machine.transform.position, Quaternion.identity);
     }
 
     public override void UpdateState()
