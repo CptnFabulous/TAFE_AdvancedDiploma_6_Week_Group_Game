@@ -40,6 +40,7 @@ namespace Auaora
         private bool dashOffCooldown = true;
 
         [Header("Misc Variables")]
+        [SerializeField] private float maxRange = 2f;
         [SerializeField] private float attackSpeed = 1f;
         [SerializeField] private float attackForce = 5f;
         [SerializeField] private LayerMask attackMask;
@@ -141,12 +142,12 @@ namespace Auaora
             {
                 if (currentState == PlayerState.Regular || currentState == PlayerState.Attacking)
                 {
-                    rigRef.velocity = new Vector3(speed.x, 0f, speed.y);
+                    rigRef.velocity = GetMovementDirection();
                     if (currentState == PlayerState.Regular)
                     {
                         if (speed != Vector2.zero)
                         {
-                            RotateVisuals(new Vector3(speed.x, 0f, speed.y));
+                            RotateVisuals(GetMovementDirection());
                         }
                     }
                     else
@@ -186,8 +187,12 @@ namespace Auaora
                     }
                 }
 
-                attackIndicator.transform.LookAt(new Vector3(transform.position.x + AimInputVector().x, transform.position.y, transform.position.z + AimInputVector().y));
-                attackIndicatorGround.transform.position = new Vector3(Mathf.Round(attackIndicatorTarget.transform.position.x / 2) * 2, attackIndicatorGround.transform.position.y, Mathf.Round(attackIndicatorTarget.transform.position.z / 2) * 2);
+                Vector3 newPos = transform.position + new Vector3(AimInputVector().x, 0f, AimInputVector().y);
+                Vector3 newDir = (newPos - transform.position).normalized;
+                newDir = Quaternion.Euler(0, 45, 0) * newDir;
+                attackIndicator.transform.LookAt(transform.position + newDir);
+                attackIndicatorTarget.transform.localPosition = new Vector3(0f, 0f, Mathf.Clamp(AimInputMagnitude(), 0.5f, maxRange * AbilityManager.SoleManager.GetAttackRangeBonus()));
+                attackIndicatorGround.transform.position = new Vector3(Mathf.Round(attackIndicatorTarget.transform.position.x), attackIndicatorGround.transform.position.y, Mathf.Round(attackIndicatorTarget.transform.position.z));
 
                 HandleAnimation();
 
@@ -262,7 +267,7 @@ namespace Auaora
 
         private void BeginDash()
         {
-            Vector2 direction = new Vector2(Mathf.Clamp(Input.GetAxisRaw("Horizontal") * 1000, -1, 1), Mathf.Clamp(Input.GetAxisRaw("Vertical") * 1000, -1, 1)).normalized;
+            Vector2 direction = new Vector2(GetMovementDirection().x, GetMovementDirection().z).normalized;
             if (direction == Vector2.zero)
             {
                 EndDash();
@@ -395,22 +400,28 @@ namespace Auaora
             hudRef.SetHealthAmount(currentHealth, maxHealth + AbilityManager.SoleManager.GetHealthBonus());
         }
 
+        public Vector3 GetMovementDirection()
+        {
+            Vector3 velDir = new Vector3(speed.x, 0f, speed.y);
+            velDir = Quaternion.Euler(0, 45, 0) * velDir;
+            return velDir;
+        }
+
         public Vector2 AimInputVector()
         {
-            Vector2 direction = Vector2.zero;
-            if (mouseAim)
-            {
-                Vector3 smolDir = cameraRef.GetComponent<Camera>().ScreenPointToRay(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0f)).direction.normalized;
-                //Vector3 smolDir = (cameraRef.GetComponent<Camera>().ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 1f)) - cameraRef.transform.position).normalized;
-                smolDir *= 10f;
-                direction = cameraRef.transform.position + smolDir - gameObject.transform.position;
-            }
-            else
-            {
-                direction = new Vector2(Input.GetAxisRaw("AimHor"), Input.GetAxisRaw("AimVer"));
-            }
-            direction.Normalize();
+            Vector2 point1 = cameraRef.GetComponent<Camera>().ScreenToViewportPoint(Input.mousePosition);
+            Vector2 point2 = cameraRef.GetComponent<Camera>().WorldToViewportPoint(visualRef.transform.position);
+            Vector2 direction = (point1 - point2).normalized;
+
             return direction;
+        }
+
+        private float AimInputMagnitude()
+        {
+            Vector2 point1 = cameraRef.GetComponent<Camera>().ScreenToViewportPoint(Input.mousePosition);
+            Vector2 point2 = cameraRef.GetComponent<Camera>().WorldToViewportPoint(visualRef.transform.position);
+            print("MAGNITUDE:" + (point1 - point2).magnitude);
+            return (point1 - point2).magnitude * 10f;
         }
 
         private void StartAttack()
@@ -436,7 +447,8 @@ namespace Auaora
                 if (hitCol.GetComponent<EnemyBehaviour>())
                 {
                     print("KNOCKBACK");
-                    Vector2 aim = AimInputVector();
+                    Vector3 aim = attackIndicator.transform.forward;
+                    aim = Quaternion.Euler(-45, 0, 0) * aim;
                     Vector3 direction = new Vector3(aim.x, 0.25f, aim.y);
                     hitCol.GetComponent<EnemyBehaviour>().Knockback(direction * (attackForce + AbilityManager.SoleManager.GetAttackForceBonus()));
                     if (AbilityManager.SoleManager.DoesPlayerHaveSpecialAbility(0))
