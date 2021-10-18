@@ -18,5 +18,5 @@ MonoBehaviour:
   usingAgent: 0
   needsLineOfSight: 0
   jumpHeight: 3
-  jumpRange: 7
+  jumpRange: 3
   jumpDuration: 0.75
