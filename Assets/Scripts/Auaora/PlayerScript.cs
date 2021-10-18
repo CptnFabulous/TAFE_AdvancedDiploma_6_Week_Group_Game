@@ -313,7 +313,7 @@ namespace Auaora
                 {
                     if (knockback)
                     {
-                        knockbackVector = (transform.position - damagePos).normalized * 20f;
+                        knockbackVector = (transform.position - damagePos).normalized * 10f;
                         rigRef.velocity = knockbackVector;
                         AnimateTrigger("Stun");
                     }
@@ -421,7 +421,7 @@ namespace Auaora
             Vector2 point1 = cameraRef.GetComponent<Camera>().ScreenToViewportPoint(Input.mousePosition);
             Vector2 point2 = cameraRef.GetComponent<Camera>().WorldToViewportPoint(visualRef.transform.position);
             print("MAGNITUDE:" + (point1 - point2).magnitude);
-            return (point1 - point2).magnitude * 10f;
+            return (point1 - point2).magnitude * 15f;
         }
 
         private void StartAttack()
