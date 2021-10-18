@@ -25,6 +25,8 @@ public class EnemyBehaviour : MonoBehaviour
     private List<EnemyBehaviour> spawner;
 
     [SerializeField] private GameObject attackIndicator;
+    private AudioSource audioSource;
+    [SerializeField] AudioClip[] audioClips;
 
     private void Awake()
     {
@@ -61,6 +63,8 @@ public class EnemyBehaviour : MonoBehaviour
             attackIndicator.transform.parent = null;
         }
         attackIndicator.SetActive(false);
+
+        audioSource = GetComponent<AudioSource>();
     }
 
     private void Start()
@@ -243,6 +247,7 @@ public class EnemyBehaviour : MonoBehaviour
         agent.enabled = false;
         rigid.isKinematic = false;
         rigid.AddForce(_force, ForceMode.Impulse);
+        Splat();
         //StartCoroutine(AddKnockback(1));
     }
 
@@ -292,6 +297,16 @@ public class EnemyBehaviour : MonoBehaviour
     public void DeactivateIndicator()
     {
         attackIndicator.SetActive(false);
+    }
+
+    public void Splat()
+    {
+        if(audioClips.Length == 0)
+        {
+            return;
+        }
+        audioSource.clip = audioClips[Random.Range(0, audioClips.Length)];
+        audioSource.Play();
     }
 
     private void OnDestroy()

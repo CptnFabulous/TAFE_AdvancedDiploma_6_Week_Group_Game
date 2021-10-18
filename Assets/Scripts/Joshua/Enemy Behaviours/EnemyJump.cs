@@ -48,6 +48,7 @@ public class EnemyJump : EnemyMove
         destination = SelectJumpDestination();
         machine.ActivateIndicator(destination);
         Instantiate(Resources.Load("Effects/Slime"), machine.transform.position, Quaternion.identity);
+        machine.Splat();
     }
 
     public override void UpdateState()
@@ -103,6 +104,7 @@ public class EnemyJump : EnemyMove
     public override void DestroyState()
     {
         Instantiate(Resources.Load("Effects/Slime"), machine.transform.position, Quaternion.identity);
+        machine.Splat();
         /*
         if(machine.transform.position != destination)
         {
