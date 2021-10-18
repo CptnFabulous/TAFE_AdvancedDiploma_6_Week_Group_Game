@@ -75,9 +75,14 @@ public class EnemyBehaviour : MonoBehaviour
         {
             playerTransform = player.transform;
         }
-
-        ChangeState(idle.GetStateCopy());
+        StartCoroutine(nameof(StartAI));
         groundYValue = transform.position.y;
+    }
+
+    private IEnumerator StartAI()
+    {
+        yield return new WaitForSeconds(Random.Range(1.0f, 2.0f));
+        ChangeState(idle.GetStateCopy());
     }
 
     private void Update()
