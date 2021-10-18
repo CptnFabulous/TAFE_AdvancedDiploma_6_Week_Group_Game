@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   machine: {fileID: 0}
   moveSpeed: 5
-  detectionRadius: 10
+  detectionRadius: 5
   usingAgent: 0
   needsLineOfSight: 0
   jumpHeight: 3
-  jumpRange: 7
+  jumpRange: 3
   jumpDuration: 0.75

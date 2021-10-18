@@ -50,7 +50,6 @@ public class EnemyBehaviour : MonoBehaviour
         rigid = GetComponent<Rigidbody>();
         rigid.isKinematic = true;
 
-        groundYValue = transform.position.y;
         GroundMask = LayerMask.GetMask("Ground", "Level Geometry");
         if(attackIndicator == null)
         {
@@ -78,7 +77,7 @@ public class EnemyBehaviour : MonoBehaviour
         }
 
         ChangeState(idle.GetStateCopy());
-        Debug.Log("a");
+        groundYValue = transform.position.y;
     }
 
     private void Update()
@@ -127,7 +126,7 @@ public class EnemyBehaviour : MonoBehaviour
     /// <returns></returns>
     public bool GroundCheck()
     {
-        return largeEnemy ? Physics.CheckSphere(transform.position, 0.75f, GroundMask) : Physics.Raycast(transform.position + Vector3.up, Vector3.down, 10f, GroundMask) && rigid.isKinematic;
+        return largeEnemy ? Physics.CheckSphere(transform.position, 0.25f, GroundMask) : Physics.Raycast(transform.position + Vector3.up, Vector3.down, 10f, GroundMask) && rigid.isKinematic;
     }
 
     #region StateMachine
