@@ -164,4 +164,16 @@ public class AbilityManager : MonoBehaviour
     {
         currentPlatformsSpawned = 0;
     }
+
+    public void ResetItems()
+    {
+        ZeroPlatforms();
+        attackSpeedUps = 0;
+        healthUps = 0;
+        attackForceUps = 0;
+        attackRangeUps = 0;
+        dashCooldownUps = 0;
+        specialAbilities[0] = 0;
+        specialAbilities[1] = 0;
+    }
 }

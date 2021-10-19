@@ -15,6 +15,7 @@ namespace Auaora
         [SerializeField] private GameObject attackIndicatorTarget;
         [SerializeField] private GameObject attackIndicatorGround;
         [SerializeField] private GameObject visualRef;
+        [SerializeField] private AudioSource soundRef;
         private HUDScript hudRef;
 
         [Header("Movement Variables")]
@@ -239,6 +240,7 @@ namespace Auaora
             rigRef.velocity = Vector3.zero;
             speed = Vector2.zero;
 
+            AbilityManager.SoleManager.ResetItems();
             StartCoroutine(nameof(StartAgain));
         }
 
@@ -463,19 +465,23 @@ namespace Auaora
                 if (blockInteraction.TryCheckBlock(attackIndicatorTarget.transform.position, Vector3.down))
                 {
                     blockInteraction.TargetedChunk.DamageBlock(blockInteraction.TargetedBlockCoords, 1);
+                    PlayerSound("break");
                 }
-                RaycastHit hit;
-                Physics.Raycast(attackIndicatorTarget.transform.position, Vector3.down, out hit, 3f, placeableMask);
-                if (hit.collider)
+                else
                 {
-                    if (hit.collider.GetComponent<PlaceablePlatformScript>())
+                    RaycastHit hit;
+                    Physics.Raycast(attackIndicatorTarget.transform.position, Vector3.down, out hit, 3f, placeableMask);
+                    if (hit.collider)
                     {
-                        hit.collider.GetComponent<PlaceablePlatformScript>().BreakPlatform();
+                        if (hit.collider.GetComponent<PlaceablePlatformScript>())
+                        {
+                            hit.collider.GetComponent<PlaceablePlatformScript>().BreakPlatform();
+                        }
                     }
-                }
-                else if (AbilityManager.SoleManager.DoesPlayerHaveSpecialAbility(1))
-                {
-                    AbilityManager.SoleManager.SpawnSpecialAbility(1, new Vector3(Mathf.Round(attackIndicatorTarget.transform.position.x / 2) * 2, 0.5f, Mathf.Round(attackIndicatorTarget.transform.position.z / 2) * 2));
+                    else if (AbilityManager.SoleManager.DoesPlayerHaveSpecialAbility(1))
+                    {
+                        AbilityManager.SoleManager.SpawnSpecialAbility(1, new Vector3(Mathf.Round(attackIndicatorTarget.transform.position.x / 2) * 2, 0.5f, Mathf.Round(attackIndicatorTarget.transform.position.z / 2) * 2));
+                    }
                 }
             }
         }
@@ -544,6 +550,19 @@ namespace Auaora
                 return false;
             }
             return true;
+        }
+
+        public void PlayerSound(string soundName)
+        {
+            /*if (soundName == "walk")
+            {
+                soundName = soundName + Random.Range(0, 6);
+            }
+            if (soundName == "break")
+            {
+                soundName = soundName + Random.Range(0, 4);
+            }
+            soundRef.PlayOneShot(Resources.Load<AudioClip>("PlayerSounds/" + soundName));*/
         }
 
         public void PrintState()
